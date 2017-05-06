@@ -16,4 +16,8 @@ set(TIJK_SOURCES
   tijk.h
   )
 
-ADD_TEEM_LIBRARY(tijk ${TIJK_SOURCES})
+ADD_TEEM_LIBRARY(tijk ${TIJK_SOURCES}
+                 DEPENDENCIES air
+                              nrrd
+                              ell
+                )

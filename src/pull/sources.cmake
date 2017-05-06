@@ -22,4 +22,13 @@ set(PULL_SOURCES
   trace.c
   )
 
-ADD_TEEM_LIBRARY(pull ${PULL_SOURCES})
+ADD_TEEM_LIBRARY(pull ${PULL_SOURCES} 
+                 DEPENDENCIES air
+                              hest
+                              biff
+                              nrrd
+                              ell
+                              gage
+                              limn
+                              ten
+                )

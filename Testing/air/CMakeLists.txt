@@ -22,25 +22,25 @@
 #
 
 add_executable(test_miscAir miscAir.c)
-target_link_libraries(test_miscAir teem)
+target_link_libraries(test_miscAir ${Teem_LIBRARIES})
 add_test(NAME misc COMMAND $<TARGET_FILE:test_miscAir>)
 
 add_executable(test_mtrand mtrand.c)
-target_link_libraries(test_mtrand teem)
+target_link_libraries(test_mtrand ${Teem_LIBRARIES})
 add_test(NAME mtrand COMMAND $<TARGET_FILE:test_mtrand>)
 
 add_executable(test_amath amath.c)
-target_link_libraries(test_amath teem)
+target_link_libraries(test_amath ${Teem_LIBRARIES})
 add_test(NAME amath COMMAND $<TARGET_FILE:test_amath>)
 
 add_executable(test_string string.c)
-target_link_libraries(test_string teem)
+target_link_libraries(test_string ${Teem_LIBRARIES})
 add_test(NAME string COMMAND $<TARGET_FILE:test_string>)
 
 add_executable(test_strtok strtok.c)
-target_link_libraries(test_strtok teem)
+target_link_libraries(test_strtok ${Teem_LIBRARIES})
 add_test(NAME strtok COMMAND $<TARGET_FILE:test_strtok>)
 
 add_executable(test_pptest pptest.c)
-target_link_libraries(test_pptest teem)
+target_link_libraries(test_pptest ${Teem_LIBRARIES})
 add_test(NAME pptest COMMAND $<TARGET_FILE:test_pptest>)

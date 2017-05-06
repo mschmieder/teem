@@ -25,4 +25,12 @@ set(LIMN_SOURCES
   transform.c
   )
 
-ADD_TEEM_LIBRARY(limn ${LIMN_SOURCES})
+ADD_TEEM_LIBRARY(limn ${LIMN_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              hest
+                              ell
+                              nrrd
+                              gage
+                              unrrdu
+                )

@@ -12,4 +12,11 @@ set(PUSH_SOURCES
   setup.c
   )
 
-ADD_TEEM_LIBRARY(push ${PUSH_SOURCES})
+ADD_TEEM_LIBRARY(push ${PUSH_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              nrrd
+                              ell
+                              gage
+                              ten
+                )

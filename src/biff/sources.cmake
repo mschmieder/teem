@@ -7,4 +7,6 @@ set(BIFF_SOURCES
   biffbiff.c
   )
 
-ADD_TEEM_LIBRARY(biff ${BIFF_SOURCES})
+ADD_TEEM_LIBRARY(biff ${BIFF_SOURCES}
+                 DEPENDENCIES air
+                )

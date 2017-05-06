@@ -62,5 +62,13 @@ set(Teem_TOOLS "@Teem_TOOLS@")
 
 # The Teem library dependencies.
 if(NOT TARGET teem)
-  include("@Teem_CV_LIBRARY_DEPENDS_FILE@")
+  include(teem-targets.cmake)
 endif()
+
+if(NOT "@Teem_NAMESPACE@" STREQUAL "")
+  set(_teem_namespace "@Teem_NAMESPACE@::")
+endif()
+
+foreach(target @Teem_LIBRARIES@)
+  list(APPEND Teem_LIBRARIES ${_teem_namespace}${target})
+endforeach()

@@ -24,4 +24,10 @@ set(BANE_SOURCES
   valid.c
   )
 
-ADD_TEEM_LIBRARY(bane ${BANE_SOURCES})
+ADD_TEEM_LIBRARY(bane ${BANE_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              nrrd
+                              unrrdu
+                              gage
+                )

@@ -8,4 +8,11 @@ set(ELF_SOURCES
   elf.h
   )
 
-ADD_TEEM_LIBRARY(elf ${ELF_SOURCES})
+ADD_TEEM_LIBRARY(elf ${ELF_SOURCES}
+                 DEPENDENCIES air
+                              nrrd
+                              ell
+                              limn
+                              tijk
+                              ten
+                )

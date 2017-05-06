@@ -13,4 +13,12 @@ set(SEEK_SOURCES
   updateSeek.c
   )
 
-ADD_TEEM_LIBRARY(seek ${SEEK_SOURCES})
+ADD_TEEM_LIBRARY(seek ${SEEK_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              hest
+                              ell
+                              nrrd
+                              gage
+                              limn
+                )

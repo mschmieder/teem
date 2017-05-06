@@ -8,4 +8,29 @@ set(MEET_SOURCES
   meet.h
   )
 
-ADD_TEEM_LIBRARY(meet ${MEET_SOURCES})
+set(MEET_Dependencies hest
+                      biff
+                      nrrd
+                      ell
+                      unrrdu
+                      gage
+                      dye
+                      limn
+                      echo
+                      hoover
+                      seek
+                      ten
+                      pull
+                      mite)
+
+if(TEEM_BUILD_EXPERIMENTAL_LIBS)
+  list(APPEND MEET_Dependencies alan
+                                tijk
+                                bane
+                                elf
+                                coil
+                                push)
+endif()
+
+ADD_TEEM_LIBRARY(meet ${MEET_SOURCES}
+                 DEPENDENCIES ${MEET_Dependencies})

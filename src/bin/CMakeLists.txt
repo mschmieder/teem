@@ -23,7 +23,7 @@
 
 macro(CREATE_EXEC name sources)
   add_executable(${name} ${sources})
-  target_link_libraries(${name} teem)
+  target_link_libraries(${name} ${Teem_LIBRARIES})
   install(TARGETS ${name}
     RUNTIME DESTINATION bin
     COMPONENT Runtime

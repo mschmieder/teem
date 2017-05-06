@@ -22,19 +22,19 @@
 #
 
 add_executable(test_enmall enmall.c)
-target_link_libraries(test_enmall teem)
+target_link_libraries(test_enmall ${Teem_LIBRARIES})
 add_test(NAME enmall COMMAND $<TARGET_FILE:test_enmall>)
 
 add_executable(test_kernall kernall.c)
-target_link_libraries(test_kernall teem)
+target_link_libraries(test_kernall ${Teem_LIBRARIES})
 add_test(NAME kernall COMMAND $<TARGET_FILE:test_kernall>)
 
 add_executable(test_buildinfo buildinfo.c)
-target_link_libraries(test_buildinfo teem)
+target_link_libraries(test_buildinfo ${Teem_LIBRARIES})
 add_test(NAME buildinfo COMMAND $<TARGET_FILE:test_buildinfo>)
 
 add_executable(test_probeSS probeSS.c)
-target_link_libraries(test_probeSS teem)
+target_link_libraries(test_probeSS ${Teem_LIBRARIES})
 add_test(NAME probeSS_box01 COMMAND $<TARGET_FILE:test_probeSS> -k box -supp 1.0 -pnum 1500)
 add_test(NAME probeSS_cos01 COMMAND $<TARGET_FILE:test_probeSS> -k cos -supp 1.0 -pnum 1500)
 add_test(NAME probeSS_cos02 COMMAND $<TARGET_FILE:test_probeSS> -k cos -supp 2.0 -pnum 1200)

@@ -78,4 +78,9 @@ set(UNRRDU_SOURCES
   untile.c
   )
 
-ADD_TEEM_LIBRARY(unrrdu ${UNRRDU_SOURCES})
+ADD_TEEM_LIBRARY(unrrdu ${UNRRDU_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              hest
+                              nrrd
+                )

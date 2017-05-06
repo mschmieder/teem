@@ -9,4 +9,5 @@ set(HEST_SOURCES
   usage.c
   )
 
-ADD_TEEM_LIBRARY(hest ${HEST_SOURCES})
+ADD_TEEM_LIBRARY(hest ${HEST_SOURCES}
+                 DEPENDENCIES air)

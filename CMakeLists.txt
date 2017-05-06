@@ -60,6 +60,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 set(CMAKE_C_FLAGS "${CMAKE_ANSI_CFLAGS} ${CMAKE_C_FLAGS}")
 set(CMAKE_REQUIRED_FLAGS ${CMAKE_ANSI_CFLAGS})
 
+# adding cmake debug postfix to distinguish between release and debug libs
+set(CMAKE_DEBUG_POSTFIX "d")
+
 #-----------------------------------------------------------------------------
 # Test for some required system information.
 include (CMakeBackwardCompatibilityC)
@@ -276,14 +279,14 @@ if(NOT "$ENV{DASHBOARD_TEST_FROM_CTEST}" STREQUAL "")
 endif()
 
 # (TEEM_LIB_LIST)
-set(Teem_LIBRARIES air hest biff nrrd ell unrrdu moss gage dye limn echo hoover seek ten pull mite meet)
+set(Teem_COMPONENTS air hest biff nrrd ell unrrdu moss gage dye limn echo hoover seek ten pull mite meet)
 if(BUILD_EXPERIMENTAL_LIBS)
   # This list of the "experimental" libraries must be kept in sync with:
   # * definition of Teem_HEADER_FILES (below)
   # * teem/src/meet/meet.h
   # * teem/src/meet/enumsall.c
   # re-setting list so libraries appear in expected order
-  set(Teem_LIBRARIES air hest biff nrrd ell unrrdu alan moss tijk gage dye bane limn echo hoover seek ten elf pull coil push mite meet)
+  list(APPEND Teem_COMPONENTS alan tijk bane elf coil push)
   add_definitions(-DTEEM_BUILD_EXPERIMENTAL_LIBS)
 endif()
 
@@ -325,11 +328,17 @@ foreach(header_file ${Teem_HEADER_FILES})
   # When debugging, uncomment this line
   #message(STATUS "Copy header file: ${header_file}")
   get_filename_component(file_no_path "${header_file}" NAME)
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${header_file}"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}" COPYONLY IMMEDIATE)
-  set(Teem_INSTALLED_HEADER_FILES
-    ${Teem_INSTALLED_HEADER_FILES}
-    "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}")
+  get_filename_component(component "${file_no_path}" NAME)
+  string(TOUPPER ${component} COMPONENT_UC)
+
+  # only copy headers of components that are build
+  if(BUILD_${COMPONENT_UC})
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${header_file}"
+      "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}" COPYONLY IMMEDIATE)
+    set(Teem_INSTALLED_HEADER_FILES
+      ${Teem_INSTALLED_HEADER_FILES}
+      "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}")
+  endif()
 endforeach()
 
 #---
@@ -374,20 +383,47 @@ set(Teem_SOURCES)
 
 #-----------------------------------------------------------------------------
 # Macro for adding the current set of source files to the master list
-macro(ADD_Teem_LIBRARY dir)
-  set(srcs)
-  foreach(src ${ARGN})
-    set(srcs ${srcs} "src/${dir}/${src}")
-  endforeach()
-  set(Teem_SOURCES ${Teem_SOURCES} ${srcs})
-  # This will group all the source files in the VS project by directory
-  source_group( ${dir} FILES ${srcs} )
+# Additionally addition option for each libary part that allows for enabling
+# and/or disabling it within the build
+# 
+# When option BUILD_MONOLITHIC is set to true (default) then teem will build
+# exactly one library containing all symbols. BUILD_MONOLITHIC is disabled
+# teem will export a number of libraries that can be used independently
+# 
+
+option(BUILD_MONOLITHIC "Enable this to get one monolithic library containing all symbols" ON)
+macro(ADD_TEEM_LIBRARY target)
+  include(CMakeParseArguments)
+  cmake_parse_arguments(_arg "" "" "DEPENDENCIES" ${ARGN})
+
+  string(TOUPPER ${target} LIBNAME_UC)
+  option(BUILD_WITH_${LIBNAME_UC} "Enable building ${target}" ON)
+  if(BUILD_WITH_${LIBNAME_UC})
+    set(srcs)
+    foreach(src ${_arg_UNPARSED_ARGUMENTS})
+      set(srcs ${srcs} "src/${target}/${src}")
+    endforeach()
+
+    if(BUILD_MONOLITHIC)
+      set(Teem_SOURCES ${Teem_SOURCES} ${srcs})
+      # This will group all the source files in the VS project by directory
+      source_group( ${target} FILES ${srcs} )
+    else()
+      add_library(${target} ${srcs})
+      if(_arg_DEPENDENCIES)
+        target_link_libraries(${target} ${_arg_DEPENDENCIES})
+      endif()
+      list(APPEND Teem_LIBRARIES ${target})
+    endif()
+  endif()
 endmacro()
 
 
 #-----------------------------------------------------------------------------
 # Dispatch the build into the proper subdirectories.
-foreach(dir ${Teem_LIBRARIES})
+# Additionally addition option for each libary part that allows for enabling
+# and/or disabling it within the build
+foreach(dir ${Teem_COMPONENTS})
   include(src/${dir}/sources.cmake)
 endforeach()
 
@@ -397,45 +433,53 @@ endforeach()
 # This needs to occur after the parsing of the subdirectories.
 
 # Create the library target
-add_library(teem ${Teem_SOURCES})
+set(Teem_NAMESPACE "teem")
+if(BUILD_MONOLITHIC)
+  set(Teem_LIBRARIES teem)
+  set(Teem_NAMESPACE "")
+  add_library(teem ${Teem_SOURCES})
+endif()
 
 # Set up some library paths for installation.  Windows will ingore the
 # RPATH stuff, and mac will ingore the INSTALL_RPATH.  Make sure for
 # macs to set BUILD_WITH_INSTALL_RPATH OFF and set INSTALL_NAME_DIR.
 # I belive INSTALL_NAME_DIR will be ignored on linux.
-set_target_properties(teem PROPERTIES
-  BUILD_WITH_INSTALL_RPATH OFF
-  INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib
-  INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/lib
-  SOVERSION 1
-  VERSION ${Teem_VERSION_STRING}
-  )
+foreach(target ${Teem_LIBRARIES})
+  set_target_properties(${target} PROPERTIES
+    BUILD_WITH_INSTALL_RPATH OFF
+    INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib
+    INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/lib
+    SOVERSION 1
+    VERSION ${Teem_VERSION_STRING}
+    )
 
-if(Teem_BZIP2_LIB)
-  target_link_libraries(teem ${Teem_BZIP2_LIB})
-endif()
-if(Teem_ZLIB_LIB)
-  target_link_libraries(teem ${Teem_ZLIB_LIB})
-  if(Teem_PNG_LIB)
-    target_link_libraries(teem ${Teem_PNG_LIB})
+  if(Teem_BZIP2_LIB)
+    target_link_libraries(${target} ${Teem_BZIP2_LIB})
   endif()
-endif()
+  if(Teem_ZLIB_LIB)
+    target_link_libraries(${target} ${Teem_ZLIB_LIB})
+    if(Teem_PNG_LIB)
+      target_link_libraries(${target} ${Teem_PNG_LIB})
+    endif()
+  endif()
 
-if(Teem_LEVMAR_LIB)
-  target_link_libraries(teem ${Teem_LEVMAR_LIB})
-endif()
+  if(Teem_LEVMAR_LIB)
+    target_link_libraries(${target} ${Teem_LEVMAR_LIB})
+  endif()
 
-if(Teem_FFTW3_LIB)
-  target_link_libraries(teem ${Teem_FFTW3_LIB})
-endif()
+  if(Teem_FFTW3_LIB)
+    target_link_libraries(${target} ${Teem_FFTW3_LIB})
+  endif()
 
-if(Teem_PTHREAD)
-  target_link_libraries(teem ${CMAKE_THREAD_LIBS_INIT})
-endif()
+  if(Teem_PTHREAD)
+    target_link_libraries(${target} ${CMAKE_THREAD_LIBS_INIT})
+  endif()
 
-if(UNIX)
-  target_link_libraries(teem -lm)
-endif()
+  if(UNIX)
+    target_link_libraries(${target} -lm)
+  endif()
+endforeach()
+
 
 option(Teem_USE_LIB_INSTALL_SUBDIR "Add a Teem-X.Y.Z directory layer to the installation tree for libraries and archives." OFF)
 if(Teem_USE_LIB_INSTALL_SUBDIR)
@@ -444,13 +488,14 @@ else()
   set(EXTRA_INSTALL_PATH "")
 endif()
 
-install(TARGETS teem
+install(TARGETS ${Teem_LIBRARIES}
+  EXPORT teem-targets
   RUNTIME DESTINATION bin COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION lib${EXTRA_INSTALL_PATH} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION lib${EXTRA_INSTALL_PATH} COMPONENT Development
-  )
+  LIBRARY DESTINATION lib/${EXTRA_INSTALL_PATH} COMPONENT RuntimeLibraries
+  ARCHIVE DESTINATION lib/${EXTRA_INSTALL_PATH} COMPONENT Development
+)
 
-export(TARGETS teem FILE ${Teem_BINARY_DIR}/TeemLibraryDepends.cmake)
+install(EXPORT teem-targets DESTINATION cmake)
 
 # Stand-alone programs to process hex encoding of data
 option(BUILD_HEX "Build dehex and enhex" OFF)
@@ -556,7 +601,7 @@ install(FILES
   "${Teem_BINARY_DIR}/CMake/TeemConfig.cmake"
   "${Teem_SOURCE_DIR}/CMake/TeemUse.cmake"
   "${Teem_BINARY_DIR}/TeemBuildSettings.cmake"
-  "${Teem_BINARY_DIR}/TeemLibraryDepends.cmake"
-  DESTINATION lib${EXTRA_INSTALL_PATH}
+  DESTINATION cmake/${EXTRA_INSTALL_PATH}
   COMPONENT Development
   )
+

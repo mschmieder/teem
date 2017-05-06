@@ -13,4 +13,13 @@ set(MITE_SOURCES
   user.c
   )
 
-ADD_TEEM_LIBRARY(mite ${MITE_SOURCES})
+ADD_TEEM_LIBRARY(mite ${MITE_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              nrrd
+                              ell
+                              gage
+                              limn
+                              hoover
+                              ten
+                )

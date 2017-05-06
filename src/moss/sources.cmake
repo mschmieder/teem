@@ -10,4 +10,10 @@ set(MOSS_SOURCES
   xform.c
   )
 
-ADD_TEEM_LIBRARY(moss ${MOSS_SOURCES})
+ADD_TEEM_LIBRARY(moss ${MOSS_SOURCES}
+                 DEPENDENCIES air
+                              hest
+                              biff
+                              ell
+                              nrrd
+                )

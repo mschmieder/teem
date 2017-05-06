@@ -26,4 +26,9 @@ set(GAGE_SOURCES
   optimsig.c
   )
 
-ADD_TEEM_LIBRARY(gage ${GAGE_SOURCES})
+ADD_TEEM_LIBRARY(gage ${GAGE_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              nrrd
+                              ell
+                )

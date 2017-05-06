@@ -82,4 +82,13 @@ set(TEN_SOURCES
   model1Tensor2.c
   )
 
-ADD_TEEM_LIBRARY(ten ${TEN_SOURCES})
+ADD_TEEM_LIBRARY(ten ${TEN_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              ell
+                              nrrd
+                              unrrdu
+                              dye
+                              gage
+                              limn
+                              echo)

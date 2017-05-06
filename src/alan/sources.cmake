@@ -7,4 +7,5 @@ set(ALAN_SOURCES
   methodsAlan.c
   )
 
-ADD_TEEM_LIBRARY(alan ${ALAN_SOURCES})
+ADD_TEEM_LIBRARY(alan ${ALAN_SOURCES} 
+                 DEPENDENCIES biff ell nrrd)

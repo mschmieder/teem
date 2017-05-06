@@ -12,4 +12,8 @@ set(ELL_SOURCES
   vecEll.c
   )
 
-ADD_TEEM_LIBRARY(ell ${ELL_SOURCES})
+ADD_TEEM_LIBRARY(ell ${ELL_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              nrrd
+                )

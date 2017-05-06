@@ -8,4 +8,11 @@ set(HOOVER_SOURCES
   stub.c
   )
 
-ADD_TEEM_LIBRARY(hoover ${HOOVER_SOURCES})
+ADD_TEEM_LIBRARY(hoover ${HOOVER_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              ell
+                              nrrd
+                              limn
+                              gage
+                )

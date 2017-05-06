@@ -60,4 +60,8 @@ set(NRRD_SOURCES
   write.c
   )
 
-ADD_TEEM_LIBRARY(nrrd ${NRRD_SOURCES})
+ADD_TEEM_LIBRARY(nrrd ${NRRD_SOURCES}
+                 DEPENDENCIES air
+                              hest
+                              biff
+                )

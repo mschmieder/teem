@@ -10,4 +10,4 @@ find_package(Teem REQUIRED)
 include(${Teem_USE_FILE})
 
 add_executable(sample sanity.c)
-target_link_libraries(sample teem)
+target_link_libraries(sample ${Teem_LIBRARIES})

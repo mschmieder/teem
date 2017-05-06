@@ -18,4 +18,10 @@ set(ECHO_SOURCES
   sqd.c
   )
 
-ADD_TEEM_LIBRARY(echo ${ECHO_SOURCES})
+ADD_TEEM_LIBRARY(echo ${ECHO_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              ell
+                              nrrd
+                              limn
+                )

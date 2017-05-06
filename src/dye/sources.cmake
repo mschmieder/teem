@@ -6,4 +6,8 @@ set(DYE_SOURCES
   methodsDye.c
   )
 
-ADD_TEEM_LIBRARY(dye ${DYE_SOURCES})
+ADD_TEEM_LIBRARY(dye ${DYE_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              ell
+                )

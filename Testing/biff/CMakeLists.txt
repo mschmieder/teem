@@ -22,5 +22,5 @@
 #
 
 add_executable(test_biff test.c)
-target_link_libraries(test_biff teem)
+target_link_libraries(test_biff ${Teem_LIBRARIES})
 add_test(NAME biff COMMAND $<TARGET_FILE:test_biff>)

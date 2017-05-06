@@ -11,4 +11,10 @@ set(COIL_SOURCES
   tensorCoil.c
   )
 
-ADD_TEEM_LIBRARY(coil ${COIL_SOURCES})
+ADD_TEEM_LIBRARY(coil ${COIL_SOURCES}
+                 DEPENDENCIES air
+                              biff
+                              ell
+                              nrrd
+                              ten
+                )

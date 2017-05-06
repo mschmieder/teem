@@ -22,9 +22,9 @@
 #
 
 add_executable(test_tendlist tendlist.c)
-target_link_libraries(test_tendlist teem)
+target_link_libraries(test_tendlist ${Teem_LIBRARIES})
 add_test(NAME tendlist COMMAND $<TARGET_FILE:test_tendlist>)
 
 add_executable(test_glyphBqd glyphBqd.c)
-target_link_libraries(test_glyphBqd teem)
+target_link_libraries(test_glyphBqd ${Teem_LIBRARIES})
 add_test(NAME glyphBqd COMMAND $<TARGET_FILE:test_glyphBqd>)

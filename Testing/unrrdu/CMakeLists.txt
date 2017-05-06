@@ -22,5 +22,5 @@
 #
 
 add_executable(test_unulist unulist.c)
-target_link_libraries(test_unulist teem)
+target_link_libraries(test_unulist ${Teem_LIBRARIES})
 add_test(NAME unulist COMMAND $<TARGET_FILE:test_unulist>)
