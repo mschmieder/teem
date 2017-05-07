@@ -7,7 +7,6 @@ matrix:
     env: OS=linux COMPILER=gcc-6 DOCKER_TAG=ubuntu-17.04 BUILD_TYPE=release
     os: linux
     script:
-    - cd ${TRAVIS_BUILD_DIR}
     - travis/build.sh "teem" "docker-${DOCKER_TAG}"
       --source-directory=${TRAVIS_BUILD_DIR}
       --build-directory=${TRAVIS_BUILD_DIR}/build
@@ -24,8 +23,26 @@ matrix:
     env: OS=linux COMPILER=clang-4.0 DOCKER_TAG=ubuntu-17.04 BUILD_TYPE=release
     os: linux
     script:
-    - cd ${TRAVIS_BUILD_DIR}
     - travis/build.sh "teem" "docker-${DOCKER_TAG}"
+      --source-directory=${TRAVIS_BUILD_DIR}
+      --build-directory=${TRAVIS_BUILD_DIR}/build
+      --target-system=${OS}
+      --compiler=${COMPILER}
+      --target-architecture=x86_64
+      --build-type=${BUILD_TYPE}
+      --link-type=shared
+      --build
+      --install
+      --install-directory=${TRAVIS_BUILD_DIR}/install
+      --num-threads=4
+  - compiler: clang
+    env: COMPILER=clang-4.0 OS=macos BUILD_TYPE=release
+    os: osx
+    osx_image: xcode8.2
+    install:
+    - travis/travis_ci_install_osx.sh
+    script:
+     - travis/build.sh "teem" "native"
       --source-directory=${TRAVIS_BUILD_DIR}
       --build-directory=${TRAVIS_BUILD_DIR}/build
       --target-system=${OS}
