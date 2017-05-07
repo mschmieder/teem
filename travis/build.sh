@@ -12,7 +12,7 @@ set -e
 case $OS in
 docker-*)
     CPP_BASE_BUILDSYSTEM_TAG=$(echo $OS | sed 's/docker-//g') 
-    ${SCRIPT_DIR}/../build-tools/cmakew_docker --container-name ${PROJECT_NAME} --docker-image-tag ${CPP_BASE_BUILDSYSTEM_TAG} ${ARGS}
+    python3 ${SCRIPT_DIR}/../build-tools/cmakew_docker --container-name ${PROJECT_NAME} --docker-image-tag ${CPP_BASE_BUILDSYSTEM_TAG} ${ARGS}
     exit $?
     ;;
 macos | native )
