@@ -323,32 +323,7 @@ if(BUILD_EXPERIMENTAL_LIBS)
     push/push.h
     )
 endif()
-set(Teem_INSTALLED_HEADER_FILES)
-foreach(header_file ${Teem_HEADER_FILES})
-  # When debugging, uncomment this line
-  #message(STATUS "Copy header file: ${header_file}")
-  get_filename_component(file_no_path "${header_file}" NAME)
-  get_filename_component(component "${file_no_path}" NAME)
-  string(TOUPPER ${component} COMPONENT_UC)
 
-  # only copy headers of components that are build
-  if(BUILD_${COMPONENT_UC})
-    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${header_file}"
-      "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}" COPYONLY IMMEDIATE)
-    set(Teem_INSTALLED_HEADER_FILES
-      ${Teem_INSTALLED_HEADER_FILES}
-      "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}")
-  endif()
-endforeach()
-
-#---
-# header that defines AIR_EXISTS_MACRO_FAILS
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMake/airExistsConf.h
-  ${CMAKE_CURRENT_BINARY_DIR}/include/teem/airExistsConf.h)
-set(Teem_INSTALLED_HEADER_FILES
-  ${Teem_INSTALLED_HEADER_FILES}
-  "${CMAKE_CURRENT_BINARY_DIR}/include/teem/airExistsConf.h")
-#---
 # Include directory
 include_directories(
   "${Teem_BINARY_DIR}/include/"
@@ -426,6 +401,33 @@ endmacro()
 foreach(dir ${Teem_COMPONENTS})
   include(src/${dir}/sources.cmake)
 endforeach()
+
+set(Teem_INSTALLED_HEADER_FILES)
+foreach(header_file ${Teem_HEADER_FILES})
+  # When debugging, uncomment this line
+  #message(STATUS "Copy header file: ${header_file}")
+  get_filename_component(file_no_path "${header_file}" NAME)
+  get_filename_component(component "${header_file}" DIRECTORY)
+  string(TOUPPER ${component} COMPONENT_UC)
+
+  # only copy headers of components that are build
+  if(BUILD_WITH_${COMPONENT_UC})
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${header_file}"
+      "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}" COPYONLY)
+    set(Teem_INSTALLED_HEADER_FILES
+      ${Teem_INSTALLED_HEADER_FILES}
+      "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}")
+  endif()
+endforeach()
+
+#---
+# header that defines AIR_EXISTS_MACRO_FAILS
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/CMake/airExistsConf.h
+  ${CMAKE_CURRENT_BINARY_DIR}/include/teem/airExistsConf.h)
+set(Teem_INSTALLED_HEADER_FILES
+  ${Teem_INSTALLED_HEADER_FILES}
+  "${CMAKE_CURRENT_BINARY_DIR}/include/teem/airExistsConf.h")
+#---
 
 #-----------------------------------------------------------------------------
 # Build the Mega library
