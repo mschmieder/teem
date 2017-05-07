@@ -19,7 +19,13 @@ brew update
 install_brew_package md5sha1sum
 # For `timeout'
 install_brew_package coreutils
+# For analysis
 install_brew_package cppcheck
+# build script needs bash version >= 4.0
+install_brew_package bash
+
+chsh -s /usr/local/bin/bash
+
 
 if [[ "${INSTALL_VALGRIND}" == "1" ]]
 then
