@@ -24,7 +24,7 @@ install_brew_package cppcheck
 # build script needs bash version >= 4.0
 install_brew_package bash
 
-chsh -s /usr/local/bin/bash
+sudo chsh -s /usr/local/bin/bash
 
 
 if [[ "${INSTALL_VALGRIND}" == "1" ]]
