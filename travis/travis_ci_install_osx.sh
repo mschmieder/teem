@@ -54,9 +54,7 @@ clang-3.8)
 clang-3.9)     
     install_brew_package llvm@3.9 --with-clang --with-libcxx;;
 clang-4.0)     
-    install_brew_package llvm     --with-clang --with-libcxx
-    echo 'export PATH="/usr/local/opt/llvm/bin/:$PATH"' >> ~/.bash_profile
-    ;;
+    install_brew_package llvm     --with-clang --with-libcxx;;
 *) echo "Compiler not supported: ${COMPILER}. See travis_ci_install_osx.sh"; exit 1 ;;
 esac
 
