@@ -28,6 +28,7 @@ sudo chsh -s /usr/local/bin/bash
 
 # build script needs gnu getopt
 install_brew_package gnu-getopt
+brew link --force gnu-getopt
 
 if [[ "${INSTALL_VALGRIND}" == "1" ]]
 then
