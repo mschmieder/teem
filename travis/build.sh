@@ -9,14 +9,18 @@ ARGS=$@
 
 set -e
 
+if [ -z "${PYTHON3}" ]; then
+  PYTHON3=python3
+fi
+
 case $OS in
 docker-*)
     CPP_BASE_BUILDSYSTEM_TAG=$(echo $OS | sed 's/docker-//g') 
-    python3 ${SCRIPT_DIR}/../build-tools/cmakew_docker --container-name ${PROJECT_NAME} --docker-image-tag ${CPP_BASE_BUILDSYSTEM_TAG} ${ARGS}
+    ${PYTHON3} ${SCRIPT_DIR}/../build-tools/cmakew_docker --container-name ${PROJECT_NAME} --docker-image-tag ${CPP_BASE_BUILDSYSTEM_TAG} ${ARGS}
     exit $?
     ;;
 macos | linux | windows | native )
-    bash ${SCRIPT_DIR}/../build-tools/cmakew ${ARGS}
+    ${PYTHON3} ${SCRIPT_DIR}/../build-tools/cmakew ${ARGS}
     exit $?
     ;;
 *)
