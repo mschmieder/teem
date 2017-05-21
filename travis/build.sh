@@ -13,6 +13,17 @@ if [ -z "${PYTHON3}" ]; then
   PYTHON3=python3
 fi
 
+
+# check if there is a path file that needs to be considered
+filename="travis_env_paths"
+if [ -f "${filename}" ]; then
+    while read -r line
+    do
+        export PATH="$line:${PATH}"
+        echo "Add to PATH: '${line}'"
+    done < "${filename}"
+fi
+
 case $OS in
 docker-*)
     CPP_BASE_BUILDSYSTEM_TAG=$(echo $OS | sed 's/docker-//g') 
