@@ -64,7 +64,7 @@ To build the Teem project simply use the build wrapper that is located within th
 ```bash
 # build travis using native build environment
 # make sure necessary compilers and tools are available in system path
-travis/build.sh "teem" native \
+build-tools/ci/travis/build.sh "teem" native \
                 --source-directory=$(pwd) \
                 --build-directory=$(pwd)/build/ \
                 --clean \
@@ -87,7 +87,7 @@ The **Advanced Build System** bring support for code coverage using **gcov**. To
 ```bash
 # build travis using native build environment
 # make sure necessary compilers and tools are available in system path
-travis/build.sh "teem" native \
+build-tools/ci/travis/build.sh "teem" native \
                 --source-directory=$(pwd) \
                 --build-directory=$(pwd)/build/ \
                 --clean \
@@ -119,7 +119,7 @@ If a clang build is started just provied "**--analyse**" and optionally "**--ana
 ```bash
 # build travis using native build environment
 # make sure necessary compilers and tools are available in system path
-travis/build.sh "teem" native \
+build-tools/ci/travis/build.sh "teem" native \
                 --source-directory=$(pwd) \
                 --build-directory=$(pwd)/build/ \
                 --clean \
@@ -147,7 +147,7 @@ Make sure that cppcheck is installed on your host system
 ```bash
 # build travis using native build environment
 # make sure necessary compilers and tools are available in system path
-travis/build.sh "teem" native \
+build-tools/ci/travis/build.sh "teem" native \
                 --source-directory=$(pwd) \
                 --build-directory=$(pwd)/build/ \
                 --clean \
@@ -193,7 +193,7 @@ We currently support an Ubuntu 17.04 build environment out of the box providing 
 ```bash
 # build travis using native build environment
 # make sure necessary compilers and tools are available in system path
-travis/build.sh "teem" "docker-ubuntu-17.04" \
+build-tools/ci/travis/build.sh "teem" "docker-ubuntu-17.04" \
                 --source-directory=$(pwd) \
                 --build-directory=$(pwd)/build/ \
                 --clean \
