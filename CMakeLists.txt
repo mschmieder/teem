@@ -361,25 +361,25 @@ set(Teem_SOURCES)
 # Additionally addition option for each libary part that allows for enabling
 # and/or disabling it within the build
 # 
-# When option BUILD_MONOLITHIC is set to true (default) then teem will build
-# exactly one library containing all symbols. BUILD_MONOLITHIC is disabled
+# When option Teem_BUILD_MONOLITHIC is set to true (default) then teem will build
+# exactly one library containing all symbols. Teem_BUILD_MONOLITHIC is disabled
 # teem will export a number of libraries that can be used independently
 # 
 
-option(BUILD_MONOLITHIC "Enable this to get one monolithic library containing all symbols" ON)
+option(Teem_BUILD_MONOLITHIC "Enable this to get one monolithic library containing all symbols" ON)
 macro(ADD_TEEM_LIBRARY target)
   include(CMakeParseArguments)
   cmake_parse_arguments(_arg "" "" "DEPENDENCIES" ${ARGN})
 
   string(TOUPPER ${target} LIBNAME_UC)
-  option(BUILD_WITH_${LIBNAME_UC} "Enable building ${target}" ON)
-  if(BUILD_WITH_${LIBNAME_UC})
+  option(Teem_BUILD_WITH_${LIBNAME_UC} "Enable building ${target}" ON)
+  if(Teem_BUILD_WITH_${LIBNAME_UC})
     set(srcs)
     foreach(src ${_arg_UNPARSED_ARGUMENTS})
       set(srcs ${srcs} "src/${target}/${src}")
     endforeach()
 
-    if(BUILD_MONOLITHIC)
+    if(Teem_BUILD_MONOLITHIC)
       set(Teem_SOURCES ${Teem_SOURCES} ${srcs})
       # This will group all the source files in the VS project by directory
       source_group( ${target} FILES ${srcs} )
@@ -411,7 +411,7 @@ foreach(header_file ${Teem_HEADER_FILES})
   string(TOUPPER ${component} COMPONENT_UC)
 
   # only copy headers of components that are build
-  if(BUILD_WITH_${COMPONENT_UC})
+  if(Teem_BUILD_WITH_${COMPONENT_UC})
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/${header_file}"
       "${CMAKE_CURRENT_BINARY_DIR}/include/teem/${file_no_path}" COPYONLY)
     set(Teem_INSTALLED_HEADER_FILES
@@ -436,7 +436,7 @@ set(Teem_INSTALLED_HEADER_FILES
 
 # Create the library target
 set(Teem_NAMESPACE "teem")
-if(BUILD_MONOLITHIC)
+if(Teem_BUILD_MONOLITHIC)
   set(Teem_LIBRARIES teem)
   set(Teem_NAMESPACE "")
   add_library(teem ${Teem_SOURCES})
