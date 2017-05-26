@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mschmieder/teem.svg?branch=master)](https://travis-ci.org/mschmieder/teem)
+[![Build Status MacOS, Linux](https://travis-ci.org/mschmieder/teem.svg?branch=master)](https://travis-ci.org/mschmieder/teem) [![Build Status Windows](https://ci.appveyor.com/api/projects/status/vu2qk8ljj90w2rmj/branch/master?svg=true)](https://ci.appveyor.com/project/mschmieder/teem) 
 
 [Static Code Analysis & Code Metrics (gh-pages)](https://mschmieder.github.io/teem/)
 
