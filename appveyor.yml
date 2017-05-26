@@ -1,0 +1,14 @@
+clone_folder: C:\teem
+environment:
+  PATH: C:\Python36-x64;C:\Python36-x64\Scripts;'C:\Program Files (x86)\CMake\bin';$(PATH)
+  matrix:
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015  
+    BUILD_TYPE: Debug
+    OS: windows
+    COMPILER: msvc14
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    BUILD_TYPE: Debug
+    OS: windows
+    COMPILER: msvc15
+build_script:
+- cmd: python build-tools/ci/travis/build.sh "teem" "native" --source-directory=$(APPVEYOR_BUILD_FOLDER) --build-directory=$(APPVEYOR_BUILD_FOLDER)/build --target-system=${OS} --compiler=${COMPILER} --target-architecture=x86_64 --build-type=${BUILD_TYPE} --link-type=shared --build --test --install --install-directory=$(APPVEYOR_BUILD_FOLDER)/install
