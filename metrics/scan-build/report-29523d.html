@@ -1,0 +1,1172 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/ten/path.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Potential leak of memory pointed to by 'newtip' -->
+
+<!-- BUGTYPE Memory leak -->
+
+<!-- BUGCATEGORY Memory Error -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/ten/path.c -->
+
+<!-- FILENAME path.c -->
+
+<!-- FUNCTIONNAME tenInterpParmCopy -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 67d2ffc92c3b0ffe4adb0cadafd1ed4b -->
+
+<!-- BUGLINE 135 -->
+
+<!-- BUGCOLUMN 7 -->
+
+<!-- BUGPATHLENGTH 8 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/ten/path.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 135, column 7</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'newtip'</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "ten.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "privateTen.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">tenInterpParm *</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">tenInterpParmNew(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  tenInterpParm *tip;</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  tip = <span class='macro'>AIR_CAST(tenInterpParm *, malloc(<span class='keyword'>sizeof</span>(tenInterpParm)))<span class='expansion'>((tenInterpParm *)(malloc(sizeof(tenInterpParm))))</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'AIR_CAST':
+</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">  <span class='keyword'>if</span> (<span class="mrange">tip</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'tip' is non-null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">    tip-&gt;verbose = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">    tip-&gt;convStep = 0.2;</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">    tip-&gt;minNorm = 0.0;</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">    tip-&gt;convEps = 0.0000000001;</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">    tip-&gt;wghtSumEps = 0.0000001;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">    tip-&gt;enableRecurse = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">    tip-&gt;maxIter = 20;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">    tip-&gt;numSteps = 100;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    tip-&gt;lengthFancy = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">    tip-&gt;allocLen = 0;</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">    tip-&gt;eval = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">    tip-&gt;evec = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">    tip-&gt;rtIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">    tip-&gt;rtLog = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">    tip-&gt;qIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">    tip-&gt;qBuff = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">    tip-&gt;qInter = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">    tip-&gt;numIter = 0;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">    tip-&gt;convFinal = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">    tip-&gt;lengthShape = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">    tip-&gt;lengthOrient = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">  <span class='keyword'>return</span> tip;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"><span class='comment'>** handles allocating all the various buffers that are needed for QGL</span></td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"><span class='comment'>** interpolation, so that they are repeatedly allocated and freed</span></td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line"><span class='comment'>** between calls</span></td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">tenInterpParmBufferAlloc(tenInterpParm *tip, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> num) {</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpParmBufferAlloc"</span>;</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">  <span class='keyword'>if</span> (0 == num) {</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">    <span class='comment'>/* user wants to free buffers for some reason */</span></td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">    airFree(tip-&gt;eval); tip-&gt;eval = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">    airFree(tip-&gt;evec); tip-&gt;evec = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">    airFree(tip-&gt;rtIn); tip-&gt;rtIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">    airFree(tip-&gt;rtLog); tip-&gt;rtLog = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">    airFree(tip-&gt;qIn); tip-&gt;qIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">    airFree(tip-&gt;qBuff); tip-&gt;qBuff = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">    airFree(tip-&gt;qInter); tip-&gt;qInter = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">    tip-&gt;allocLen = 0;</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  } <span class='keyword'>else</span> <span class='keyword'>if</span> (1 == num) {</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: need num &gt;= 2 (not %u)"</span>, me, num);</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">  } <span class='keyword'>else</span> <span class='keyword'>if</span> (num != tip-&gt;allocLen) {</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">    airFree(tip-&gt;eval); tip-&gt;eval = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">    airFree(tip-&gt;evec); tip-&gt;evec = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">    airFree(tip-&gt;rtIn); tip-&gt;rtIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">    airFree(tip-&gt;rtLog); tip-&gt;rtLog = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">    airFree(tip-&gt;qIn); tip-&gt;qIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">    airFree(tip-&gt;qBuff); tip-&gt;qBuff = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">    airFree(tip-&gt;qInter); tip-&gt;qInter = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">    tip-&gt;eval = <span class='macro'>AIR_CALLOC(3*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((3*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    tip-&gt;evec = <span class='macro'>AIR_CALLOC(9*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((9*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">    tip-&gt;rtIn = <span class='macro'>AIR_CALLOC(3*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((3*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">    tip-&gt;rtLog = <span class='macro'>AIR_CALLOC(3*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((3*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">    tip-&gt;qIn = <span class='macro'>AIR_CALLOC(4*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((4*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">    tip-&gt;qBuff = <span class='macro'>AIR_CALLOC(4*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((4*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">    tip-&gt;qInter = <span class='macro'>AIR_CALLOC(num*num, <span class='keyword'>double</span>)<span class='expansion'>(double*)(calloc((num*num), sizeof(double)))</span></span>;</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">    <span class='keyword'>if</span> (!(tip-&gt;eval &amp;&amp; tip-&gt;evec &amp;&amp;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">          tip-&gt;rtIn &amp;&amp; tip-&gt;rtLog &amp;&amp;</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">          tip-&gt;qIn &amp;&amp; tip-&gt;qBuff &amp;&amp; tip-&gt;qInter)) {</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: didn't alloc buffers (%p,%p,%p %p %p %p %p)"</span>, me,</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">               <span class='macro'>AIR_VOIDP(tip-&gt;eval)<span class='expansion'>((void *)(tip-&gt;eval))</span></span>, <span class='macro'>AIR_VOIDP(tip-&gt;evec)<span class='expansion'>((void *)(tip-&gt;evec))</span></span>,</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">               <span class='macro'>AIR_VOIDP(tip-&gt;rtIn)<span class='expansion'>((void *)(tip-&gt;rtIn))</span></span>, <span class='macro'>AIR_VOIDP(tip-&gt;rtLog)<span class='expansion'>((void *)(tip-&gt;rtLog))</span></span>,</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">               <span class='macro'>AIR_VOIDP(tip-&gt;qIn)<span class='expansion'>((void *)(tip-&gt;qIn))</span></span>, <span class='macro'>AIR_VOIDP(tip-&gt;qBuff)<span class='expansion'>((void *)(tip-&gt;qBuff))</span></span>,</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">               <span class='macro'>AIR_VOIDP(tip-&gt;qInter)<span class='expansion'>((void *)(tip-&gt;qInter))</span></span>);</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">    tip-&gt;allocLen = num;</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">tenInterpParm *</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">tenInterpParmCopy(tenInterpParm *tip) {</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpParmCopy"</span>;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">  tenInterpParm *newtip;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> num;</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">  num = tip-&gt;allocLen;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">  newtip = <span class="mrange"><span class="mrange">tenInterpParmNew()</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:12ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'tenInterpParmNew'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:12ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  <span class='keyword'>if</span> (newtip) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">    <span class='macro'>memcpy(newtip, tip, <span class='keyword'>sizeof</span>(tenInterpParm))<span class='expansion'>__builtin___memcpy_chk (newtip, tip, sizeof(tenInterpParm), __builtin_object_size<br> (newtip, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    <span class='comment'>/* manually set all pointers */</span></td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">    newtip-&gt;allocLen = 0;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">    newtip-&gt;eval = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">    newtip-&gt;evec = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    newtip-&gt;rtIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">    newtip-&gt;rtLog = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">    newtip-&gt;qIn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">    newtip-&gt;qBuff = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">    newtip-&gt;qInter = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    <span class='keyword'>if</span> (tenInterpParmBufferAlloc(newtip, num)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: trouble allocating output"</span>, me);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'newtip'</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">      <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;eval, tip-&gt;eval, 3*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;eval, tip-&gt;eval, 3*num*<br>sizeof(double), __builtin_object_size (newtip-&gt;eval, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;evec, tip-&gt;evec, 9*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;evec, tip-&gt;evec, 9*num*<br>sizeof(double), __builtin_object_size (newtip-&gt;evec, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;rtIn, tip-&gt;rtIn, 3*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;rtIn, tip-&gt;rtIn, 3*num*<br>sizeof(double), __builtin_object_size (newtip-&gt;rtIn, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;rtLog, tip-&gt;rtLog, 3*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;rtLog, tip-&gt;rtLog, 3*num<br>*sizeof(double), __builtin_object_size (newtip-&gt;rtLog, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;qIn, tip-&gt;qIn, 4*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;qIn, tip-&gt;qIn, 4*num*sizeof<br>(double), __builtin_object_size (newtip-&gt;qIn, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;qBuff, tip-&gt;qBuff, 4*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;qBuff, tip-&gt;qBuff, 4*num<br>*sizeof(double), __builtin_object_size (newtip-&gt;qBuff, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">    <span class='macro'>memcpy(newtip-&gt;qInter, tip-&gt;qInter, num*num*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (newtip-&gt;qInter, tip-&gt;qInter, num<br>*num*sizeof(double), __builtin_object_size (newtip-&gt;qInter<br>, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">  <span class='keyword'>return</span> newtip;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">tenInterpParm *</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">tenInterpParmNix(tenInterpParm *tip) {</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">  <span class='keyword'>if</span> (tip) {</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">    airFree(tip-&gt;eval);</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">    airFree(tip-&gt;evec);</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">    airFree(tip-&gt;rtIn);</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">    airFree(tip-&gt;rtLog);</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">    airFree(tip-&gt;qIn);</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">    airFree(tip-&gt;qBuff);</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">    airFree(tip-&gt;qInter);</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">    free(tip);</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"><span class='comment'>******** tenInterpTwo_d</span></td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line"><span class='comment'>** interpolates between two tensors, in various ways</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line"><span class='comment'>** this is really only used for demo purposes; its not useful for</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line"><span class='comment'>** doing real work in DTI fields.  So: its okay that its slow</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line"><span class='comment'>** (e.g. for tenInterpTypeQuatGeoLox{K,R}, it recomputes the</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"><span class='comment'>** eigensystems at the endpoints for every call, even though they are</span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line"><span class='comment'>** apt to be the same between calls.</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line"><span class='comment'>** this</span></td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">tenInterpTwo_d(<span class='keyword'>double</span> oten[7],</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">               <span class='keyword'>const</span> <span class='keyword'>double</span> tenA[7], <span class='keyword'>const</span> <span class='keyword'>double</span> tenB[7],</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">               <span class='keyword'>int</span> ptype, <span class='keyword'>double</span> aa,</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">               tenInterpParm *tip) {</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpTwo_d"</span>;</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">  <span class='keyword'>double</span> logA[7], logB[7], tmp1[7], tmp2[7], logMean[7],</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">    mat1[9], mat2[9], mat3[9], sqrtA[7], isqrtA[7],</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">    mean[7], sqrtB[7], isqrtB[7],</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">    oeval[3], evalA[3], evalB[3], oevec[9], evecA[9], evecB[9];</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">  <span class='keyword'>if</span> (!( oten &amp;&amp; tenA &amp;&amp; tenB )) {</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">    <span class='comment'>/* got NULL pointer, but not using biff */</span></td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">    <span class='keyword'>if</span> (oten) {</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">      <span class='macro'>TEN_T_SET(oten, AIR_NAN, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (oten)[0] = ((airFloatQNaN.f)), (oten)[1] = ((airFloatQNaN.<br>f)), (oten)[2] = ((airFloatQNaN.f)), (oten)[3] = ((airFloatQNaN<br>.f)), (oten)[4] = ((airFloatQNaN.f)), (oten)[5] = ((airFloatQNaN<br>.f)), (oten)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">                <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (oten)[0] = ((airFloatQNaN.f)), (oten)[1] = ((airFloatQNaN.<br>f)), (oten)[2] = ((airFloatQNaN.f)), (oten)[3] = ((airFloatQNaN<br>.f)), (oten)[4] = ((airFloatQNaN.f)), (oten)[5] = ((airFloatQNaN<br>.f)), (oten)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">    <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">  <span class='keyword'>switch</span> (ptype) {</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLinear:</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">    <span class='macro'>TEN_T_LERP(oten, aa, tenA, tenB)<span class='expansion'>( (oten)[0] = (((aa))*(((tenB)[0]) - ((tenA)[0])) + ((tenA)[0<br>])), (oten)[1] = (((aa))*(((tenB)[1]) - ((tenA)[1])) + ((tenA<br>)[1])), (oten)[2] = (((aa))*(((tenB)[2]) - ((tenA)[2])) + ((tenA<br>)[2])), (oten)[3] = (((aa))*(((tenB)[3]) - ((tenA)[3])) + ((tenA<br>)[3])), (oten)[4] = (((aa))*(((tenB)[4]) - ((tenA)[4])) + ((tenA<br>)[4])), (oten)[5] = (((aa))*(((tenB)[5]) - ((tenA)[5])) + ((tenA<br>)[5])), (oten)[6] = (((aa))*(((tenB)[6]) - ((tenA)[6])) + ((tenA<br>)[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLogLinear:</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">    tenLogSingle_d(logA, tenA);</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">    tenLogSingle_d(logB, tenB);</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">    <span class='macro'>TEN_T_LERP(logMean, aa, logA, logB)<span class='expansion'>( (logMean)[0] = (((aa))*(((logB)[0]) - ((logA)[0])) + ((logA<br>)[0])), (logMean)[1] = (((aa))*(((logB)[1]) - ((logA)[1])) + (<br>(logA)[1])), (logMean)[2] = (((aa))*(((logB)[2]) - ((logA)[2]<br>)) + ((logA)[2])), (logMean)[3] = (((aa))*(((logB)[3]) - ((logA<br>)[3])) + ((logA)[3])), (logMean)[4] = (((aa))*(((logB)[4]) - (<br>(logA)[4])) + ((logA)[4])), (logMean)[5] = (((aa))*(((logB)[5<br>]) - ((logA)[5])) + ((logA)[5])), (logMean)[6] = (((aa))*(((logB<br>)[6]) - ((logA)[6])) + ((logA)[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">    tenExpSingle_d(oten, logMean);</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeAffineInvariant:</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">    tenSqrtSingle_d(sqrtA, tenA);</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">    tenInv_d(isqrtA, sqrtA);</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">    <span class='macro'>TEN_T2M(mat1, tenB)<span class='expansion'>( (mat1)[0] = (tenB)[1], (mat1)[1] = (tenB)[2], (mat1)[2] = (<br>tenB)[3], (mat1)[3] = (tenB)[2], (mat1)[4] = (tenB)[4], (mat1<br>)[5] = (tenB)[5], (mat1)[6] = (tenB)[3], (mat1)[7] = (tenB)[5<br>], (mat1)[8] = (tenB)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">    <span class='macro'>TEN_T2M(mat2, isqrtA)<span class='expansion'>( (mat2)[0] = (isqrtA)[1], (mat2)[1] = (isqrtA)[2], (mat2)[2]<br> = (isqrtA)[3], (mat2)[3] = (isqrtA)[2], (mat2)[4] = (isqrtA)<br>[4], (mat2)[5] = (isqrtA)[5], (mat2)[6] = (isqrtA)[3], (mat2)<br>[7] = (isqrtA)[5], (mat2)[8] = (isqrtA)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">    <span class='macro'>ELL_3M_MUL(mat3, mat1, mat2)<span class='expansion'>((mat3)[0] = (mat1)[0]*(mat2)[0] + (mat1)[1]*(mat2)[3] + (mat1<br>)[2]*(mat2)[6], (mat3)[1] = (mat1)[0]*(mat2)[1] + (mat1)[1]*(<br>mat2)[4] + (mat1)[2]*(mat2)[7], (mat3)[2] = (mat1)[0]*(mat2)[<br>2] + (mat1)[1]*(mat2)[5] + (mat1)[2]*(mat2)[8], (mat3)[3] = (<br>mat1)[3]*(mat2)[0] + (mat1)[4]*(mat2)[3] + (mat1)[5]*(mat2)[6<br>], (mat3)[4] = (mat1)[3]*(mat2)[1] + (mat1)[4]*(mat2)[4] + (mat1<br>)[5]*(mat2)[7], (mat3)[5] = (mat1)[3]*(mat2)[2] + (mat1)[4]*(<br>mat2)[5] + (mat1)[5]*(mat2)[8], (mat3)[6] = (mat1)[6]*(mat2)[<br>0] + (mat1)[7]*(mat2)[3] + (mat1)[8]*(mat2)[6], (mat3)[7] = (<br>mat1)[6]*(mat2)[1] + (mat1)[7]*(mat2)[4] + (mat1)[8]*(mat2)[7<br>], (mat3)[8] = (mat1)[6]*(mat2)[2] + (mat1)[7]*(mat2)[5] + (mat1<br>)[8]*(mat2)[8])</span></span>;   <span class='comment'>/*  B * is(A) */</span></td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">    <span class='macro'>ELL_3M_MUL(mat1, mat2, mat3)<span class='expansion'>((mat1)[0] = (mat2)[0]*(mat3)[0] + (mat2)[1]*(mat3)[3] + (mat2<br>)[2]*(mat3)[6], (mat1)[1] = (mat2)[0]*(mat3)[1] + (mat2)[1]*(<br>mat3)[4] + (mat2)[2]*(mat3)[7], (mat1)[2] = (mat2)[0]*(mat3)[<br>2] + (mat2)[1]*(mat3)[5] + (mat2)[2]*(mat3)[8], (mat1)[3] = (<br>mat2)[3]*(mat3)[0] + (mat2)[4]*(mat3)[3] + (mat2)[5]*(mat3)[6<br>], (mat1)[4] = (mat2)[3]*(mat3)[1] + (mat2)[4]*(mat3)[4] + (mat2<br>)[5]*(mat3)[7], (mat1)[5] = (mat2)[3]*(mat3)[2] + (mat2)[4]*(<br>mat3)[5] + (mat2)[5]*(mat3)[8], (mat1)[6] = (mat2)[6]*(mat3)[<br>0] + (mat2)[7]*(mat3)[3] + (mat2)[8]*(mat3)[6], (mat1)[7] = (<br>mat2)[6]*(mat3)[1] + (mat2)[7]*(mat3)[4] + (mat2)[8]*(mat3)[7<br>], (mat1)[8] = (mat2)[6]*(mat3)[2] + (mat2)[7]*(mat3)[5] + (mat2<br>)[8]*(mat3)[8])</span></span>;   <span class='comment'>/*  is(A) * B * is(A) */</span></td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">    <span class='macro'>TEN_M2T(tmp2, mat1)<span class='expansion'>( (tmp2)[1] = (mat1)[0], (tmp2)[2] = ((mat1)[1]+(mat1)[3])/2.0<br>, (tmp2)[3] = ((mat1)[2]+(mat1)[6])/2.0, (tmp2)[4] = (mat1)[4<br>], (tmp2)[5] = ((mat1)[5]+(mat1)[7])/2.0, (tmp2)[6] = (mat1)[<br>8] )</span></span>;</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">    tenPowSingle_d(tmp1, tmp2, aa); <span class='comment'>/*  m = (is(A) * B * is(A))^aa */</span></td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">    <span class='macro'>TEN_T2M(mat1, tmp1)<span class='expansion'>( (mat1)[0] = (tmp1)[1], (mat1)[1] = (tmp1)[2], (mat1)[2] = (<br>tmp1)[3], (mat1)[3] = (tmp1)[2], (mat1)[4] = (tmp1)[4], (mat1<br>)[5] = (tmp1)[5], (mat1)[6] = (tmp1)[3], (mat1)[7] = (tmp1)[5<br>], (mat1)[8] = (tmp1)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">    <span class='macro'>TEN_T2M(mat2, sqrtA)<span class='expansion'>( (mat2)[0] = (sqrtA)[1], (mat2)[1] = (sqrtA)[2], (mat2)[2] =<br> (sqrtA)[3], (mat2)[3] = (sqrtA)[2], (mat2)[4] = (sqrtA)[4], (<br>mat2)[5] = (sqrtA)[5], (mat2)[6] = (sqrtA)[3], (mat2)[7] = (sqrtA<br>)[5], (mat2)[8] = (sqrtA)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">    <span class='macro'>ELL_3M_MUL(mat3, mat1, mat2)<span class='expansion'>((mat3)[0] = (mat1)[0]*(mat2)[0] + (mat1)[1]*(mat2)[3] + (mat1<br>)[2]*(mat2)[6], (mat3)[1] = (mat1)[0]*(mat2)[1] + (mat1)[1]*(<br>mat2)[4] + (mat1)[2]*(mat2)[7], (mat3)[2] = (mat1)[0]*(mat2)[<br>2] + (mat1)[1]*(mat2)[5] + (mat1)[2]*(mat2)[8], (mat3)[3] = (<br>mat1)[3]*(mat2)[0] + (mat1)[4]*(mat2)[3] + (mat1)[5]*(mat2)[6<br>], (mat3)[4] = (mat1)[3]*(mat2)[1] + (mat1)[4]*(mat2)[4] + (mat1<br>)[5]*(mat2)[7], (mat3)[5] = (mat1)[3]*(mat2)[2] + (mat1)[4]*(<br>mat2)[5] + (mat1)[5]*(mat2)[8], (mat3)[6] = (mat1)[6]*(mat2)[<br>0] + (mat1)[7]*(mat2)[3] + (mat1)[8]*(mat2)[6], (mat3)[7] = (<br>mat1)[6]*(mat2)[1] + (mat1)[7]*(mat2)[4] + (mat1)[8]*(mat2)[7<br>], (mat3)[8] = (mat1)[6]*(mat2)[2] + (mat1)[7]*(mat2)[5] + (mat1<br>)[8]*(mat2)[8])</span></span>;   <span class='comment'>/*  m * sqrt(A) */</span></td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">    <span class='macro'>ELL_3M_MUL(mat1, mat2, mat3)<span class='expansion'>((mat1)[0] = (mat2)[0]*(mat3)[0] + (mat2)[1]*(mat3)[3] + (mat2<br>)[2]*(mat3)[6], (mat1)[1] = (mat2)[0]*(mat3)[1] + (mat2)[1]*(<br>mat3)[4] + (mat2)[2]*(mat3)[7], (mat1)[2] = (mat2)[0]*(mat3)[<br>2] + (mat2)[1]*(mat3)[5] + (mat2)[2]*(mat3)[8], (mat1)[3] = (<br>mat2)[3]*(mat3)[0] + (mat2)[4]*(mat3)[3] + (mat2)[5]*(mat3)[6<br>], (mat1)[4] = (mat2)[3]*(mat3)[1] + (mat2)[4]*(mat3)[4] + (mat2<br>)[5]*(mat3)[7], (mat1)[5] = (mat2)[3]*(mat3)[2] + (mat2)[4]*(<br>mat3)[5] + (mat2)[5]*(mat3)[8], (mat1)[6] = (mat2)[6]*(mat3)[<br>0] + (mat2)[7]*(mat3)[3] + (mat2)[8]*(mat3)[6], (mat1)[7] = (<br>mat2)[6]*(mat3)[1] + (mat2)[7]*(mat3)[4] + (mat2)[8]*(mat3)[7<br>], (mat1)[8] = (mat2)[6]*(mat3)[2] + (mat2)[7]*(mat3)[5] + (mat2<br>)[8]*(mat3)[8])</span></span>;   <span class='comment'>/*  sqrt(A) * m * sqrt(A) */</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">    <span class='macro'>TEN_M2T(oten, mat1)<span class='expansion'>( (oten)[1] = (mat1)[0], (oten)[2] = ((mat1)[1]+(mat1)[3])/2.0<br>, (oten)[3] = ((mat1)[2]+(mat1)[6])/2.0, (oten)[4] = (mat1)[4<br>], (oten)[5] = ((mat1)[5]+(mat1)[7])/2.0, (oten)[6] = (mat1)[<br>8] )</span></span>;</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">    oten[0] = <span class='macro'>AIR_LERP(aa, tenA[0], tenB[0])<span class='expansion'>((aa)*((tenB[0]) - (tenA[0])) + (tenA[0]))</span></span>;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">    <span class='keyword'>if</span> (tip-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s:\nA= %g %g %g   %g %g  %g\n"</span></td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">              <span class='string_literal'>"B = %g %g %g   %g %g  %g\n"</span></td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">              <span class='string_literal'>"foo = %g %g %g   %g %g  %g\n"</span></td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">              <span class='string_literal'>"bar(%g) = %g %g %g   %g %g  %g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">              tenA[1], tenA[2], tenA[3], tenA[4], tenA[5], tenA[6],</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">              tenB[1], tenB[2], tenB[3], tenB[4], tenB[5], tenB[6],</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">              tmp1[1], tmp1[2], tmp1[3], tmp1[4], tmp1[5], tmp1[6],</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">              aa, oten[1], oten[2], oten[3], oten[4], oten[5], oten[6]);</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeWang:</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">    <span class='comment'>/* HEY: this seems to be broken */</span></td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">    <span class='macro'>TEN_T_LERP(mean, aa, tenA, tenB)<span class='expansion'>( (mean)[0] = (((aa))*(((tenB)[0]) - ((tenA)[0])) + ((tenA)[0<br>])), (mean)[1] = (((aa))*(((tenB)[1]) - ((tenA)[1])) + ((tenA<br>)[1])), (mean)[2] = (((aa))*(((tenB)[2]) - ((tenA)[2])) + ((tenA<br>)[2])), (mean)[3] = (((aa))*(((tenB)[3]) - ((tenA)[3])) + ((tenA<br>)[3])), (mean)[4] = (((aa))*(((tenB)[4]) - ((tenA)[4])) + ((tenA<br>)[4])), (mean)[5] = (((aa))*(((tenB)[5]) - ((tenA)[5])) + ((tenA<br>)[5])), (mean)[6] = (((aa))*(((tenB)[6]) - ((tenA)[6])) + ((tenA<br>)[6])))</span></span>;    <span class='comment'>/* "A" = mean */</span></td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">    tenLogSingle_d(logA, tenA);</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">    tenLogSingle_d(logB, tenB);</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">    <span class='macro'>TEN_T_LERP(logMean, aa, logA, logB)<span class='expansion'>( (logMean)[0] = (((aa))*(((logB)[0]) - ((logA)[0])) + ((logA<br>)[0])), (logMean)[1] = (((aa))*(((logB)[1]) - ((logA)[1])) + (<br>(logA)[1])), (logMean)[2] = (((aa))*(((logB)[2]) - ((logA)[2]<br>)) + ((logA)[2])), (logMean)[3] = (((aa))*(((logB)[3]) - ((logA<br>)[3])) + ((logA)[3])), (logMean)[4] = (((aa))*(((logB)[4]) - (<br>(logA)[4])) + ((logA)[4])), (logMean)[5] = (((aa))*(((logB)[5<br>]) - ((logA)[5])) + ((logA)[5])), (logMean)[6] = (((aa))*(((logB<br>)[6]) - ((logA)[6])) + ((logA)[6])))</span></span>; <span class='comment'>/* "B" = logMean */</span></td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">    tenSqrtSingle_d(sqrtB, logMean);</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">    tenInv_d(isqrtB, sqrtB);</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">    <span class='macro'>TEN_T2M(mat1, mean)<span class='expansion'>( (mat1)[0] = (mean)[1], (mat1)[1] = (mean)[2], (mat1)[2] = (<br>mean)[3], (mat1)[3] = (mean)[2], (mat1)[4] = (mean)[4], (mat1<br>)[5] = (mean)[5], (mat1)[6] = (mean)[3], (mat1)[7] = (mean)[5<br>], (mat1)[8] = (mean)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">    <span class='macro'>TEN_T2M(mat2, isqrtB)<span class='expansion'>( (mat2)[0] = (isqrtB)[1], (mat2)[1] = (isqrtB)[2], (mat2)[2]<br> = (isqrtB)[3], (mat2)[3] = (isqrtB)[2], (mat2)[4] = (isqrtB)<br>[4], (mat2)[5] = (isqrtB)[5], (mat2)[6] = (isqrtB)[3], (mat2)<br>[7] = (isqrtB)[5], (mat2)[8] = (isqrtB)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">    <span class='macro'>ELL_3M_MUL(mat3, mat1, mat2)<span class='expansion'>((mat3)[0] = (mat1)[0]*(mat2)[0] + (mat1)[1]*(mat2)[3] + (mat1<br>)[2]*(mat2)[6], (mat3)[1] = (mat1)[0]*(mat2)[1] + (mat1)[1]*(<br>mat2)[4] + (mat1)[2]*(mat2)[7], (mat3)[2] = (mat1)[0]*(mat2)[<br>2] + (mat1)[1]*(mat2)[5] + (mat1)[2]*(mat2)[8], (mat3)[3] = (<br>mat1)[3]*(mat2)[0] + (mat1)[4]*(mat2)[3] + (mat1)[5]*(mat2)[6<br>], (mat3)[4] = (mat1)[3]*(mat2)[1] + (mat1)[4]*(mat2)[4] + (mat1<br>)[5]*(mat2)[7], (mat3)[5] = (mat1)[3]*(mat2)[2] + (mat1)[4]*(<br>mat2)[5] + (mat1)[5]*(mat2)[8], (mat3)[6] = (mat1)[6]*(mat2)[<br>0] + (mat1)[7]*(mat2)[3] + (mat1)[8]*(mat2)[6], (mat3)[7] = (<br>mat1)[6]*(mat2)[1] + (mat1)[7]*(mat2)[4] + (mat1)[8]*(mat2)[7<br>], (mat3)[8] = (mat1)[6]*(mat2)[2] + (mat1)[7]*(mat2)[5] + (mat1<br>)[8]*(mat2)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">    <span class='macro'>ELL_3M_MUL(mat1, mat2, mat3)<span class='expansion'>((mat1)[0] = (mat2)[0]*(mat3)[0] + (mat2)[1]*(mat3)[3] + (mat2<br>)[2]*(mat3)[6], (mat1)[1] = (mat2)[0]*(mat3)[1] + (mat2)[1]*(<br>mat3)[4] + (mat2)[2]*(mat3)[7], (mat1)[2] = (mat2)[0]*(mat3)[<br>2] + (mat2)[1]*(mat3)[5] + (mat2)[2]*(mat3)[8], (mat1)[3] = (<br>mat2)[3]*(mat3)[0] + (mat2)[4]*(mat3)[3] + (mat2)[5]*(mat3)[6<br>], (mat1)[4] = (mat2)[3]*(mat3)[1] + (mat2)[4]*(mat3)[4] + (mat2<br>)[5]*(mat3)[7], (mat1)[5] = (mat2)[3]*(mat3)[2] + (mat2)[4]*(<br>mat3)[5] + (mat2)[5]*(mat3)[8], (mat1)[6] = (mat2)[6]*(mat3)[<br>0] + (mat2)[7]*(mat3)[3] + (mat2)[8]*(mat3)[6], (mat1)[7] = (<br>mat2)[6]*(mat3)[1] + (mat2)[7]*(mat3)[4] + (mat2)[8]*(mat3)[7<br>], (mat1)[8] = (mat2)[6]*(mat3)[2] + (mat2)[7]*(mat3)[5] + (mat2<br>)[8]*(mat3)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">    <span class='macro'>TEN_M2T(tmp1, mat1)<span class='expansion'>( (tmp1)[1] = (mat1)[0], (tmp1)[2] = ((mat1)[1]+(mat1)[3])/2.0<br>, (tmp1)[3] = ((mat1)[2]+(mat1)[6])/2.0, (tmp1)[4] = (mat1)[4<br>], (tmp1)[5] = ((mat1)[5]+(mat1)[7])/2.0, (tmp1)[6] = (mat1)[<br>8] )</span></span>;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">    tenSqrtSingle_d(oten, tmp1);</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">    oten[0] = <span class='macro'>AIR_LERP(aa, tenA[0], tenB[0])<span class='expansion'>((aa)*((tenB[0]) - (tenA[0])) + (tenA[0]))</span></span>;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeQuatGeoLoxK:</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeQuatGeoLoxR:</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">    tenEigensolve_d(evalA, evecA, tenA);</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">    tenEigensolve_d(evalB, evecB, tenB);</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">    <span class='keyword'>if</span> (tenInterpTypeQuatGeoLoxK == ptype) {</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">      tenQGLInterpTwoEvalK(oeval, evalA, evalB, aa);</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">      tenQGLInterpTwoEvalR(oeval, evalA, evalB, aa);</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">    tenQGLInterpTwoEvec(oevec, evecA, evecB, aa);</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">    tenMakeSingle_d(oten, <span class='macro'>AIR_LERP(aa, tenA[0], tenB[0])<span class='expansion'>((aa)*((tenB[0]) - (tenA[0])) + (tenA[0]))</span></span>, oeval, oevec);</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeGeoLoxK:</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeGeoLoxR:</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLoxK:</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLoxR:</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">    <span class='comment'>/* (currently) no closed-form expression for these */</span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">    <span class='macro'>TEN_T_SET(oten, AIR_NAN, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (oten)[0] = ((airFloatQNaN.f)), (oten)[1] = ((airFloatQNaN.<br>f)), (oten)[2] = ((airFloatQNaN.f)), (oten)[3] = ((airFloatQNaN<br>.f)), (oten)[4] = ((airFloatQNaN.f)), (oten)[5] = ((airFloatQNaN<br>.f)), (oten)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">              <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (oten)[0] = ((airFloatQNaN.f)), (oten)[1] = ((airFloatQNaN.<br>f)), (oten)[2] = ((airFloatQNaN.f)), (oten)[3] = ((airFloatQNaN<br>.f)), (oten)[4] = ((airFloatQNaN.f)), (oten)[5] = ((airFloatQNaN<br>.f)), (oten)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeRThetaPhiLinear:</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">    <span class='keyword'>if</span> (1) {</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">      <span class='keyword'>double</span> rtpA[3], rtpB[3], rtpM[3], eval[3], tenM[7];</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">      tenEigensolve_d(eval, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, tenA);</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">      tenTripleConvertSingle_d(rtpA, tenTripleTypeRThetaPhi,</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">                               eval, tenTripleTypeEigenvalue);</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">      tenEigensolve_d(eval, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, tenB);</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">      tenTripleConvertSingle_d(rtpB, tenTripleTypeRThetaPhi,</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">                               eval, tenTripleTypeEigenvalue);</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">      <span class='macro'>TEN_T_LERP(tenM, aa, tenA, tenB)<span class='expansion'>( (tenM)[0] = (((aa))*(((tenB)[0]) - ((tenA)[0])) + ((tenA)[0<br>])), (tenM)[1] = (((aa))*(((tenB)[1]) - ((tenA)[1])) + ((tenA<br>)[1])), (tenM)[2] = (((aa))*(((tenB)[2]) - ((tenA)[2])) + ((tenA<br>)[2])), (tenM)[3] = (((aa))*(((tenB)[3]) - ((tenA)[3])) + ((tenA<br>)[3])), (tenM)[4] = (((aa))*(((tenB)[4]) - ((tenA)[4])) + ((tenA<br>)[4])), (tenM)[5] = (((aa))*(((tenB)[5]) - ((tenA)[5])) + ((tenA<br>)[5])), (tenM)[6] = (((aa))*(((tenB)[6]) - ((tenA)[6])) + ((tenA<br>)[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">      tenEigensolve_d(eval, oevec, tenM);</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">      <span class='macro'>ELL_3V_LERP(rtpM, aa, rtpA, rtpB)<span class='expansion'>((rtpM)[0] = (((aa))*(((rtpB)[0]) - ((rtpA)[0])) + ((rtpA)[0]<br>)), (rtpM)[1] = (((aa))*(((rtpB)[1]) - ((rtpA)[1])) + ((rtpA)<br>[1])), (rtpM)[2] = (((aa))*(((rtpB)[2]) - ((rtpA)[2])) + ((rtpA<br>)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">      tenTripleConvertSingle_d(oeval, tenTripleTypeEigenvalue,</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">                               rtpM, tenTripleTypeRThetaPhi);</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">    tenMakeSingle_d(oten, <span class='macro'>AIR_LERP(aa, tenA[0], tenB[0])<span class='expansion'>((aa)*((tenB[0]) - (tenA[0])) + (tenA[0]))</span></span>, oeval, oevec);</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">    <span class='comment'>/* error */</span></td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">    <span class='macro'>TEN_T_SET(oten, AIR_NAN, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (oten)[0] = ((airFloatQNaN.f)), (oten)[1] = ((airFloatQNaN.<br>f)), (oten)[2] = ((airFloatQNaN.f)), (oten)[3] = ((airFloatQNaN<br>.f)), (oten)[4] = ((airFloatQNaN.f)), (oten)[5] = ((airFloatQNaN<br>.f)), (oten)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">              <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (oten)[0] = ((airFloatQNaN.f)), (oten)[1] = ((airFloatQNaN.<br>f)), (oten)[2] = ((airFloatQNaN.f)), (oten)[3] = ((airFloatQNaN<br>.f)), (oten)[4] = ((airFloatQNaN.f)), (oten)[5] = ((airFloatQNaN<br>.f)), (oten)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line"><span class='comment'>** this NON-optionally uses biff</span></td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"><span class='comment'>** for simplicity, a pre-allocated tenInterpParm MUST be passed,</span></td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line"><span class='comment'>** regardless of the interpolation requested</span></td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">tenInterpN_d(<span class='keyword'>double</span> tenOut[7],</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">             <span class='keyword'>const</span> <span class='keyword'>double</span> *tenIn, <span class='keyword'>const</span> <span class='keyword'>double</span> *wght,</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">             <span class='keyword'>unsigned</span> <span class='keyword'>int</span> num, <span class='keyword'>int</span> ptype, tenInterpParm *tip) {</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpN_d"</span>;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  <span class='keyword'>double</span> ww, cc, tenErr[7], tmpTen[7], wghtSum, eval[3], evec[9], rtp[3];</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">  <span class='macro'>TEN_T_SET(tenErr, AIR_NAN, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (tenErr)[0] = ((airFloatQNaN.f)), (tenErr)[1] = ((airFloatQNaN<br>.f)), (tenErr)[2] = ((airFloatQNaN.f)), (tenErr)[3] = ((airFloatQNaN<br>.f)), (tenErr)[4] = ((airFloatQNaN.f)), (tenErr)[5] = ((airFloatQNaN<br>.f)), (tenErr)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">            <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (tenErr)[0] = ((airFloatQNaN.f)), (tenErr)[1] = ((airFloatQNaN<br>.f)), (tenErr)[2] = ((airFloatQNaN.f)), (tenErr)[3] = ((airFloatQNaN<br>.f)), (tenErr)[4] = ((airFloatQNaN.f)), (tenErr)[5] = ((airFloatQNaN<br>.f)), (tenErr)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">  <span class='comment'>/* wght can be NULL ==&gt; equal 1/num weight for all */</span></td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  <span class='keyword'>if</span> (!(tenOut &amp;&amp; tenIn &amp;&amp; tip)) {</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  <span class='keyword'>if</span> (!( num &gt;= 2 )) {</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: need num &gt;= 2 (not %u)"</span>, me, num);</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">    <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">  <span class='keyword'>if</span> (airEnumValCheck(tenInterpType, ptype)) {</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: invalid %s %d"</span>, me, tenInterpType-&gt;name, ptype);</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">    <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">  wghtSum = 0;</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">    ww = wght ? wght[ii] : 1.0/num;</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">    wghtSum += ww;</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">  <span class='keyword'>if</span> (!( <span class='macro'>AIR_IN_CL(1 - tip-&gt;wghtSumEps, wghtSum, 1 + tip-&gt;wghtSumEps)<span class='expansion'>((1 - tip-&gt;wghtSumEps) &lt;= (wghtSum) &amp;&amp; (wghtSum<br>) &lt;= (1 + tip-&gt;wghtSumEps))</span></span> )) {</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: wght sum %g not within %g of 1.0"</span>, me,</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">             wghtSum, tip-&gt;wghtSumEps);</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">    <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">  <span class='keyword'>switch</span> (ptype) {</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLinear:</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">    <span class='macro'>TEN_T_SET(tenOut, 0,   0, 0, 0,   0, 0,   0)<span class='expansion'>( (tenOut)[0] = (0), (tenOut)[1] = (0), (tenOut)[2] = (0), (tenOut<br>)[3] = (0), (tenOut)[4] = (0), (tenOut)[5] = (0), (tenOut)[6]<br> = (0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">    cc = 0;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">      ww = wght ? wght[ii] : 1.0/num;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">      <span class='macro'>TEN_T_SCALE_INCR(tenOut, ww, tenIn + 7*ii)<span class='expansion'>( (tenOut)[0] = (tenIn + 7*ii)[0], (tenOut)[1] += (ww)*(tenIn<br> + 7*ii)[1], (tenOut)[2] += (ww)*(tenIn + 7*ii)[2], (tenOut)[<br>3] += (ww)*(tenIn + 7*ii)[3], (tenOut)[4] += (ww)*(tenIn + 7*<br>ii)[4], (tenOut)[5] += (ww)*(tenIn + 7*ii)[5], (tenOut)[6] +=<br> (ww)*(tenIn + 7*ii)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">      cc += ww*(tenIn + 7*ii)[0];</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">    tenOut[0] = cc;</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLogLinear:</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">    <span class='macro'>TEN_T_SET(tenOut, 0,   0, 0, 0,   0, 0,   0)<span class='expansion'>( (tenOut)[0] = (0), (tenOut)[1] = (0), (tenOut)[2] = (0), (tenOut<br>)[3] = (0), (tenOut)[4] = (0), (tenOut)[5] = (0), (tenOut)[6]<br> = (0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">    cc = 0;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">      ww = wght ? wght[ii] : 1.0/num;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">      tenLogSingle_d(tmpTen, tenIn + 7*ii);</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">      <span class='macro'>TEN_T_SCALE_INCR(tenOut, ww, tmpTen)<span class='expansion'>( (tenOut)[0] = (tmpTen)[0], (tenOut)[1] += (ww)*(tmpTen)[1],<br> (tenOut)[2] += (ww)*(tmpTen)[2], (tenOut)[3] += (ww)*(tmpTen<br>)[3], (tenOut)[4] += (ww)*(tmpTen)[4], (tenOut)[5] += (ww)*(tmpTen<br>)[5], (tenOut)[6] += (ww)*(tmpTen)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">      cc += ww*(tenIn + 7*ii)[0];</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">    tenOut[0] = cc;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">    <span class='macro'>TEN_T_COPY(tmpTen, tenOut)<span class='expansion'>( (tmpTen)[0] = (tenOut)[0], (tmpTen)[1] = (tenOut)[1], (tmpTen<br>)[2] = (tenOut)[2], (tmpTen)[3] = (tenOut)[3], (tmpTen)[4] = (<br>tenOut)[4], (tmpTen)[5] = (tenOut)[5], (tmpTen)[6] = (tenOut)<br>[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">    tenExpSingle_d(tenOut, tmpTen);</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeAffineInvariant:</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeWang:</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: sorry, not implemented"</span>, me);</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">    <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeGeoLoxK:</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeGeoLoxR:</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLoxK:</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLoxR:</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: %s doesn't support averaging multiple tensors"</span>, me,</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">             airEnumStr(tenInterpType, ptype));</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">    <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeQuatGeoLoxK:</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeQuatGeoLoxR:</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">    <span class='keyword'>if</span> (tenInterpParmBufferAlloc(tip, num)) {</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: trouble getting buffers"</span>, me);</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">      <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">      cc = 0;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">      <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">        tenEigensolve_d(tip-&gt;eval + 3*ii, tip-&gt;evec + 9*ii, tenIn + 7*ii);</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">        ww = wght ? wght[ii] : 1.0/num;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">        cc += ww*(tenIn + 7*ii)[0];</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">      <span class='keyword'>if</span> (_tenQGLInterpNEval(eval, tip-&gt;eval, wght, num, ptype, tip)</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">          || _tenQGLInterpNEvec(evec, tip-&gt;evec, wght, num, tip)) {</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: trouble computing"</span>, me);</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">      tenMakeSingle_d(tenOut, cc, eval, evec);</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeRThetaPhiLinear:</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">    <span class='macro'>TEN_T_SET(tmpTen, 0,   0, 0, 0,   0, 0,   0)<span class='expansion'>( (tmpTen)[0] = (0), (tmpTen)[1] = (0), (tmpTen)[2] = (0), (tmpTen<br>)[3] = (0), (tmpTen)[4] = (0), (tmpTen)[5] = (0), (tmpTen)[6]<br> = (0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">    <span class='macro'>ELL_3V_SET(rtp, 0, 0, 0)<span class='expansion'>((rtp)[0] = (0), (rtp)[1] = (0), (rtp)[2] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">      <span class='keyword'>double</span> tmpeval[3], tmprtp[3];</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">      tenEigensolve_d(tmpeval, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, tenIn + 7*ii);</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">      tenTripleConvertSingle_d(tmprtp, tenTripleTypeRThetaPhi,</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">                               tmpeval, tenTripleTypeEigenvalue);</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">      ww = wght ? wght[ii] : 1.0/num;</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">      <span class='macro'>TEN_T_SCALE_INCR(tmpTen, ww, tenIn + 7*ii)<span class='expansion'>( (tmpTen)[0] = (tenIn + 7*ii)[0], (tmpTen)[1] += (ww)*(tenIn<br> + 7*ii)[1], (tmpTen)[2] += (ww)*(tenIn + 7*ii)[2], (tmpTen)[<br>3] += (ww)*(tenIn + 7*ii)[3], (tmpTen)[4] += (ww)*(tenIn + 7*<br>ii)[4], (tmpTen)[5] += (ww)*(tenIn + 7*ii)[5], (tmpTen)[6] +=<br> (ww)*(tenIn + 7*ii)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">      <span class='macro'>ELL_3V_SCALE_INCR(rtp, ww, tmprtp)<span class='expansion'>((rtp)[0] += (ww)*(tmprtp)[0], (rtp)[1] += (ww)*(tmprtp)[1], (<br>rtp)[2] += (ww)*(tmprtp)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">    tenEigensolve_d(eval, evec, tmpTen); <span class='comment'>/* only care about evec */</span></td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">    tenTripleConvertSingle_d(eval, tenTripleTypeEigenvalue,</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                             rtp, tenTripleTypeRThetaPhi);</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">    tenMakeSingle_d(tenOut, tmpTen[0], eval, evec);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: sorry, interp type %s (%d) not implemented"</span>,</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">             me, airEnumStr(tenInterpType, ptype), ptype);</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">    <span class='macro'>TEN_T_COPY(tenOut, tenErr)<span class='expansion'>( (tenOut)[0] = (tenErr)[0], (tenOut)[1] = (tenErr)[1], (tenOut<br>)[2] = (tenErr)[2], (tenOut)[3] = (tenErr)[3], (tenOut)[4] = (<br>tenErr)[4], (tenOut)[5] = (tenErr)[5], (tenOut)[6] = (tenErr)<br>[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">_tenInterpGeoLoxRelaxOne(Nrrd *nodata, Nrrd *ntdata, Nrrd *nigrtdata,</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">                       <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii, <span class='keyword'>int</span> rotnoop, <span class='keyword'>double</span> scl,</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                       tenInterpParm *tip) {</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_tenInterpGeoLoxRelaxOne"</span>;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">  <span class='keyword'>double</span> *tdata, *odata, *igrtdata, *tt[5], *igrt[5][6], d02[7], d24[7],</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">    len02, len24, tmp, tng[7], correct, update[7];</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> jj;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">  <span class='keyword'>if</span> (tip-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"---- %u --&gt; %u %u %u %u %u\n"</span>, ii,</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">            2*ii - 2, 2*ii - 1, 2*ii, 2*ii + 1, 2*ii + 2);</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">  tdata = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, ntdata-&gt;data)<span class='expansion'>((double *)(ntdata-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">  odata = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nodata-&gt;data)<span class='expansion'>((double *)(nodata-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">  tt[0] = tdata + 7*(2*ii - 2);</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">  tt[1] = tdata + 7*(2*ii - 1); <span class='comment'>/* unused */</span></td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">  tt[2] = tdata + 7*(2*ii + 0);</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">  tt[3] = tdata + 7*(2*ii + 1); <span class='comment'>/* unused */</span></td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">  tt[4] = tdata + 7*(2*ii + 2);</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">  igrtdata = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nigrtdata-&gt;data)<span class='expansion'>((double *)(nigrtdata-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">  <span class='keyword'>for</span> (jj=0; jj&lt;6; jj++) {</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">    igrt[0][jj] = igrtdata + 7*(jj + 6*(2*ii - 2)); <span class='comment'>/* unused */</span></td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">    igrt[1][jj] = igrtdata + 7*(jj + 6*(2*ii - 1));</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">    igrt[2][jj] = igrtdata + 7*(jj + 6*(2*ii + 0));</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">    igrt[3][jj] = igrtdata + 7*(jj + 6*(2*ii + 1));</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">    igrt[4][jj] = igrtdata + 7*(jj + 6*(2*ii + 2)); <span class='comment'>/* unused */</span></td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">  <span class='comment'>/* re-align [1] and [3] bases relative to [2] */</span></td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">  <span class='comment'>/* HEY: should I be worrying about aligning the mode normal</span></td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">     <span class='comment'>when it had to be computed from eigenvectors? */</span></td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">  <span class='keyword'>for</span> (jj=3; jj&lt;6; jj++) {</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>TEN_T_DOT(igrt[1][jj], igrt[2][jj])<span class='expansion'>( (igrt[1][jj])[1]*(igrt[2][jj])[1] + 2*(igrt[1][jj])[2]*(igrt<br>[2][jj])[2] + 2*(igrt[1][jj])[3]*(igrt[2][jj])[3] + (igrt[1][<br>jj])[4]*(igrt[2][jj])[4] + 2*(igrt[1][jj])[5]*(igrt[2][jj])[5<br>] + (igrt[1][jj])[6]*(igrt[2][jj])[6] )</span></span> &lt; 0) {</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">      <span class='macro'>TEN_T_SCALE(igrt[1][jj], -1, igrt[1][jj])<span class='expansion'>( (igrt[1][jj])[0] = (igrt[1][jj])[0], (igrt[1][jj])[1] = (-1<br>)*(igrt[1][jj])[1], (igrt[1][jj])[2] = (-1)*(igrt[1][jj])[2],<br> (igrt[1][jj])[3] = (-1)*(igrt[1][jj])[3], (igrt[1][jj])[4] =<br> (-1)*(igrt[1][jj])[4], (igrt[1][jj])[5] = (-1)*(igrt[1][jj])<br>[5], (igrt[1][jj])[6] = (-1)*(igrt[1][jj])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>TEN_T_DOT(igrt[3][jj], igrt[2][jj])<span class='expansion'>( (igrt[3][jj])[1]*(igrt[2][jj])[1] + 2*(igrt[3][jj])[2]*(igrt<br>[2][jj])[2] + 2*(igrt[3][jj])[3]*(igrt[2][jj])[3] + (igrt[3][<br>jj])[4]*(igrt[2][jj])[4] + 2*(igrt[3][jj])[5]*(igrt[2][jj])[5<br>] + (igrt[3][jj])[6]*(igrt[2][jj])[6] )</span></span> &lt; 0) {</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">      <span class='macro'>TEN_T_SCALE(igrt[3][jj], -1, igrt[1][jj])<span class='expansion'>( (igrt[3][jj])[0] = (igrt[1][jj])[0], (igrt[3][jj])[1] = (-1<br>)*(igrt[1][jj])[1], (igrt[3][jj])[2] = (-1)*(igrt[1][jj])[2],<br> (igrt[3][jj])[3] = (-1)*(igrt[1][jj])[3], (igrt[3][jj])[4] =<br> (-1)*(igrt[1][jj])[4], (igrt[3][jj])[5] = (-1)*(igrt[1][jj])<br>[5], (igrt[3][jj])[6] = (-1)*(igrt[1][jj])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">  <span class='macro'>TEN_T_SUB(tng, tt[4], tt[0])<span class='expansion'>( (tng)[0] = ((tt[4])[0] + (tt[0])[0])/2.0, (tng)[1] = (tt[4]<br>)[1] - (tt[0])[1], (tng)[2] = (tt[4])[2] - (tt[0])[2], (tng)[<br>3] = (tt[4])[3] - (tt[0])[3], (tng)[4] = (tt[4])[4] - (tt[0])<br>[4], (tng)[5] = (tt[4])[5] - (tt[0])[5], (tng)[6] = (tt[4])[6<br>] - (tt[0])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">  tmp = 1.0/<span class='macro'>TEN_T_NORM(tng)<span class='expansion'>(sqrt(( (tng)[1]*(tng)[1] + 2*(tng)[2]*(tng)[2] + 2*(tng)[3]*<br>(tng)[3] + (tng)[4]*(tng)[4] + 2*(tng)[5]*(tng)[5] + (tng)[6]<br>*(tng)[6] )))</span></span>;</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">  <span class='macro'>TEN_T_SCALE(tng, tmp, tng)<span class='expansion'>( (tng)[0] = (tng)[0], (tng)[1] = (tmp)*(tng)[1], (tng)[2] = (<br>tmp)*(tng)[2], (tng)[3] = (tmp)*(tng)[3], (tng)[4] = (tmp)*(tng<br>)[4], (tng)[5] = (tmp)*(tng)[5], (tng)[6] = (tmp)*(tng)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">  <span class='macro'>TEN_T_SUB(d02, tt[2], tt[0])<span class='expansion'>( (d02)[0] = ((tt[2])[0] + (tt[0])[0])/2.0, (d02)[1] = (tt[2]<br>)[1] - (tt[0])[1], (d02)[2] = (tt[2])[2] - (tt[0])[2], (d02)[<br>3] = (tt[2])[3] - (tt[0])[3], (d02)[4] = (tt[2])[4] - (tt[0])<br>[4], (d02)[5] = (tt[2])[5] - (tt[0])[5], (d02)[6] = (tt[2])[6<br>] - (tt[0])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">  <span class='macro'>TEN_T_SUB(d24, tt[4], tt[2])<span class='expansion'>( (d24)[0] = ((tt[4])[0] + (tt[2])[0])/2.0, (d24)[1] = (tt[4]<br>)[1] - (tt[2])[1], (d24)[2] = (tt[4])[2] - (tt[2])[2], (d24)[<br>3] = (tt[4])[3] - (tt[2])[3], (d24)[4] = (tt[4])[4] - (tt[2])<br>[4], (d24)[5] = (tt[4])[5] - (tt[2])[5], (d24)[6] = (tt[4])[6<br>] - (tt[2])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">  <span class='macro'>TEN_T_SET(update, 1,   0, 0, 0,   0, 0,   0)<span class='expansion'>( (update)[0] = (1), (update)[1] = (0), (update)[2] = (0), (update<br>)[3] = (0), (update)[4] = (0), (update)[5] = (0), (update)[6]<br> = (0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">  <span class='keyword'>for</span> (jj=0; jj&lt;(rotnoop ? 3u : 6u); jj++) {</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">    len02 = <span class='macro'>TEN_T_DOT(igrt[1][jj], d02)<span class='expansion'>( (igrt[1][jj])[1]*(d02)[1] + 2*(igrt[1][jj])[2]*(d02)[2] + 2<br>*(igrt[1][jj])[3]*(d02)[3] + (igrt[1][jj])[4]*(d02)[4] + 2*(igrt<br>[1][jj])[5]*(d02)[5] + (igrt[1][jj])[6]*(d02)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">    len24 = <span class='macro'>TEN_T_DOT(igrt[3][jj], d24)<span class='expansion'>( (igrt[3][jj])[1]*(d24)[1] + 2*(igrt[3][jj])[2]*(d24)[2] + 2<br>*(igrt[3][jj])[3]*(d24)[3] + (igrt[3][jj])[4]*(d24)[4] + 2*(igrt<br>[3][jj])[5]*(d24)[5] + (igrt[3][jj])[6]*(d24)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">    correct = (len24 - len02)/2;</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">    <span class='macro'>TEN_T_SCALE_INCR(update, correct*scl, igrt[2][jj])<span class='expansion'>( (update)[0] = (igrt[2][jj])[0], (update)[1] += (correct*scl<br>)*(igrt[2][jj])[1], (update)[2] += (correct*scl)*(igrt[2][jj]<br>)[2], (update)[3] += (correct*scl)*(igrt[2][jj])[3], (update)<br>[4] += (correct*scl)*(igrt[2][jj])[4], (update)[5] += (correct<br>*scl)*(igrt[2][jj])[5], (update)[6] += (correct*scl)*(igrt[2]<br>[jj])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">    <span class='keyword'>if</span> (tip-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"igrt[1][%u] = %g %g %g   %g %g   %g\n"</span>, jj,</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">              igrt[1][jj][1], igrt[1][jj][2], igrt[1][jj][3],</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">              igrt[1][jj][4], igrt[1][jj][5], igrt[1][jj][6]);</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"igrt[3][%u] = %g %g %g   %g %g   %g\n"</span>, jj,</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">              igrt[3][jj][1], igrt[3][jj][2], igrt[3][jj][3],</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">              igrt[3][jj][4], igrt[3][jj][5], igrt[3][jj][6]);</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"(jj=%u) len = %g %g --&gt; (d = %g) "</span></td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">              <span class='string_literal'>"update = %g %g %g     %g %g   %g\n"</span>,</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">              jj, len02, len24,</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">              <span class='macro'>TEN_T_DOT(igrt[2][0], update)<span class='expansion'>( (igrt[2][0])[1]*(update)[1] + 2*(igrt[2][0])[2]*(update)[2]<br> + 2*(igrt[2][0])[3]*(update)[3] + (igrt[2][0])[4]*(update)[4<br>] + 2*(igrt[2][0])[5]*(update)[5] + (igrt[2][0])[6]*(update)[<br>6] )</span></span>,</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">              update[1], update[2], update[3],</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">              update[4], update[5], update[6]);</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">  <span class='keyword'>if</span> (rotnoop) {</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">    <span class='keyword'>double</span> avg[7], diff[7], len;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">    <span class='macro'>TEN_T_LERP(avg, 0.5, tt[0], tt[4])<span class='expansion'>( (avg)[0] = (((0.5))*(((tt[4])[0]) - ((tt[0])[0])) + ((tt[0]<br>)[0])), (avg)[1] = (((0.5))*(((tt[4])[1]) - ((tt[0])[1])) + (<br>(tt[0])[1])), (avg)[2] = (((0.5))*(((tt[4])[2]) - ((tt[0])[2]<br>)) + ((tt[0])[2])), (avg)[3] = (((0.5))*(((tt[4])[3]) - ((tt[<br>0])[3])) + ((tt[0])[3])), (avg)[4] = (((0.5))*(((tt[4])[4]) -<br> ((tt[0])[4])) + ((tt[0])[4])), (avg)[5] = (((0.5))*(((tt[4])<br>[5]) - ((tt[0])[5])) + ((tt[0])[5])), (avg)[6] = (((0.5))*(((<br>tt[4])[6]) - ((tt[0])[6])) + ((tt[0])[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">    <span class='macro'>TEN_T_SUB(diff, avg, tt[2])<span class='expansion'>( (diff)[0] = ((avg)[0] + (tt[2])[0])/2.0, (diff)[1] = (avg)[<br>1] - (tt[2])[1], (diff)[2] = (avg)[2] - (tt[2])[2], (diff)[3]<br> = (avg)[3] - (tt[2])[3], (diff)[4] = (avg)[4] - (tt[2])[4], (<br>diff)[5] = (avg)[5] - (tt[2])[5], (diff)[6] = (avg)[6] - (tt[<br>2])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">    <span class='keyword'>for</span> (jj=0; jj&lt;3; jj++) {</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">      len = <span class='macro'>TEN_T_DOT(igrt[2][jj], diff)<span class='expansion'>( (igrt[2][jj])[1]*(diff)[1] + 2*(igrt[2][jj])[2]*(diff)[2] +<br> 2*(igrt[2][jj])[3]*(diff)[3] + (igrt[2][jj])[4]*(diff)[4] + 2<br>*(igrt[2][jj])[5]*(diff)[5] + (igrt[2][jj])[6]*(diff)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">      <span class='macro'>TEN_T_SCALE_INCR(diff, -len, igrt[2][jj])<span class='expansion'>( (diff)[0] = (igrt[2][jj])[0], (diff)[1] += (-len)*(igrt[2][<br>jj])[1], (diff)[2] += (-len)*(igrt[2][jj])[2], (diff)[3] += (<br>-len)*(igrt[2][jj])[3], (diff)[4] += (-len)*(igrt[2][jj])[4],<br> (diff)[5] += (-len)*(igrt[2][jj])[5], (diff)[6] += (-len)*(igrt<br>[2][jj])[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">    <span class='macro'>TEN_T_SCALE_INCR(update, scl*0.2, diff)<span class='expansion'>( (update)[0] = (diff)[0], (update)[1] += (scl*0.2)*(diff)[1]<br>, (update)[2] += (scl*0.2)*(diff)[2], (update)[3] += (scl*0.2<br>)*(diff)[3], (update)[4] += (scl*0.2)*(diff)[4], (update)[5] +=<br> (scl*0.2)*(diff)[5], (update)[6] += (scl*0.2)*(diff)[6])</span></span>;  <span class='comment'>/* HEY: scaling is a hack */</span></td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">    <span class='keyword'>if</span> (tip-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"(rotnoop) (d = %g) "</span></td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">              <span class='string_literal'>"update = %g %g %g     %g %g   %g\n"</span>,</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">              <span class='macro'>TEN_T_DOT(igrt[2][0], update)<span class='expansion'>( (igrt[2][0])[1]*(update)[1] + 2*(igrt[2][0])[2]*(update)[2]<br> + 2*(igrt[2][0])[3]*(update)[3] + (igrt[2][0])[4]*(update)[4<br>] + 2*(igrt[2][0])[5]*(update)[5] + (igrt[2][0])[6]*(update)[<br>6] )</span></span>,</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">              update[1], update[2], update[3],</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">              update[4], update[5], update[6]);</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">  <span class='comment'>TEN_T_SUB(d02, tt[2], tt[0]);</span></td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">  <span class='comment'>TEN_T_SUB(d24, tt[4], tt[2]);</span></td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">  <span class='comment'>len02 = TEN_T_DOT(tng, d02);</span></td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">  <span class='comment'>len24 = TEN_T_DOT(tng, d24);</span></td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">  <span class='comment'>correct = (len24 - len02);</span></td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">  <span class='comment'>TEN_T_SCALE_INCR(update, scl*correct, tng);</span></td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">  <span class='keyword'>if</span> (!<span class='macro'>TEN_T_EXISTS(update)<span class='expansion'>( (((int)(!(((update)[0]) - ((update)[0]))))) &amp;&amp; (((int<br>)(!(((update)[1]) - ((update)[1]))))) &amp;&amp; (((int)(!(((<br>update)[2]) - ((update)[2]))))) &amp;&amp; (((int)(!(((update<br>)[3]) - ((update)[3]))))) &amp;&amp; (((int)(!(((update)[4]) -<br> ((update)[4]))))) &amp;&amp; (((int)(!(((update)[5]) - ((update<br>)[5]))))) &amp;&amp; (((int)(!(((update)[6]) - ((update)[6]))<br>))) )</span></span>) {</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: computed non-existent update (step-size too big?)"</span>, me);</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">  <span class='macro'>TEN_T_ADD(odata + 7*(2*ii + 0), tt[2], update)<span class='expansion'>( (odata + 7*(2*ii + 0))[0] = ((tt[2])[0] + (update)[0])/2.0,<br> (odata + 7*(2*ii + 0))[1] = (tt[2])[1] + (update)[1], (odata<br> + 7*(2*ii + 0))[2] = (tt[2])[2] + (update)[2], (odata + 7*(2<br>*ii + 0))[3] = (tt[2])[3] + (update)[3], (odata + 7*(2*ii + 0<br>))[4] = (tt[2])[4] + (update)[4], (odata + 7*(2*ii + 0))[5] =<br> (tt[2])[5] + (update)[5], (odata + 7*(2*ii + 0))[6] = (tt[2]<br>)[6] + (update)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">_tenInterpGeoLoxIGRT(<span class='keyword'>double</span> *igrt, <span class='keyword'>double</span> *ten, <span class='keyword'>int</span> useK, <span class='keyword'>int</span> rotNoop,</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">                   <span class='keyword'>double</span> minnorm) {</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">  <span class='comment'>/* static const char me[]="_tenInterpGeoLoxIGRT"; */</span></td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">  <span class='keyword'>double</span> eval[3], evec[9];</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">  <span class='keyword'>if</span> (useK) {</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">    tenInvariantGradientsK_d(igrt + 7*0, igrt + 7*1, igrt + 7*2, ten, minnorm);</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">    tenInvariantGradientsR_d(igrt + 7*0, igrt + 7*1, igrt + 7*2, ten, minnorm);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">  <span class='keyword'>if</span> (rotNoop) {</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">    <span class='comment'>/* these shouldn't be used */</span></td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">    <span class='macro'>TEN_T_SET(igrt + 7*3, 1, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (igrt + 7*3)[0] = (1), (igrt + 7*3)[1] = ((airFloatQNaN.f))<br>, (igrt + 7*3)[2] = ((airFloatQNaN.f)), (igrt + 7*3)[3] = ((airFloatQNaN<br>.f)), (igrt + 7*3)[4] = ((airFloatQNaN.f)), (igrt + 7*3)[5] =<br> ((airFloatQNaN.f)), (igrt + 7*3)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">              <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (igrt + 7*3)[0] = (1), (igrt + 7*3)[1] = ((airFloatQNaN.f))<br>, (igrt + 7*3)[2] = ((airFloatQNaN.f)), (igrt + 7*3)[3] = ((airFloatQNaN<br>.f)), (igrt + 7*3)[4] = ((airFloatQNaN.f)), (igrt + 7*3)[5] =<br> ((airFloatQNaN.f)), (igrt + 7*3)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">    <span class='macro'>TEN_T_SET(igrt + 7*4, 1, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (igrt + 7*4)[0] = (1), (igrt + 7*4)[1] = ((airFloatQNaN.f))<br>, (igrt + 7*4)[2] = ((airFloatQNaN.f)), (igrt + 7*4)[3] = ((airFloatQNaN<br>.f)), (igrt + 7*4)[4] = ((airFloatQNaN.f)), (igrt + 7*4)[5] =<br> ((airFloatQNaN.f)), (igrt + 7*4)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">              <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (igrt + 7*4)[0] = (1), (igrt + 7*4)[1] = ((airFloatQNaN.f))<br>, (igrt + 7*4)[2] = ((airFloatQNaN.f)), (igrt + 7*4)[3] = ((airFloatQNaN<br>.f)), (igrt + 7*4)[4] = ((airFloatQNaN.f)), (igrt + 7*4)[5] =<br> ((airFloatQNaN.f)), (igrt + 7*4)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">    <span class='macro'>TEN_T_SET(igrt + 7*5, 1, AIR_NAN, AIR_NAN, AIR_NAN,<span class='expansion'>( (igrt + 7*5)[0] = (1), (igrt + 7*5)[1] = ((airFloatQNaN.f))<br>, (igrt + 7*5)[2] = ((airFloatQNaN.f)), (igrt + 7*5)[3] = ((airFloatQNaN<br>.f)), (igrt + 7*5)[4] = ((airFloatQNaN.f)), (igrt + 7*5)[5] =<br> ((airFloatQNaN.f)), (igrt + 7*5)[6] = ((airFloatQNaN.f)) )</span></span></td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">              <span class='macro'>AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>( (igrt + 7*5)[0] = (1), (igrt + 7*5)[1] = ((airFloatQNaN.f))<br>, (igrt + 7*5)[2] = ((airFloatQNaN.f)), (igrt + 7*5)[3] = ((airFloatQNaN<br>.f)), (igrt + 7*5)[4] = ((airFloatQNaN.f)), (igrt + 7*5)[5] =<br> ((airFloatQNaN.f)), (igrt + 7*5)[6] = ((airFloatQNaN.f)) )</span></span>;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">    tenEigensolve_d(eval, evec, ten);</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">    tenRotationTangents_d(igrt + 7*3, igrt + 7*4, igrt + 7*5, evec);</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line"><span class='comment'>** if "doubling" is non-zero, this assumes that the real</span></td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line"><span class='comment'>** vertices are on the even-numbered indices:</span></td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line"><span class='comment'>** (0   1   2   3   4)</span></td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line"><span class='comment'>**  0   2   4   6   8 --&gt; size=9 --&gt; NN=4</span></td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line"><span class='comment'>**    1   3   5   7</span></td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line"><span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">tenInterpPathLength(Nrrd *ntt, <span class='keyword'>int</span> doubleVerts, <span class='keyword'>int</span> fancy, <span class='keyword'>int</span> shape) {</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">  <span class='keyword'>double</span> *tt, len, diff[7], *tenA, *tenB;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii, NN;</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  tt = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, ntt-&gt;data)<span class='expansion'>((double *)(ntt-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">  <span class='keyword'>if</span> (doubleVerts) {</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">    NN = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, (ntt-&gt;axis[1].size-1)/2)<span class='expansion'>((unsigned int)((ntt-&gt;axis[1].size-1)/2))</span></span>;</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">    NN = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, ntt-&gt;axis[1].size-1)<span class='expansion'>((unsigned int)(ntt-&gt;axis[1].size-1))</span></span>;</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">  len = 0;</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;NN; ii++) {</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">    <span class='keyword'>if</span> (doubleVerts) {</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">      tenA = tt + 7*2*(ii + 1);</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">      tenB = tt + 7*2*(ii + 0);</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">      tenA = tt + 7*(ii + 1);</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">      tenB = tt + 7*(ii + 0);</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">    <span class='macro'>TEN_T_SUB(diff, tenA, tenB)<span class='expansion'>( (diff)[0] = ((tenA)[0] + (tenB)[0])/2.0, (diff)[1] = (tenA)<br>[1] - (tenB)[1], (diff)[2] = (tenA)[2] - (tenB)[2], (diff)[3]<br> = (tenA)[3] - (tenB)[3], (diff)[4] = (tenA)[4] - (tenB)[4], (<br>diff)[5] = (tenA)[5] - (tenB)[5], (diff)[6] = (tenA)[6] - (tenB<br>)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">    <span class='keyword'>if</span> (fancy) {</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">      <span class='keyword'>double</span> mean[7], igrt[7*6], dot, incr;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> lo, hi;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">      <span class='macro'>TEN_T_LERP(mean, 0.5, tenA, tenB)<span class='expansion'>( (mean)[0] = (((0.5))*(((tenB)[0]) - ((tenA)[0])) + ((tenA)[<br>0])), (mean)[1] = (((0.5))*(((tenB)[1]) - ((tenA)[1])) + ((tenA<br>)[1])), (mean)[2] = (((0.5))*(((tenB)[2]) - ((tenA)[2])) + ((<br>tenA)[2])), (mean)[3] = (((0.5))*(((tenB)[3]) - ((tenA)[3])) +<br> ((tenA)[3])), (mean)[4] = (((0.5))*(((tenB)[4]) - ((tenA)[4]<br>)) + ((tenA)[4])), (mean)[5] = (((0.5))*(((tenB)[5]) - ((tenA<br>)[5])) + ((tenA)[5])), (mean)[6] = (((0.5))*(((tenB)[6]) - ((<br>tenA)[6])) + ((tenA)[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">      _tenInterpGeoLoxIGRT(igrt, mean, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, 0.0);</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">      <span class='keyword'>if</span> (shape) {</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">        lo = 0;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">        hi = 2;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">        lo = 3;</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">        hi = 5;</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">      incr = 0;</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">      <span class='keyword'>for</span> (ii=lo; ii&lt;=hi; ii++) {</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">        dot = <span class='macro'>TEN_T_DOT(igrt + 7*ii, diff)<span class='expansion'>( (igrt + 7*ii)[1]*(diff)[1] + 2*(igrt + 7*ii)[2]*(diff)[2] +<br> 2*(igrt + 7*ii)[3]*(diff)[3] + (igrt + 7*ii)[4]*(diff)[4] + 2<br>*(igrt + 7*ii)[5]*(diff)[5] + (igrt + 7*ii)[6]*(diff)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        incr += dot*dot;</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">      len += sqrt(incr);</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">      len += <span class='macro'>TEN_T_NORM(diff)<span class='expansion'>(sqrt(( (diff)[1]*(diff)[1] + 2*(diff)[2]*(diff)[2] + 2*(diff<br>)[3]*(diff)[3] + (diff)[4]*(diff)[4] + 2*(diff)[5]*(diff)[5] +<br> (diff)[6]*(diff)[6] )))</span></span>;</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">  <span class='keyword'>return</span> len;</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line"><span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">_tenPathSpacingEqualize(Nrrd *nout, Nrrd *nin) {</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">  <span class='comment'>/* static const char me[]="_tenPathSpacingEqualize"; */</span></td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">  <span class='keyword'>double</span> *in, *out, len, diff[7],</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">    lenTotal,  <span class='comment'>/* total length of input */</span></td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">    lenStep,   <span class='comment'>/* correct length on input polyline between output vertices */</span></td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">    lenIn,     <span class='comment'>/* length along input processed so far */</span></td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">    lenHere,   <span class='comment'>/* length of segment associated with current input index */</span></td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">    lenRmn,    <span class='comment'>/* length along past input segments as yet unmapped to output */</span></td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">    *tenHere, *tenNext;</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> idxIn, idxOut, NN;</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">  in = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nin-&gt;data)<span class='expansion'>((double *)(nin-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">  out = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nout-&gt;data)<span class='expansion'>((double *)(nout-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">  NN = (nin-&gt;axis[1].size-1)/2;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">  lenTotal = tenInterpPathLength(nin, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">  lenStep = lenTotal/NN;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">  <span class='comment'>fprintf(stderr, "!%s: lenTotal/NN = %g/%u = %g = lenStep\n", me,</span></td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">          <span class='comment'>lenTotal, NN, lenStep);</span></td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">  <span class='macro'>TEN_T_COPY(out + 7*2*(0 + 0), in + 7*2*(0 + 0))<span class='expansion'>( (out + 7*2*(0 + 0))[0] = (in + 7*2*(0 + 0))[0], (out + 7*2*<br>(0 + 0))[1] = (in + 7*2*(0 + 0))[1], (out + 7*2*(0 + 0))[2] =<br> (in + 7*2*(0 + 0))[2], (out + 7*2*(0 + 0))[3] = (in + 7*2*(0<br> + 0))[3], (out + 7*2*(0 + 0))[4] = (in + 7*2*(0 + 0))[4], (out<br> + 7*2*(0 + 0))[5] = (in + 7*2*(0 + 0))[5], (out + 7*2*(0 + 0<br>))[6] = (in + 7*2*(0 + 0))[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">  lenIn = lenRmn = 0;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">  idxOut = 1;</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">  <span class='keyword'>for</span> (idxIn=0; idxIn&lt;NN; idxIn++) {</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">    tenNext = in + 7*2*(idxIn + 1);</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">    tenHere = in + 7*2*(idxIn + 0);</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">    <span class='macro'>TEN_T_SUB(diff, tenNext, tenHere)<span class='expansion'>( (diff)[0] = ((tenNext)[0] + (tenHere)[0])/2.0, (diff)[1] = (<br>tenNext)[1] - (tenHere)[1], (diff)[2] = (tenNext)[2] - (tenHere<br>)[2], (diff)[3] = (tenNext)[3] - (tenHere)[3], (diff)[4] = (tenNext<br>)[4] - (tenHere)[4], (diff)[5] = (tenNext)[5] - (tenHere)[5],<br> (diff)[6] = (tenNext)[6] - (tenHere)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">    lenHere = <span class='macro'>TEN_T_NORM(diff)<span class='expansion'>(sqrt(( (diff)[1]*(diff)[1] + 2*(diff)[2]*(diff)[2] + 2*(diff<br>)[3]*(diff)[3] + (diff)[4]*(diff)[4] + 2*(diff)[5]*(diff)[5] +<br> (diff)[6]*(diff)[6] )))</span></span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">    <span class='comment'>fprintf(stderr, "!%s(%u): %g + %g &gt;(%s)= %g\n", me, idxIn,</span></td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">            <span class='comment'>lenRmn, lenHere,</span></td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">            <span class='comment'>(lenRmn + lenHere &gt;= lenStep ? "yes" : "no"),</span></td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">            <span class='comment'>lenStep);</span></td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">    <span class='keyword'>if</span> (lenRmn + lenHere &gt;= lenStep) {</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">      len = lenRmn + lenHere;</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">      <span class='keyword'>while</span> (len &gt; lenStep) {</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        len -= lenStep;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">        <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">        <span class='comment'>fprintf(stderr, "!%s(%u): len = %g -&gt; %g\n", me, idxIn,</span></td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">                <span class='comment'>len + lenStep, len);</span></td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">        <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">        <span class='macro'>TEN_T_AFFINE(out + 7*(2*idxOut + 0),<span class='expansion'>( (out + 7*(2*idxOut + 0))[0] = ( ((double)((tenNext)[0])-((tenHere<br>)[0]))*((double)((len))-((lenHere))) / ((double)((0))-((lenHere<br>))) + ((tenHere)[0])), (out + 7*(2*idxOut + 0))[1] = ( ((double<br>)((tenNext)[1])-((tenHere)[1]))*((double)((len))-((lenHere)))<br> / ((double)((0))-((lenHere))) + ((tenHere)[1])), (out + 7*(2<br>*idxOut + 0))[2] = ( ((double)((tenNext)[2])-((tenHere)[2]))*<br>((double)((len))-((lenHere))) / ((double)((0))-((lenHere))) +<br> ((tenHere)[2])), (out + 7*(2*idxOut + 0))[3] = ( ((double)((<br>tenNext)[3])-((tenHere)[3]))*((double)((len))-((lenHere))) / (<br>(double)((0))-((lenHere))) + ((tenHere)[3])), (out + 7*(2*idxOut<br> + 0))[4] = ( ((double)((tenNext)[4])-((tenHere)[4]))*((double<br>)((len))-((lenHere))) / ((double)((0))-((lenHere))) + ((tenHere<br>)[4])), (out + 7*(2*idxOut + 0))[5] = ( ((double)((tenNext)[5<br>])-((tenHere)[5]))*((double)((len))-((lenHere))) / ((double)(<br>(0))-((lenHere))) + ((tenHere)[5])), (out + 7*(2*idxOut + 0))<br>[6] = ( ((double)((tenNext)[6])-((tenHere)[6]))*((double)((len<br>))-((lenHere))) / ((double)((0))-((lenHere))) + ((tenHere)[6]<br>)))</span></span></td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">                     <span class='macro'>lenHere, len, 0, tenHere, tenNext)<span class='expansion'>( (out + 7*(2*idxOut + 0))[0] = ( ((double)((tenNext)[0])-((tenHere<br>)[0]))*((double)((len))-((lenHere))) / ((double)((0))-((lenHere<br>))) + ((tenHere)[0])), (out + 7*(2*idxOut + 0))[1] = ( ((double<br>)((tenNext)[1])-((tenHere)[1]))*((double)((len))-((lenHere)))<br> / ((double)((0))-((lenHere))) + ((tenHere)[1])), (out + 7*(2<br>*idxOut + 0))[2] = ( ((double)((tenNext)[2])-((tenHere)[2]))*<br>((double)((len))-((lenHere))) / ((double)((0))-((lenHere))) +<br> ((tenHere)[2])), (out + 7*(2*idxOut + 0))[3] = ( ((double)((<br>tenNext)[3])-((tenHere)[3]))*((double)((len))-((lenHere))) / (<br>(double)((0))-((lenHere))) + ((tenHere)[3])), (out + 7*(2*idxOut<br> + 0))[4] = ( ((double)((tenNext)[4])-((tenHere)[4]))*((double<br>)((len))-((lenHere))) / ((double)((0))-((lenHere))) + ((tenHere<br>)[4])), (out + 7*(2*idxOut + 0))[5] = ( ((double)((tenNext)[5<br>])-((tenHere)[5]))*((double)((len))-((lenHere))) / ((double)(<br>(0))-((lenHere))) + ((tenHere)[5])), (out + 7*(2*idxOut + 0))<br>[6] = ( ((double)((tenNext)[6])-((tenHere)[6]))*((double)((len<br>))-((lenHere))) / ((double)((0))-((lenHere))) + ((tenHere)[6]<br>)))</span></span>;</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">        <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">        <span class='comment'>fprintf(stderr, "!%s(%u): out[%u] ~ %g\n", me, idxIn, idxOut,</span></td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">                <span class='comment'>AIR_AFFINE(lenHere, len, 0, 0, 1));</span></td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">        <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">        idxOut++;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">      lenRmn = len;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">      lenRmn += lenHere;</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">      <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">      <span class='comment'>fprintf(stderr, "!%s(%u):   (==&gt; lenRmn = %g -&gt; %g)\n", me, idxIn,</span></td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">              <span class='comment'>lenRmn - lenHere, lenRmn);</span></td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">    <span class='comment'>/* now lenRmn &lt; lenStep */</span></td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">    lenIn += lenHere;</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">  <span class='comment'>/* copy very last one in case we didn't get to it somehow */</span></td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">  <span class='macro'>TEN_T_COPY(out + 7*2*(NN + 0), in + 7*2*(NN + 0))<span class='expansion'>( (out + 7*2*(NN + 0))[0] = (in + 7*2*(NN + 0))[0], (out + 7*<br>2*(NN + 0))[1] = (in + 7*2*(NN + 0))[1], (out + 7*2*(NN + 0))<br>[2] = (in + 7*2*(NN + 0))[2], (out + 7*2*(NN + 0))[3] = (in +<br> 7*2*(NN + 0))[3], (out + 7*2*(NN + 0))[4] = (in + 7*2*(NN + 0<br>))[4], (out + 7*2*(NN + 0))[5] = (in + 7*2*(NN + 0))[5], (out<br> + 7*2*(NN + 0))[6] = (in + 7*2*(NN + 0))[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">  <span class='comment'>/* fill in vertex mid-points */</span></td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">  <span class='keyword'>for</span> (idxOut=0; idxOut&lt;NN; idxOut++) {</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">    <span class='macro'>TEN_T_LERP(out + 7*(2*idxOut + 1),<span class='expansion'>( (out + 7*(2*idxOut + 1))[0] = (((0.5))*(((out + 7*(2*idxOut<br> + 2))[0]) - ((out + 7*(2*idxOut + 0))[0])) + ((out + 7*(2*idxOut<br> + 0))[0])), (out + 7*(2*idxOut + 1))[1] = (((0.5))*(((out + 7<br>*(2*idxOut + 2))[1]) - ((out + 7*(2*idxOut + 0))[1])) + ((out<br> + 7*(2*idxOut + 0))[1])), (out + 7*(2*idxOut + 1))[2] = (((0.5<br>))*(((out + 7*(2*idxOut + 2))[2]) - ((out + 7*(2*idxOut + 0))<br>[2])) + ((out + 7*(2*idxOut + 0))[2])), (out + 7*(2*idxOut + 1<br>))[3] = (((0.5))*(((out + 7*(2*idxOut + 2))[3]) - ((out + 7*(<br>2*idxOut + 0))[3])) + ((out + 7*(2*idxOut + 0))[3])), (out + 7<br>*(2*idxOut + 1))[4] = (((0.5))*(((out + 7*(2*idxOut + 2))[4])<br> - ((out + 7*(2*idxOut + 0))[4])) + ((out + 7*(2*idxOut + 0))<br>[4])), (out + 7*(2*idxOut + 1))[5] = (((0.5))*(((out + 7*(2*idxOut<br> + 2))[5]) - ((out + 7*(2*idxOut + 0))[5])) + ((out + 7*(2*idxOut<br> + 0))[5])), (out + 7*(2*idxOut + 1))[6] = (((0.5))*(((out + 7<br>*(2*idxOut + 2))[6]) - ((out + 7*(2*idxOut + 0))[6])) + ((out<br> + 7*(2*idxOut + 0))[6])))</span></span></td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">               <span class='macro'>0.5, out + 7*(2*idxOut + 0), out + 7*(2*idxOut + 2))<span class='expansion'>( (out + 7*(2*idxOut + 1))[0] = (((0.5))*(((out + 7*(2*idxOut<br> + 2))[0]) - ((out + 7*(2*idxOut + 0))[0])) + ((out + 7*(2*idxOut<br> + 0))[0])), (out + 7*(2*idxOut + 1))[1] = (((0.5))*(((out + 7<br>*(2*idxOut + 2))[1]) - ((out + 7*(2*idxOut + 0))[1])) + ((out<br> + 7*(2*idxOut + 0))[1])), (out + 7*(2*idxOut + 1))[2] = (((0.5<br>))*(((out + 7*(2*idxOut + 2))[2]) - ((out + 7*(2*idxOut + 0))<br>[2])) + ((out + 7*(2*idxOut + 0))[2])), (out + 7*(2*idxOut + 1<br>))[3] = (((0.5))*(((out + 7*(2*idxOut + 2))[3]) - ((out + 7*(<br>2*idxOut + 0))[3])) + ((out + 7*(2*idxOut + 0))[3])), (out + 7<br>*(2*idxOut + 1))[4] = (((0.5))*(((out + 7*(2*idxOut + 2))[4])<br> - ((out + 7*(2*idxOut + 0))[4])) + ((out + 7*(2*idxOut + 0))<br>[4])), (out + 7*(2*idxOut + 1))[5] = (((0.5))*(((out + 7*(2*idxOut<br> + 2))[5]) - ((out + 7*(2*idxOut + 0))[5])) + ((out + 7*(2*idxOut<br> + 0))[5])), (out + 7*(2*idxOut + 1))[6] = (((0.5))*(((out + 7<br>*(2*idxOut + 2))[6]) - ((out + 7*(2*idxOut + 0))[6])) + ((out<br> + 7*(2*idxOut + 0))[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">  <span class='keyword'>return</span> lenTotal;</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">_tenInterpGeoLoxPolyLine(Nrrd *ngeod, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *numIter,</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">                         <span class='keyword'>const</span> <span class='keyword'>double</span> tenA[7], <span class='keyword'>const</span> <span class='keyword'>double</span> tenB[7],</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">                         <span class='keyword'>unsigned</span> <span class='keyword'>int</span> NN, <span class='keyword'>int</span> useK, <span class='keyword'>int</span> rotnoop,</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">                         tenInterpParm *tip) {</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_tenInterpGeoLoxPolyLine"</span>;</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">  Nrrd *nigrt, *ntt, *nss, *nsub;</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">  <span class='keyword'>double</span> *igrt, *geod, *tt, len, newlen;</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">  <span class='keyword'>if</span> (!(ngeod &amp;&amp; numIter &amp;&amp; tenA &amp;&amp; tenB)) {</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">  <span class='keyword'>if</span> (!(NN &gt;= 2)) {</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: # steps %u too small"</span>, me, NN);</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">  ntt = nrrdNew();</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">  airMopAdd(mop, ntt, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">  nss = nrrdNew();</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">  airMopAdd(mop, nss, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">  nigrt = nrrdNew();</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">  airMopAdd(mop, nigrt, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">  nsub = nrrdNew();</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">  airMopAdd(mop, nsub, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_va(ngeod, nrrdTypeDouble, 2,</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, 7)<span class='expansion'>((size_t)(7))</span></span>,</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, NN+1)<span class='expansion'>((size_t)(NN+1))</span></span>)</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">      || nrrdMaybeAlloc_va(ntt, nrrdTypeDouble, 2,</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, 7)<span class='expansion'>((size_t)(7))</span></span>,</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, 2*NN + 1)<span class='expansion'>((size_t)(2*NN + 1))</span></span>)</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">      || nrrdMaybeAlloc_va(nigrt, nrrdTypeDouble, 3,</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, 7)<span class='expansion'>((size_t)(7))</span></span>,</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, 6)<span class='expansion'>((size_t)(6))</span></span>,</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, 2*NN + 1)<span class='expansion'>((size_t)(2*NN + 1))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">    biffMovef(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate output"</span>, me);</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">  geod = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, ngeod-&gt;data)<span class='expansion'>((double *)(ngeod-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">  tt = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, ntt-&gt;data)<span class='expansion'>((double *)(ntt-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">  igrt = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nigrt-&gt;data)<span class='expansion'>((double *)(nigrt-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">  *numIter = 0;</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">  <span class='keyword'>if</span> (NN &gt; 14 &amp;&amp; tip-&gt;enableRecurse) {</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> subIter;</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">    <span class='keyword'>int</span> E;</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">    NrrdResampleContext *rsmc;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">    <span class='keyword'>double</span> kparm[3] = {1.0, 0.0, 0.5};</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">    <span class='comment'>/* recurse and find geodesic with smaller number of vertices */</span></td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">    <span class='keyword'>if</span> (_tenInterpGeoLoxPolyLine(nsub, &amp;subIter, tenA, tenB,</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">                                 NN/2, useK, rotnoop, tip)) {</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: problem with recursive call"</span>, me);</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">    <span class='comment'>/* upsample coarse geodesic to higher resolution */</span></td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">    rsmc = nrrdResampleContextNew();</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">    airMopAdd(mop, rsmc, (airMopper)nrrdResampleContextNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">    E = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleDefaultCenterSet(rsmc, nrrdCenterNode);</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleInputSet(rsmc, nsub);</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleKernelSet(rsmc, 0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleKernelSet(rsmc, 1, nrrdKernelTent, kparm);</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleSamplesSet(rsmc, 1, 2*NN + 1);</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleRangeFullSet(rsmc, 1);</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleBoundarySet(rsmc, nrrdBoundaryBleed);</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleTypeOutSet(rsmc, nrrdTypeDefault);</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleRenormalizeSet(rsmc, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">    <span class='keyword'>if</span> (!E) E |= nrrdResampleExecute(rsmc, ntt);</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">    <span class='keyword'>if</span> (E) {</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">      biffMovef(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: problem upsampling course solution"</span>, me);</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">    *numIter += subIter;</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">    <span class='comment'>/* initialize the path, including all the segment midpoints */</span></td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;=2*NN; ii++) {</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">      <span class='macro'>TEN_T_AFFINE(tt + 7*ii, 0, ii, 2*NN, tenA, tenB)<span class='expansion'>( (tt + 7*ii)[0] = ( ((double)((tenB)[0])-((tenA)[0]))*((double<br>)((ii))-((0))) / ((double)((2*NN))-((0))) + ((tenA)[0])), (tt<br> + 7*ii)[1] = ( ((double)((tenB)[1])-((tenA)[1]))*((double)((<br>ii))-((0))) / ((double)((2*NN))-((0))) + ((tenA)[1])), (tt + 7<br>*ii)[2] = ( ((double)((tenB)[2])-((tenA)[2]))*((double)((ii))<br>-((0))) / ((double)((2*NN))-((0))) + ((tenA)[2])), (tt + 7*ii<br>)[3] = ( ((double)((tenB)[3])-((tenA)[3]))*((double)((ii))-((<br>0))) / ((double)((2*NN))-((0))) + ((tenA)[3])), (tt + 7*ii)[4<br>] = ( ((double)((tenB)[4])-((tenA)[4]))*((double)((ii))-((0))<br>) / ((double)((2*NN))-((0))) + ((tenA)[4])), (tt + 7*ii)[5] =<br> ( ((double)((tenB)[5])-((tenA)[5]))*((double)((ii))-((0))) /<br> ((double)((2*NN))-((0))) + ((tenA)[5])), (tt + 7*ii)[6] = ( (<br>(double)((tenB)[6])-((tenA)[6]))*((double)((ii))-((0))) / ((double<br>)((2*NN))-((0))) + ((tenA)[6])))</span></span>;</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;=2*NN; ii++) {</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">    _tenInterpGeoLoxIGRT(igrt + 7*6*ii, tt + 7*ii, useK, rotnoop,</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">                         tip-&gt;minNorm);</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">  nrrdCopy(nss, ntt);</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">  newlen = tenInterpPathLength(ntt, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">  <span class='keyword'>do</span> {</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> lo, hi;</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">    <span class='keyword'>int</span> dd;</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">    len = newlen;</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">    <span class='keyword'>if</span> (0 == *numIter % 2) {</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">      lo = 1;</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">      hi = NN;</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">      dd = 1;</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">      lo = NN-1;</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">      hi = 0;</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">      dd = -1;</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">    <span class='keyword'>if</span> (tip-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: ======= iter = %u (NN=%u)\n"</span>, me, *numIter, NN);</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">    <span class='keyword'>for</span> (ii=lo; ii!=hi; ii+=dd) {</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">      <span class='keyword'>double</span> sclHack;</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">      sclHack = ii*4.0/NN - ii*ii*4.0/NN/NN;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">      <span class='keyword'>if</span> (_tenInterpGeoLoxRelaxOne(nss, ntt, nigrt, ii, rotnoop,</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">                                   sclHack*tip-&gt;convStep, tip)) {</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">        biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: problem on vert %u, iter %u\n"</span>, me, ii, *numIter);</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">    newlen = _tenPathSpacingEqualize(ntt, nss);</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">    <span class='comment'>/* try doing this less often */</span></td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;=2*NN; ii++) {</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">      _tenInterpGeoLoxIGRT(igrt + 7*6*ii, tt + 7*ii, useK, rotnoop,</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">                           tip-&gt;minNorm);</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">    *numIter += 1;</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">  } <span class='keyword'>while</span> ((0 == tip-&gt;maxIter || *numIter &lt; tip-&gt;maxIter)</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">           &amp;&amp; 2*<span class='macro'>AIR_ABS(newlen - len)<span class='expansion'>((newlen - len) &gt; 0.0f ? (newlen - len) : -(newlen - len))</span></span>/(newlen + len) &gt; tip-&gt;convEps);</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">  <span class='comment'>/* copy final result to output */</span></td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;=NN; ii++) {</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">    <span class='macro'>TEN_T_COPY(geod + 7*ii, tt + 7*2*ii)<span class='expansion'>( (geod + 7*ii)[0] = (tt + 7*2*ii)[0], (geod + 7*ii)[1] = (tt<br> + 7*2*ii)[1], (geod + 7*ii)[2] = (tt + 7*2*ii)[2], (geod + 7<br>*ii)[3] = (tt + 7*2*ii)[3], (geod + 7*ii)[4] = (tt + 7*2*ii)[<br>4], (geod + 7*ii)[5] = (tt + 7*2*ii)[5], (geod + 7*ii)[6] = (<br>tt + 7*2*ii)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">  <span class='comment'>/* values from outer-most recursion will stick */</span></td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">  tip-&gt;numIter = *numIter;</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">  tip-&gt;convFinal = 2*<span class='macro'>AIR_ABS(newlen - len)<span class='expansion'>((newlen - len) &gt; 0.0f ? (newlen - len) : -(newlen - len))</span></span>/(newlen + len);</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">tenInterpTwoDiscrete_d(Nrrd *nout,</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">                       <span class='keyword'>const</span> <span class='keyword'>double</span> tenA[7], <span class='keyword'>const</span> <span class='keyword'>double</span> tenB[7],</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">                       <span class='keyword'>int</span> ptype, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> num,</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">                       tenInterpParm *_tip) {</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpTwoDiscrete_d"</span>;</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">  <span class='keyword'>double</span> *out;</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii;</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">  tenInterpParm *tip;</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">  <span class='keyword'>if</span> (!nout) {</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">  <span class='keyword'>if</span> (airEnumValCheck(tenInterpType, ptype)) {</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: path type %d not a valid %s"</span>, me, ptype,</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">            tenInterpType-&gt;name);</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">  <span class='keyword'>if</span> (_tip) {</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">    tip = _tip;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">    tip = tenInterpParmNew();</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">    airMopAdd(mop, tip, (airMopper)tenInterpParmNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">  <span class='keyword'>if</span> (!( num &gt;= 2 )) {</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: need num &gt;= 2 (not %u)"</span>, me, num);</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_va(nout, nrrdTypeDouble, 2,</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, 7)<span class='expansion'>((size_t)(7))</span></span>,</td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, num)<span class='expansion'>((size_t)(num))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line">    biffMovef(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble allocating output"</span>, me);</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">  out = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nout-&gt;data)<span class='expansion'>((double *)(nout-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">  <span class='keyword'>if</span> (ptype == tenInterpTypeLinear</td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">      || ptype == tenInterpTypeLogLinear</td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">      || ptype == tenInterpTypeAffineInvariant</td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">      || ptype == tenInterpTypeWang</td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">      || ptype == tenInterpTypeQuatGeoLoxK</td></tr>
+<tr><td class="num" id="LN860">860</td><td class="line">      || ptype == tenInterpTypeQuatGeoLoxR</td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line">      || ptype == tenInterpTypeRThetaPhiLinear) {</td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line">    <span class='comment'>/* we have fast ways of doing interpolation</span></td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line">       <span class='comment'>between two tensors for these path types */</span></td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line">      <span class='comment'>/* yes, this is often doing a lot of needless recomputations. */</span></td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">      tenInterpTwo_d(out + 7*ii, tenA, tenB,</td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">                     ptype, (<span class='keyword'>double</span>)ii/(num-1), tip);</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line">  } <span class='keyword'>else</span> <span class='keyword'>if</span> (ptype == tenInterpTypeGeoLoxK</td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">             || ptype == tenInterpTypeGeoLoxR</td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line">             || ptype == tenInterpTypeLoxK</td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">             || ptype == tenInterpTypeLoxR) {</td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line">    <span class='comment'>/* we have slow iterative code for these */</span></td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> numIter;</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line">    <span class='keyword'>int</span> useK, rotnoop;</td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">    useK = (tenInterpTypeGeoLoxK == ptype</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">            || tenInterpTypeLoxK == ptype);</td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line">    rotnoop = (tenInterpTypeGeoLoxK == ptype</td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">               || tenInterpTypeGeoLoxR == ptype);</td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"!%s: useK = %d, rotnoop = %d\n"</span>, me, useK, rotnoop);</td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line">    <span class='keyword'>if</span> (_tenInterpGeoLoxPolyLine(nout, &amp;numIter,</td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">                                 tenA, tenB,</td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">                                 num, useK, rotnoop, tip)) {</td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: trouble finding path"</span>, me);</td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: sorry, interp for path %s not implemented"</span>, me,</td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line">             airEnumStr(tenInterpType, ptype));</td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line"><span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">tenInterpDistanceTwo_d(<span class='keyword'>const</span> <span class='keyword'>double</span> tenA[7], <span class='keyword'>const</span> <span class='keyword'>double</span> tenB[7],</td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line">                    <span class='keyword'>int</span> ptype, tenInterpParm *_tip) {</td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpDistanceTwo_d"</span>;</td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">  <span class='keyword'>char</span> *err;</td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">  tenInterpParm *tip;</td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line">  <span class='keyword'>double</span> ret, diff[7], logA[7], logB[7], invA[7], det, siA[7],</td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line">    mat1[9], mat2[9], mat3[9], logDiff[7];</td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">  Nrrd *npath;</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">  <span class='keyword'>if</span> (!( tenA &amp;&amp; tenB &amp;&amp; !airEnumValCheck(tenInterpType, ptype) )) {</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">  <span class='keyword'>switch</span> (ptype) {</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLinear:</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">    <span class='macro'>TEN_T_SUB(diff, tenA, tenB)<span class='expansion'>( (diff)[0] = ((tenA)[0] + (tenB)[0])/2.0, (diff)[1] = (tenA)<br>[1] - (tenB)[1], (diff)[2] = (tenA)[2] - (tenB)[2], (diff)[3]<br> = (tenA)[3] - (tenB)[3], (diff)[4] = (tenA)[4] - (tenB)[4], (<br>diff)[5] = (tenA)[5] - (tenB)[5], (diff)[6] = (tenA)[6] - (tenB<br>)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">    ret = <span class='macro'>TEN_T_NORM(diff)<span class='expansion'>(sqrt(( (diff)[1]*(diff)[1] + 2*(diff)[2]*(diff)[2] + 2*(diff<br>)[3]*(diff)[3] + (diff)[4]*(diff)[4] + 2*(diff)[5]*(diff)[5] +<br> (diff)[6]*(diff)[6] )))</span></span>;</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLogLinear:</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">    tenLogSingle_d(logA, tenA);</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line">    tenLogSingle_d(logB, tenB);</td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">    <span class='macro'>TEN_T_SUB(diff, logA, logB)<span class='expansion'>( (diff)[0] = ((logA)[0] + (logB)[0])/2.0, (diff)[1] = (logA)<br>[1] - (logB)[1], (diff)[2] = (logA)[2] - (logB)[2], (diff)[3]<br> = (logA)[3] - (logB)[3], (diff)[4] = (logA)[4] - (logB)[4], (<br>diff)[5] = (logA)[5] - (logB)[5], (diff)[6] = (logA)[6] - (logB<br>)[6])</span></span>;</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line">    ret = <span class='macro'>TEN_T_NORM(diff)<span class='expansion'>(sqrt(( (diff)[1]*(diff)[1] + 2*(diff)[2]*(diff)[2] + 2*(diff<br>)[3]*(diff)[3] + (diff)[4]*(diff)[4] + 2*(diff)[5]*(diff)[5] +<br> (diff)[6]*(diff)[6] )))</span></span>;</td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeAffineInvariant:</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">    <span class='macro'>TEN_T_INV(invA, tenA, det)<span class='expansion'>((det) = ( (tenA)[1]*((tenA)[4]*(tenA)[6] - (tenA)[5]*(tenA)[<br>5]) + (tenA)[2]*((tenA)[5]*(tenA)[3] - (tenA)[2]*(tenA)[6]) +<br> (tenA)[3]*((tenA)[2]*(tenA)[5] - (tenA)[3]*(tenA)[4])), (invA<br>)[0] = (tenA)[0], (invA)[1] = (((tenA)[4])*((tenA)[6]) - ((tenA<br>)[5])*((tenA)[5]))/(det), (invA)[2] = -(((tenA)[2])*((tenA)[6<br>]) - ((tenA)[5])*((tenA)[3]))/(det), (invA)[3] = (((tenA)[2])<br>*((tenA)[5]) - ((tenA)[4])*((tenA)[3]))/(det), (invA)[4] = ((<br>(tenA)[1])*((tenA)[6]) - ((tenA)[3])*((tenA)[3]))/(det), (invA<br>)[5] = -(((tenA)[1])*((tenA)[5]) - ((tenA)[2])*((tenA)[3]))/(<br>det), (invA)[6] = (((tenA)[1])*((tenA)[4]) - ((tenA)[2])*((tenA<br>)[2]))/(det))</span></span>;</td></tr>
+<tr><td class="num" id="LN927">927</td><td class="line">    tenSqrtSingle_d(siA, invA);</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">    <span class='macro'>TEN_T2M(mat1, tenB)<span class='expansion'>( (mat1)[0] = (tenB)[1], (mat1)[1] = (tenB)[2], (mat1)[2] = (<br>tenB)[3], (mat1)[3] = (tenB)[2], (mat1)[4] = (tenB)[4], (mat1<br>)[5] = (tenB)[5], (mat1)[6] = (tenB)[3], (mat1)[7] = (tenB)[5<br>], (mat1)[8] = (tenB)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">    <span class='macro'>TEN_T2M(mat2, siA)<span class='expansion'>( (mat2)[0] = (siA)[1], (mat2)[1] = (siA)[2], (mat2)[2] = (siA<br>)[3], (mat2)[3] = (siA)[2], (mat2)[4] = (siA)[4], (mat2)[5] =<br> (siA)[5], (mat2)[6] = (siA)[3], (mat2)[7] = (siA)[5], (mat2)<br>[8] = (siA)[6] )</span></span>;</td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line">    ell_3m_mul_d(mat3, mat1, mat2);</td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">    ell_3m_mul_d(mat1, mat2, mat3);</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">    <span class='macro'>TEN_M2T(diff, mat1)<span class='expansion'>( (diff)[1] = (mat1)[0], (diff)[2] = ((mat1)[1]+(mat1)[3])/2.0<br>, (diff)[3] = ((mat1)[2]+(mat1)[6])/2.0, (diff)[4] = (mat1)[4<br>], (diff)[5] = ((mat1)[5]+(mat1)[7])/2.0, (diff)[6] = (mat1)[<br>8] )</span></span>;</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">    tenLogSingle_d(logDiff, diff);</td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">    ret = <span class='macro'>TEN_T_NORM(logDiff)<span class='expansion'>(sqrt(( (logDiff)[1]*(logDiff)[1] + 2*(logDiff)[2]*(logDiff)[<br>2] + 2*(logDiff)[3]*(logDiff)[3] + (logDiff)[4]*(logDiff)[4] +<br> 2*(logDiff)[5]*(logDiff)[5] + (logDiff)[6]*(logDiff)[6] )))</span></span>;</td></tr>
+<tr><td class="num" id="LN935">935</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeGeoLoxK:</td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeGeoLoxR:</td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLoxK:</td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeLoxR:</td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeQuatGeoLoxK:</td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeQuatGeoLoxR:</td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line">    npath = nrrdNew();</td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line">    airMopAdd(mop, npath, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">    <span class='keyword'>if</span> (_tip) {</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">      tip = _tip;</td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line">      tip = tenInterpParmNew();</td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">      airMopAdd(mop, tip, (airMopper)tenInterpParmNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">    <span class='keyword'>if</span> (tenInterpTwoDiscrete_d(npath, tenA, tenB, ptype,</td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line">                               tip-&gt;numSteps, tip)) {</td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble computing path:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">    ret = tenInterpPathLength(npath, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line">    <span class='keyword'>if</span> (tip-&gt;lengthFancy) {</td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line">      tip-&gt;lengthShape = tenInterpPathLength(npath, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>,</td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line">                                             <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line">      tip-&gt;lengthOrient = tenInterpPathLength(npath, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>,</td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line">                                              <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line">  <span class='keyword'>case</span> tenInterpTypeWang:</td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: unimplemented %s %d!!!!\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN967">967</td><td class="line">            tenInterpType-&gt;name, ptype);</td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">    ret = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line"><span class='comment'>** actually, the input nrrds don't have to be 3D ...</span></td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line">tenInterpMulti3D(Nrrd *nout, <span class='keyword'>const</span> Nrrd *<span class='keyword'>const</span> *nin, <span class='keyword'>const</span> <span class='keyword'>double</span> *wght,</td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line">                 <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ninLen, <span class='keyword'>int</span> ptype, tenInterpParm *_tip) {</td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tenInterpMulti3D"</span>;</td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ninIdx;</td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line">  size_t II, NN;</td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">  <span class='keyword'>double</span> (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), (*ins)(<span class='keyword'>void</span> *, size_t, <span class='keyword'>double</span>),</td></tr>
+<tr><td class="num" id="LN986">986</td><td class="line">    *tbuff;</td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line">  tenInterpParm *tip;</td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">  <span class='comment'>/* allow NULL wght, to signify equal weighting */</span></td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line">  <span class='keyword'>if</span> (!( ninLen &gt; 0 )) {</td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: need at least 1 nin, not 0"</span>, me);</td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">  <span class='keyword'>if</span> (airEnumValCheck(tenInterpType, ptype)) {</td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: invalid %s %d"</span>, me,</td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">             tenInterpType-&gt;name, ptype);</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line">  <span class='keyword'>if</span> (tenTensorCheck(nin[0], nrrdTypeDefault, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>)) {</td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: first nrrd not a tensor array"</span>, me);</td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1009">1009</td><td class="line">  <span class='keyword'>if</span> (!( nrrdTypeFloat == nin[0]-&gt;type ||</td></tr>
+<tr><td class="num" id="LN1010">1010</td><td class="line">         nrrdTypeDouble == nin[0]-&gt;type )) {</td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: need type %s or %s (not %s) in first nrrd"</span>, me,</td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">             airEnumStr(nrrdType, nrrdTypeFloat),</td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line">             airEnumStr(nrrdType, nrrdTypeDouble),</td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">             airEnumStr(nrrdType, nin[0]-&gt;type));</td></tr>
+<tr><td class="num" id="LN1015">1015</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">  <span class='keyword'>for</span> (ninIdx=1; ninIdx&lt;ninLen; ninIdx++) {</td></tr>
+<tr><td class="num" id="LN1018">1018</td><td class="line">    <span class='keyword'>if</span> (tenTensorCheck(nin[ninIdx], nrrdTypeDefault, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>)) {</td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: nin[%u] not a tensor array"</span>, me, ninIdx);</td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line">    <span class='keyword'>if</span> (!nrrdSameSize(nin[0], nin[ninIdx], <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>)) {</td></tr>
+<tr><td class="num" id="LN1023">1023</td><td class="line">      biffMovef(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: nin[0] doesn't match nin[%u]"</span>, me, ninIdx);</td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line">    <span class='keyword'>if</span> (nin[0]-&gt;type != nin[ninIdx]-&gt;type) {</td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: nin[0] type (%s) != nin[%u] type (%s)"</span>, me,</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line">               airEnumStr(nrrdType, nin[0]-&gt;type),</td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line">               ninIdx, airEnumStr(nrrdType, nin[ninIdx]-&gt;type));</td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1033">1033</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1034">1034</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN1035">1035</td><td class="line">  <span class='keyword'>if</span> (nrrdCopy(nout, nin[0])) {</td></tr>
+<tr><td class="num" id="LN1036">1036</td><td class="line">    biffMovef(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't initialize output"</span>, me);</td></tr>
+<tr><td class="num" id="LN1037">1037</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">  <span class='keyword'>if</span> (_tip) {</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line">    tip = _tip;</td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line">    tip = tenInterpParmNew();</td></tr>
+<tr><td class="num" id="LN1043">1043</td><td class="line">    airMopAdd(mop, tip, (airMopper)tenInterpParmNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line">  tbuff = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, calloc(7*ninLen, <span class='keyword'>sizeof</span>(<span class='keyword'>double</span>)))<span class='expansion'>((double *)(calloc(7*ninLen, sizeof(double))))</span></span>;</td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line">  <span class='keyword'>if</span> (!tbuff) {</td></tr>
+<tr><td class="num" id="LN1047">1047</td><td class="line">    biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate tensor buff"</span>, me);</td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line">  ins = nrrdDInsert[nin[0]-&gt;type];</td></tr>
+<tr><td class="num" id="LN1051">1051</td><td class="line">  lup = nrrdDLookup[nin[0]-&gt;type];</td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line">  NN = nrrdElementNumber(nin[0])/7;</td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line">  <span class='keyword'>for</span> (II=0; II&lt;NN; II++) {</td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line">    <span class='keyword'>double</span> tenOut[7];</td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> tt;</td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line">    <span class='keyword'>for</span> (ninIdx=0; ninIdx&lt;ninLen; ninIdx++) {</td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line">      <span class='keyword'>for</span> (tt=0; tt&lt;7; tt++) {</td></tr>
+<tr><td class="num" id="LN1058">1058</td><td class="line">        tbuff[tt + 7*ninIdx] = lup(nin[ninIdx]-&gt;data, tt + 7*II);</td></tr>
+<tr><td class="num" id="LN1059">1059</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN1060">1060</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">    <span class='keyword'>if</span> (tenInterpN_d(tenOut, tbuff, wght, ninLen, ptype, tip)) {</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line">      <span class='keyword'>char</span> stmp[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">      biffAddf(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>, <span class='string_literal'>"%s: trouble on sample %s"</span>, me,</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">               airSprintSize_t(stmp, II));</td></tr>
+<tr><td class="num" id="LN1065">1065</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line">    <span class='keyword'>for</span> (tt=0; tt&lt;7; tt++) {</td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line">      ins(nout-&gt;data, tt + 7*II, tenOut[tt]);</td></tr>
+<tr><td class="num" id="LN1069">1069</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line">}</td></tr>
+</table></body></html>

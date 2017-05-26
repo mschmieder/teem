@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/pull/taskPull.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Potential leak of memory pointed to by 'task' -->
+
+<!-- BUGTYPE Memory leak -->
+
+<!-- BUGCATEGORY Memory Error -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/pull/taskPull.c -->
+
+<!-- FILENAME taskPull.c -->
+
+<!-- FUNCTIONNAME _pullTaskNew -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 532438d3c3abb51b6729c8cee3a1a9a1 -->
+
+<!-- BUGLINE 43 -->
+
+<!-- BUGCOLUMN 7 -->
+
+<!-- BUGPATHLENGTH 11 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/pull/taskPull.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 43, column 7</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'task'</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "pull.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privatePull.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line">pullTask *</td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">_pullTaskNew(pullContext *pctx, <span class='keyword'>int</span> threadIdx) {</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullTaskNew"</span>;</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  pullTask *task;</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii;</td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  pullPtrPtrUnion pppu;</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">  task = <span class='macro'>AIR_CALLOC(1, pullTask)<span class='expansion'>(pullTask*)(calloc((1), sizeof(pullTask)))</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:10ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'AIR_CALLOC':
+</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">  <span class='keyword'>if</span> (<span class="mrange">!task</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'task' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate task"</span>, me);</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">  task-&gt;pctx = pctx;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;pctx-&gt;volNum; ii++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    <span class='keyword'>if</span> (!(<span class="mrange">task-&gt;vol[ii]</span> = _pullVolumeCopy(pctx, pctx-&gt;vol[ii]))) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:11ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming  is null</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble copying vol %u/%u"</span>, me, ii, pctx-&gt;volNum);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'task'</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">      <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">  <span class='keyword'>if</span> (0) {</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">    gagePerVolume *pvl;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">    <span class='keyword'>const</span> <span class='keyword'>double</span> *ans;</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">    <span class='keyword'>double</span> pos[3];</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">    <span class='keyword'>int</span> gret;</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;pctx-&gt;volNum; ii++) {</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">      pvl = task-&gt;vol[ii]-&gt;gctx-&gt;pvl[0];</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">      printf(<span class='string_literal'>"!%s: vol[%u] query:\n"</span>, me, ii);</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">      gageQueryPrint(<span class='macro'>stdout<span class='expansion'>__stdoutp</span></span>, pvl-&gt;kind, pvl-&gt;query);</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">      ans = gageAnswerPointer(task-&gt;vol[ii]-&gt;gctx, pvl, gageSclValue);</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">      <span class='macro'>ELL_3V_SET(pos, 0.6, 0.6, 0.3)<span class='expansion'>((pos)[0] = (0.6), (pos)[1] = (0.6), (pos)[2] = (0.3))</span></span>;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">      gret = gageProbeSpace(task-&gt;vol[ii]-&gt;gctx, pos[0], pos[1], pos[2],</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">                            <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">      printf(<span class='string_literal'>"!%s: (%d) val(%g,%g,%g) = %g\n"</span>, me, gret,</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">             pos[0], pos[1], pos[2], *ans);</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">      <span class='macro'>ELL_3V_SET(pos, 0.5, 0.0, 0.0)<span class='expansion'>((pos)[0] = (0.5), (pos)[1] = (0.0), (pos)[2] = (0.0))</span></span>;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">      gret = gageProbeSpace(task-&gt;vol[ii]-&gt;gctx, pos[0], pos[1], pos[2],</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">                            <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">      printf(<span class='string_literal'>"!%s: (%d) val(%g,%g,%g) = %g\n"</span>, me, gret,</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">             pos[0], pos[1], pos[2], *ans);</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">  <span class='comment'>/* now set up all pointers for per-task pullInfos */</span></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;=<span class='macro'>PULL_INFO_MAX<span class='expansion'>23</span></span>; ii++) {</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    <span class='keyword'>const</span> pullVolume *vol;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">    <span class='keyword'>if</span> (pctx-&gt;ispec[ii]) {</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">      <span class='keyword'>if</span> (pullSourceGage == pctx-&gt;ispec[ii]-&gt;source) {</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">        vol = task-&gt;vol[pctx-&gt;ispec[ii]-&gt;volIdx];</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        task-&gt;ans[ii] = gageAnswerPointer(vol-&gt;gctx, vol-&gt;gpvl,</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">                                          pctx-&gt;ispec[ii]-&gt;item);</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">        <span class='keyword'>if</span> (pctx-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">          printf(<span class='string_literal'>"%s: task-&gt;ans[%u] = (%s) %p\n"</span>, me, ii,</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">                 vol-&gt;kind-&gt;name, <span class='macro'>AIR_CVOIDP(task-&gt;ans[ii])<span class='expansion'>((const void *)(task-&gt;ans[ii]))</span></span>);</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">        task-&gt;ans[ii] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">      task-&gt;ans[ii] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">  <span class='comment'>/* HEY: any idea why there is so little error checking in the below? */</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">  <span class='comment'>/* initialize to descent because that's what's needed for the end of point</span></td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">     <span class='comment'>initialization, when initial energy must be learned */</span></td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">  task-&gt;processMode = pullProcessModeDescent;</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">  task-&gt;probeSeedPreThreshOnly = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;threadNum &gt; 1) {</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    task-&gt;thread = airThreadNew();</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">  task-&gt;threadIdx = threadIdx;</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  task-&gt;rng = airRandMTStateNew(pctx-&gt;rngSeed + threadIdx);</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">  task-&gt;pointBuffer = pullPointNew(pctx);</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">  pctx-&gt;idtagNext = 0; <span class='comment'>/* because pullPointNew incremented it */</span></td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">  task-&gt;neighPoint = <span class='macro'>AIR_CAST(pullPoint **, calloc(_PULL_NEIGH_MAXNUM,<span class='expansion'>((pullPoint **)(calloc(4096, sizeof(pullPoint*))))</span></span></td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">                                                   <span class='keyword'><span class='macro'>sizeof</span>(pullPoint*)))<span class='expansion'>((pullPoint **)(calloc(4096, sizeof(pullPoint*))))</span></span>;</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">  task-&gt;addPoint = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  task-&gt;addPointNum = 0;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">  pppu.points = &amp;(task-&gt;addPoint);</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">  task-&gt;addPointArr = airArrayNew(pppu.v, &amp;(task-&gt;addPointNum),</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                                  <span class='keyword'>sizeof</span>(pullPoint*),</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                                  <span class='comment'>/* not exactly the right semantics . . . */</span></td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                                  <span class='macro'>PULL_POINT_NEIGH_INCR<span class='expansion'>16</span></span>);</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">  task-&gt;nixPoint = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">  task-&gt;nixPointNum = 0;</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">  pppu.points = &amp;(task-&gt;nixPoint);</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  task-&gt;nixPointArr = airArrayNew(pppu.v, &amp;(task-&gt;nixPointNum),</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                                  <span class='keyword'>sizeof</span>(pullPoint*),</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                                  <span class='comment'>/* not exactly the right semantics . . . */</span></td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">                                  <span class='macro'>PULL_POINT_NEIGH_INCR<span class='expansion'>16</span></span>);</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">  task-&gt;returnPtr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">  task-&gt;stuckNum = 0;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">  <span class='keyword'>return</span> task;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">pullTask *</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">_pullTaskNix(pullTask *task) {</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii;</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">  <span class='keyword'>if</span> (task) {</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">    <span class='keyword'>for</span> (ii=0; ii&lt;task-&gt;pctx-&gt;volNum; ii++) {</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">      task-&gt;vol[ii] = pullVolumeNix(task-&gt;vol[ii]);</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    <span class='keyword'>if</span> (task-&gt;pctx-&gt;threadNum &gt; 1) {</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">      task-&gt;thread = airThreadNix(task-&gt;thread);</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">    task-&gt;rng = airRandMTStateNix(task-&gt;rng);</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">    task-&gt;pointBuffer = pullPointNix(task-&gt;pointBuffer);</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    airFree(task-&gt;neighPoint);</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">    task-&gt;addPointArr = airArrayNuke(task-&gt;addPointArr);</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">    task-&gt;nixPointArr = airArrayNuke(task-&gt;nixPointArr);</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">    airFree(task);</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line"><span class='comment'>** _pullTaskSetup sets:</span></td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line"><span class='comment'>**** pctx-&gt;task</span></td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line"><span class='comment'>**** pctx-&gt;task[]</span></td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">_pullTaskSetup(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullTaskSetup"</span>;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> tidx;</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">  pctx-&gt;task = (pullTask **)calloc(pctx-&gt;threadNum, <span class='keyword'>sizeof</span>(pullTask *));</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">  <span class='keyword'>if</span> (!(pctx-&gt;task)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate array of tasks"</span>, me);</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">  <span class='keyword'>for</span> (tidx=0; tidx&lt;pctx-&gt;threadNum; tidx++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">    <span class='keyword'>if</span> (pctx-&gt;verbose) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">      printf(<span class='string_literal'>"%s: creating task %u/%u\n"</span>, me, tidx, pctx-&gt;threadNum);</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">    pctx-&gt;task[tidx] = <span class="mrange">_pullTaskNew(pctx, tidx)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Calling '_pullTaskNew'</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">    <span class='keyword'>if</span> (!(pctx-&gt;task[tidx])) {</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate task %d"</span>, me, tidx);</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">_pullTaskFinish(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> tidx;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  <span class='keyword'>for</span> (tidx=0; tidx&lt;pctx-&gt;threadNum; tidx++) {</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">    pctx-&gt;task[tidx] = _pullTaskNix(pctx-&gt;task[tidx]);</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">  airFree(pctx-&gt;task);</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">  pctx-&gt;task = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">}</td></tr>
+</table></body></html>

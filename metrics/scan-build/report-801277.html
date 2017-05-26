@@ -1,0 +1,610 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/pull/popcntl.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'newpnt' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/pull/popcntl.c -->
+
+<!-- FILENAME popcntl.c -->
+
+<!-- FUNCTIONNAME _pullPointProcessAdding -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 4249f8b51a3c43900899597042db08cb -->
+
+<!-- BUGLINE 292 -->
+
+<!-- BUGCOLUMN 5 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/pull/popcntl.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 292, column 5</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'newpnt' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "pull.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "privatePull.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">_pullPointProcessNeighLearn(pullTask *task, pullBin *bin, pullPoint *point) {</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line">  <span class='comment'>/* sneaky: we just learn (and discard) the energy, and this function</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">     <span class='comment'>will do the work of learning the neighbors */</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">  _pullEnergyFromPoints(task, bin, point, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">_pointEnergyOfNeighbors(pullTask *task, pullBin *bin, pullPoint *point,</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">                        <span class='keyword'>double</span> *fracNixed) {</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">  <span class='keyword'>double</span> enr;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii, xx;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">  pullPoint *her;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">  enr = 0;</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">  xx = 0;</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;point-&gt;neighPointNum; ii++) {</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">    her = point-&gt;neighPoint[ii];</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">    <span class='keyword'>if</span> (her-&gt;status &amp; <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>) {</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">      xx += 1;</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">      enr += _pullEnergyFromPoints(task, bin, her, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">  *fracNixed = (point-&gt;neighPointNum</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">                ? <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, xx)<span class='expansion'>((double)(xx))</span></span>/point-&gt;neighPointNum</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">                : 0);</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">  <span class='keyword'>return</span> enr;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">_pullPointProcessAdding(pullTask *task, pullBin *bin, pullPoint *point) {</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullPointProcessAdding"</span>;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> npi, iter, api;</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">  <span class='keyword'>double</span> noffavg[4], npos[4], enrWith, enrWithout,</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">    fracNixed, newSpcDist, tmp;</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">  pullPoint *newpnt;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">  <span class='keyword'>int</span> E;</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">  task-&gt;pctx-&gt;count[pullCountAdding] += 1;</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">  <span class='keyword'>if</span> (point-&gt;neighPointNum &amp;&amp; task-&gt;pctx-&gt;targetDim</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">      &amp;&amp; task-&gt;pctx-&gt;flag.popCntlEnoughTest) {</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> plenty, tardim;</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">    tardim = task-&gt;pctx-&gt;targetDim;</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">    <span class='keyword'>if</span> (task-&gt;pctx-&gt;flag.zeroZ &amp;&amp; tardim &gt; 1) {</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">      <span class='comment'>/* GLK unsure of tardim == 1 logic here */</span></td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">      tardim -= 1;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">    plenty = (1 == tardim</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">              ? 3</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">              : (2 == tardim</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">                 ? 7</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">                 : (3 == tardim</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">                    ? 13 <span class='comment'>/* = 1 + 12</span></td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">                            <span class='comment'>= 1 + coordination number of 3D sphere packing */</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">                    : 0 <span class='comment'>/* shouldn't get here */</span>)));</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">    <span class='comment'>if (0 == (point-&gt;idtag % 100)) {</span></td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">      <span class='comment'>printf("!%s: #num %d &gt;?= plenty %d\n", me, point-&gt;neighPointNum, plenty);</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">    <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">    <span class='keyword'>if</span> (point-&gt;neighPointNum &gt;= plenty) {</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">      <span class='comment'>/* there's little chance that adding points will reduce energy */</span></td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  <span class='comment'>printf("!%s: point-&gt;pos = (%g,%g,%g,%g)\n", me,</span></td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">         <span class='comment'>point-&gt;pos[0], point-&gt;pos[1], point-&gt;pos[2], point-&gt;pos[3]);</span></td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">  <span class='comment'>printf("!%s: point-&gt;neighPointNum = %u\n", me,</span></td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">         <span class='comment'>point-&gt;neighPointNum);</span></td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">  <span class='comment'>printf("!%s: task-&gt;pctx-&gt;targetDim = %u\n", me,</span></td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">         <span class='comment'>task-&gt;pctx-&gt;targetDim);</span></td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  <span class='comment'>printf("!%s: task-&gt;pctx-&gt;flag.popCntlEnoughTest = %d\n", me,</span></td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">         <span class='comment'>task-&gt;pctx-&gt;flag.popCntlEnoughTest);</span></td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">  <span class='macro'>ELL_4V_SET(noffavg, 0, 0, 0, 0)<span class='expansion'>((noffavg)[0] = (0), (noffavg)[1] = (0), (noffavg)[2] = (0), (<br>noffavg)[3] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">  <span class='keyword'>for</span> (npi=0; npi&lt;point-&gt;neighPointNum; npi++) {</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">    <span class='keyword'>double</span> off[4];</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    <span class='macro'>ELL_4V_SUB(off, point-&gt;pos, point-&gt;neighPoint[npi]-&gt;pos)<span class='expansion'>((off)[0] = (point-&gt;pos)[0] - (point-&gt;neighPoint[npi]-&gt;<br>pos)[0], (off)[1] = (point-&gt;pos)[1] - (point-&gt;neighPoint<br>[npi]-&gt;pos)[1], (off)[2] = (point-&gt;pos)[2] - (point-&gt;<br>neighPoint[npi]-&gt;pos)[2], (off)[3] = (point-&gt;pos)[3] - (<br>point-&gt;neighPoint[npi]-&gt;pos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">    <span class='comment'>/* normalize the offset */</span></td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">    <span class='macro'>ELL_3V_SCALE(off, 1/task-&gt;pctx-&gt;sysParm.radiusSpace, off)<span class='expansion'>((off)[0] = (1/task-&gt;pctx-&gt;sysParm.radiusSpace)*(off)[0<br>], (off)[1] = (1/task-&gt;pctx-&gt;sysParm.radiusSpace)*(off)<br>[1], (off)[2] = (1/task-&gt;pctx-&gt;sysParm.radiusSpace)*(off<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">    <span class='keyword'>if</span> (task-&gt;pctx-&gt;haveScale) {</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">      off[3] /= task-&gt;pctx-&gt;sysParm.radiusScale;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">    <span class='macro'>ELL_4V_INCR(noffavg, off)<span class='expansion'>((noffavg)[0] += (off)[0], (noffavg)[1] += (off)[1], (noffavg<br>)[2] += (off)[2], (noffavg)[3] += (off)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">  <span class='keyword'>if</span> (point-&gt;neighPointNum) {</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">    <span class='comment'>if (0 == (point-&gt;idtag % 100)) {</span></td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">      <span class='comment'>printf("%s: len(offavg) %g &gt;?= thresh %g\n", me,</span></td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">             <span class='comment'>ELL_4V_LEN(noffavg)/point-&gt;neighPointNum,</span></td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">             <span class='comment'>_PULL_NEIGH_OFFSET_SUM_THRESH);</span></td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">    <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>ELL_4V_LEN(noffavg)<span class='expansion'>(sqrt((((noffavg))[0]*((noffavg))[0] + ((noffavg))[1]*((noffavg<br>))[1] + ((noffavg))[2]*((noffavg))[2] + ((noffavg))[3]*((noffavg<br>))[3])))</span></span>/point-&gt;neighPointNum</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">        &lt; <span class='macro'>_PULL_NEIGH_OFFSET_SUM_THRESH<span class='expansion'>0.2</span></span>) {</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">      <span class='comment'>/* we have neighbors, and they seem to be balanced well enough;</span></td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">         <span class='comment'>don't try to add */</span></td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;energySpecR-&gt;energy-&gt;well(&amp;newSpcDist,</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                                            task-&gt;pctx-&gt;energySpecR-&gt;parm)) {</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    <span class='comment'>/* HEY: if we don't actually have a well, what is the point of</span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">       <span class='comment'>guessing a new distance? */</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">    newSpcDist = <span class='macro'>_PULL_NEWPNT_DIST<span class='expansion'>0.6</span></span>;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">  <span class='comment'>/* compute offset (normalized) direction from current point location */</span></td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">  <span class='keyword'>if</span> (!point-&gt;neighPointNum) {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">    <span class='comment'>/* we had no neighbors, have to pretend like we did */</span></td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">    airNormalRand_r(noffavg + 0, noffavg + 1, task-&gt;rng);</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">    airNormalRand_r(noffavg + 2, noffavg + 3, task-&gt;rng);</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">    <span class='keyword'>if</span> (!task-&gt;pctx-&gt;flag.zeroZ) {</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">      noffavg[2] = 0;</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">    <span class='keyword'>if</span> (!task-&gt;pctx-&gt;haveScale) {</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">      noffavg[3] = 0;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;constraint) {</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">    <span class='keyword'>double</span> proj[9], tmpvec[3];</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">    _pullConstraintTangent(task, point, proj);</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">    <span class='macro'>ELL_3MV_MUL(tmpvec, proj, noffavg)<span class='expansion'>((tmpvec)[0] = (proj)[0]*(noffavg)[0] + (proj)[1]*(noffavg)[1<br>] + (proj)[2]*(noffavg)[2], (tmpvec)[1] = (proj)[3]*(noffavg)<br>[0] + (proj)[4]*(noffavg)[1] + (proj)[5]*(noffavg)[2], (tmpvec<br>)[2] = (proj)[6]*(noffavg)[0] + (proj)[7]*(noffavg)[1] + (proj<br>)[8]*(noffavg)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">    <span class='macro'>ELL_3V_COPY(noffavg, tmpvec)<span class='expansion'>((noffavg)[0] = (tmpvec)[0], (noffavg)[1] = (tmpvec)[1], (noffavg<br>)[2] = (tmpvec)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">  <span class='macro'>ELL_4V_NORM(noffavg, noffavg, tmp)<span class='expansion'>(tmp = (sqrt((((noffavg))[0]*((noffavg))[0] + ((noffavg))[1]*<br>((noffavg))[1] + ((noffavg))[2]*((noffavg))[2] + ((noffavg))[<br>3]*((noffavg))[3]))), ((noffavg)[0] = (noffavg)[0]*1.0/tmp, (<br>noffavg)[1] = (noffavg)[1]*1.0/tmp, (noffavg)[2] = (noffavg)[<br>2]*1.0/tmp, (noffavg)[3] = (noffavg)[3]*1.0/tmp))</span></span>;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">  <span class='macro'>ELL_3V_SCALE(noffavg, task-&gt;pctx-&gt;sysParm.radiusSpace, noffavg)<span class='expansion'>((noffavg)[0] = (task-&gt;pctx-&gt;sysParm.radiusSpace)*(noffavg<br>)[0], (noffavg)[1] = (task-&gt;pctx-&gt;sysParm.radiusSpace)*<br>(noffavg)[1], (noffavg)[2] = (task-&gt;pctx-&gt;sysParm.radiusSpace<br>)*(noffavg)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">  noffavg[3] *= task-&gt;pctx-&gt;sysParm.radiusScale;</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">  <span class='macro'>ELL_4V_SCALE(noffavg, newSpcDist, noffavg)<span class='expansion'>((noffavg)[0] = (noffavg)[0]*newSpcDist, (noffavg)[1] = (noffavg<br>)[1]*newSpcDist, (noffavg)[2] = (noffavg)[2]*newSpcDist, (noffavg<br>)[3] = (noffavg)[3]*newSpcDist)</span></span>;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">  <span class='comment'>/* set new point location */</span></td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">  <span class='macro'>ELL_4V_ADD2(npos, noffavg, point-&gt;pos)<span class='expansion'>((npos)[0] = (noffavg)[0] + (point-&gt;pos)[0], (npos)[1] = (<br>noffavg)[1] + (point-&gt;pos)[1], (npos)[2] = (noffavg)[2] + (<br>point-&gt;pos)[2], (npos)[3] = (noffavg)[3] + (point-&gt;pos)<br>[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">  <span class='comment'>printf("!%s: new test pos @ (%g,%g,%g,%g)\n", me,</span></td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">         <span class='comment'>npos[0], npos[1], npos[2], npos[3]);</span></td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">  <span class='keyword'>if</span> (!_pullInsideBBox(task-&gt;pctx, npos)) {</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">    <span class='keyword'>if</span> (task-&gt;pctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">      printf(<span class='string_literal'>"%s: new pnt would start (%g,%g,%g,%g) outside bbox, nope\n"</span>,</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">             me, npos[0], npos[1], npos[2], npos[3]);</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">  <span class='comment'>/* initial pos is good, now we start getting serious */</span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  newpnt = pullPointNew(task-&gt;pctx);</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">  <span class='keyword'>if</span> (!newpnt) {</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't spawn new point from %u"</span>, me, point-&gt;idtag);</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">  <span class='macro'>ELL_4V_COPY(newpnt-&gt;pos, npos)<span class='expansion'>((newpnt-&gt;pos)[0] = (npos)[0], (newpnt-&gt;pos)[1] = (npos<br>)[1], (newpnt-&gt;pos)[2] = (npos)[2], (newpnt-&gt;pos)[3] = (<br>npos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">  <span class='comment'>/* set status to indicate this is an unbinned point, with no</span></td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">     <span class='comment'>knowledge of its neighbors */</span></td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">  newpnt-&gt;status |= <span class='macro'>PULL_STATUS_NEWBIE_BIT<span class='expansion'>(1&lt;&lt; 2)</span></span>;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">  <span class='comment'>/* satisfy constraint if needed */</span></td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;constraint) {</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">    <span class='keyword'>int</span> constrFail;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">    <span class='keyword'>if</span> (_pullConstraintSatisfy(task, newpnt,</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">                               <span class='macro'>_PULL_CONSTRAINT_TRAVEL_MAX<span class='expansion'>2</span></span>,</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">                               &amp;constrFail)) {</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: on newbie point %u (spawned from %u)"</span>, me,</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">               newpnt-&gt;idtag, point-&gt;idtag);</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">      pullPointNix(newpnt); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">    <span class='keyword'>if</span> (constrFail) {</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">      <span class='comment'>/* constraint satisfaction failed, which isn't an error for us,</span></td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">         <span class='comment'>we just don't try to add this point.  Can do immediate nix</span></td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">         <span class='comment'>because no neighbors know about this point. */</span></td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">      pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">    <span class='keyword'>if</span> (!_pullInsideBBox(task-&gt;pctx, newpnt-&gt;pos)) {</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">      <span class='keyword'>if</span> (task-&gt;pctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">        printf(<span class='string_literal'>"%s: post constr newpnt %u (%g,%g,%g,%g) outside bbox; nope\n"</span>,</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">               me, newpnt-&gt;idtag, newpnt-&gt;pos[0], newpnt-&gt;pos[1],</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">               newpnt-&gt;pos[2], newpnt-&gt;pos[3]);</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">      newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">  <span class='comment'>printf("!%s: new test pos @ (%g,%g,%g,%g)\n", me,</span></td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">         <span class='comment'>newpnt-&gt;pos[0], newpnt-&gt;pos[1], newpnt-&gt;pos[2], newpnt-&gt;pos[3]);</span></td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">  <span class='comment'>/* do some descent, on this point only, which (HACK!) we do by</span></td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">     <span class='comment'>changing the per-task process mode . . . */</span></td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">  task-&gt;processMode = pullProcessModeDescent;</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">  E = 0;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">  <span class='keyword'>for</span> (iter=0; iter&lt;task-&gt;pctx-&gt;iterParm.addDescent; iter++) {</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">    <span class='keyword'>double</span> diff[4];</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">    <span class='keyword'>if</span> (!E) E |= _pullPointProcessDescent(task, bin, newpnt,</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">                                          <span class='comment'>/* ignoreImage; actually it is</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">                                           <span class='comment'>this use which motivated the</span></td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">                                           <span class='comment'>creation of ignoreImage */</span></td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">                                          <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">    <span class='keyword'>if</span> (newpnt-&gt;status &amp; <span class='macro'>PULL_STATUS_STUCK_BIT<span class='expansion'>(1&lt;&lt; 1)</span></span>) {</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">      <span class='keyword'>if</span> (task-&gt;pctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">        printf(<span class='string_literal'>"%s: possible newpnt %u stuck @ iter %u; nope\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">               newpnt-&gt;idtag, iter);</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">      newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">      <span class='comment'>/* if we don't change the mode back, then pullBinProcess() won't</span></td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">         <span class='comment'>know to try adding for the rest of the bins it sees, bad HACK */</span></td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">      task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">    <span class='keyword'>if</span> (!_pullInsideBBox(task-&gt;pctx, newpnt-&gt;pos)) {</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">      <span class='keyword'>if</span> (task-&gt;pctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">        printf(<span class='string_literal'>"%s: newpnt %u went (%g,%g,%g,%g) outside bbox; nope\n"</span>,</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">               me, newpnt-&gt;idtag, newpnt-&gt;pos[0], newpnt-&gt;pos[1],</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">               newpnt-&gt;pos[2], newpnt-&gt;pos[3]);</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">      newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">      task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">    <span class='macro'>ELL_4V_SUB(diff, newpnt-&gt;pos, point-&gt;pos)<span class='expansion'>((diff)[0] = (newpnt-&gt;pos)[0] - (point-&gt;pos)[0], (diff)<br>[1] = (newpnt-&gt;pos)[1] - (point-&gt;pos)[1], (diff)[2] = (<br>newpnt-&gt;pos)[2] - (point-&gt;pos)[2], (diff)[3] = (newpnt-&gt;<br>pos)[3] - (point-&gt;pos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">    <span class='macro'>ELL_3V_SCALE(diff, 1/task-&gt;pctx-&gt;sysParm.radiusSpace, diff)<span class='expansion'>((diff)[0] = (1/task-&gt;pctx-&gt;sysParm.radiusSpace)*(diff)<br>[0], (diff)[1] = (1/task-&gt;pctx-&gt;sysParm.radiusSpace)*(diff<br>)[1], (diff)[2] = (1/task-&gt;pctx-&gt;sysParm.radiusSpace)*(<br>diff)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">    diff[3] /= task-&gt;pctx-&gt;sysParm.radiusScale;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>ELL_4V_LEN(diff)<span class='expansion'>(sqrt((((diff))[0]*((diff))[0] + ((diff))[1]*((diff))[1] + ((<br>diff))[2]*((diff))[2] + ((diff))[3]*((diff))[3])))</span></span> &gt; <span class='macro'>_PULL_NEWPNT_STRAY_DIST<span class='expansion'>1.3</span></span>) {</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">      <span class='keyword'>if</span> (task-&gt;pctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        printf(<span class='string_literal'>"%s: newpnt %u went too far %g from old point %u; nope\n"</span>,</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">               me, newpnt-&gt;idtag, <span class='macro'>ELL_4V_LEN(diff)<span class='expansion'>(sqrt((((diff))[0]*((diff))[0] + ((diff))[1]*((diff))[1] + ((<br>diff))[2]*((diff))[2] + ((diff))[3]*((diff))[3])))</span></span>, point-&gt;idtag);</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">      newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">      task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">    <span class='comment'>/* still okay to continue descending */</span></td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">    newpnt-&gt;stepEnergy *= task-&gt;pctx-&gt;sysParm.opporStepScale;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">  <span class='comment'>printf("!%s: new test pos @ (%g,%g,%g,%g)\n", me,</span></td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">         <span class='comment'>newpnt-&gt;pos[0], newpnt-&gt;pos[1], newpnt-&gt;pos[2], newpnt-&gt;pos[3]);</span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">  <span class='comment'>{</span></td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">    <span class='comment'>double posdiff[4];</span></td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">    <span class='comment'>ELL_4V_SUB(posdiff, newpnt-&gt;pos, point-&gt;pos);</span></td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">    <span class='comment'>printf("!%s:      at dist %g\n", me, ELL_4V_LEN(posdiff));</span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">  <span class='comment'>/* now that newbie point is final test location, see if it meets</span></td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">     <span class='comment'>the live thresh, if there is one */</span></td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;ispec[pullInfoLiveThresh]</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">      &amp;&amp; 0 &gt; pullPointScalar(task-&gt;pctx, newpnt, pullInfoLiveThresh,</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">    <span class='comment'>/* didn't meet threshold */</span></td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">    newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">    task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;ispec[pullInfoLiveThresh2] <span class='comment'>/* HEY: copy &amp; paste */</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">      &amp;&amp; 0 &gt; pullPointScalar(task-&gt;pctx, newpnt, pullInfoLiveThresh2,</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">    <span class='comment'>/* didn't meet threshold */</span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">    newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">    task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;ispec[pullInfoLiveThresh3] <span class='comment'>/* HEY: copy &amp; paste */</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">      &amp;&amp; 0 &gt; pullPointScalar(task-&gt;pctx, newpnt, pullInfoLiveThresh3,</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">    <span class='comment'>/* didn't meet threshold */</span></td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">    newpnt = <span class="mrange">pullPointNix(newpnt)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:5ex">Value stored to 'newpnt' is never read</div></td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">    task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">  <span class='comment'>/* see if the new point should be nixed because its at a volume edge */</span></td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;flag.nixAtVolumeEdgeSpace</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">      &amp;&amp; (newpnt-&gt;status &amp; <span class='macro'>PULL_STATUS_EDGE_BIT<span class='expansion'>(1&lt;&lt; 4)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">    newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">    task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">  <span class='comment'>/* no problem with live thresh, test energy by first learn neighbors */</span></td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">  <span class='comment'>/* we have to add newpnt to task's add queue, just so that its neighbors</span></td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">     <span class='comment'>can see it as a possible neighbor */</span></td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">  api = airArrayLenIncr(task-&gt;addPointArr, 1);</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">  task-&gt;addPoint[api] = newpnt;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  task-&gt;processMode = pullProcessModeNeighLearn;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  _pullEnergyFromPoints(task, bin, newpnt, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">  <span class='comment'>/* and teach the neighbors their neighbors (possibly including newpnt) */</span></td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">  <span class='keyword'>for</span> (npi=0; npi&lt;newpnt-&gt;neighPointNum; npi++) {</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">    _pullEnergyFromPoints(task, bin, newpnt-&gt;neighPoint[npi], <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  <span class='comment'>/* now back to the actual mode we came here with */</span></td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">  task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">  enrWith = (_pullEnergyFromPoints(task, bin, newpnt, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">             + _pointEnergyOfNeighbors(task, bin, newpnt, &amp;fracNixed));</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  newpnt-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;  <span class='comment'>/* turn nixme on */</span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">  enrWithout = _pointEnergyOfNeighbors(task, bin, newpnt, &amp;fracNixed);</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">  newpnt-&gt;status &amp;= ~<span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>; <span class='comment'>/* turn nixme off */</span></td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">  <span class='keyword'>if</span> (enrWith &lt; enrWithout) {</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">    <span class='comment'>/* energy is clearly lower *with* newpnt, so we want to add it, which</span></td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">       <span class='comment'>means keeping it in the add queue where it already is */</span></td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">    <span class='keyword'>if</span> (task-&gt;pctx-&gt;logAdd) {</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">      <span class='keyword'>double</span> posdiff[4];</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">      <span class='macro'>ELL_4V_SUB(posdiff, newpnt-&gt;pos, point-&gt;pos)<span class='expansion'>((posdiff)[0] = (newpnt-&gt;pos)[0] - (point-&gt;pos)[0], (posdiff<br>)[1] = (newpnt-&gt;pos)[1] - (point-&gt;pos)[1], (posdiff)[2]<br> = (newpnt-&gt;pos)[2] - (point-&gt;pos)[2], (posdiff)[3] = (<br>newpnt-&gt;pos)[3] - (point-&gt;pos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">      fprintf(task-&gt;pctx-&gt;logAdd, <span class='string_literal'>"%u %g %g %g %g %g %g\n"</span>, newpnt-&gt;idtag,</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">              <span class='macro'>ELL_3V_LEN(posdiff)<span class='expansion'>(sqrt((((posdiff))[0]*((posdiff))[0] + ((posdiff))[1]*((posdiff<br>))[1] + ((posdiff))[2]*((posdiff))[2])))</span></span>/task-&gt;pctx-&gt;sysParm.radiusSpace,</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">              <span class='macro'>AIR_ABS(posdiff[3])<span class='expansion'>((posdiff[3]) &gt; 0.0f ? (posdiff[3]) : -(posdiff[3]))</span></span>/task-&gt;pctx-&gt;sysParm.radiusScale,</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">              newpnt-&gt;pos[0], newpnt-&gt;pos[1], newpnt-&gt;pos[2], newpnt-&gt;pos[3]);</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">    <span class='comment'>/* adding point is not an improvement, remove it from the add queue */</span></td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">    airArrayLenIncr(task-&gt;addPointArr, -1);</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">    <span class='comment'>/* ugh, have to signal to neighbors that its no longer their neighbor.</span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">       <span class='comment'>HEY this is the part that is totally screwed with multiple threads */</span></td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">    task-&gt;processMode = pullProcessModeNeighLearn;</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">    newpnt-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">    <span class='keyword'>for</span> (npi=0; npi&lt;newpnt-&gt;neighPointNum; npi++) {</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">      _pullEnergyFromPoints(task, bin, newpnt-&gt;neighPoint[npi], <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">    task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">    newpnt = pullPointNix(newpnt);</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">_pullPointProcessNixing(pullTask *task, pullBin *bin, pullPoint *point) {</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullPointProcessNixing"</span>;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">  <span class='keyword'>double</span> enrWith, enrNeigh, enrWithout, fracNixed;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">  task-&gt;pctx-&gt;count[pullCountNixing] += 1;</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">  <span class='keyword'>if</span> (0 &amp;&amp; 289 == task-&gt;pctx-&gt;iter) {</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"!%s(%04u): hello lthr %p -&gt; %g %g %g\n"</span>, me, point-&gt;idtag,</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">            task-&gt;pctx-&gt;ispec[pullInfoLiveThresh],</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">            pullPointScalar(task-&gt;pctx, point, pullInfoLiveThresh, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>),</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">            point-&gt;pos[0], point-&gt;pos[1]</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">            );</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">  <span class='comment'>/* if there's a live thresh, do we meet it? */</span></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;ispec[pullInfoLiveThresh]</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">      &amp;&amp; 0 &gt; pullPointScalar(task-&gt;pctx, point, pullInfoLiveThresh,</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">    point-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">  <span class='comment'>/* HEY copy &amp; paste */</span></td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;ispec[pullInfoLiveThresh2]</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">      &amp;&amp; 0 &gt; pullPointScalar(task-&gt;pctx, point, pullInfoLiveThresh2,</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">    point-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">  <span class='comment'>/* HEY copy &amp; paste */</span></td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">  <span class='keyword'>if</span> (task-&gt;pctx-&gt;ispec[pullInfoLiveThresh3]</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">      &amp;&amp; 0 &gt; pullPointScalar(task-&gt;pctx, point, pullInfoLiveThresh3,</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">    point-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">  <span class='comment'>/* if many neighbors have been nixed, then system is far from convergence,</span></td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">     <span class='comment'>so energy is not a very meaningful guide to whether to nix this point</span></td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">     <span class='comment'>NOTE that we use this function to *learn* fracNixed */</span></td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">  enrNeigh = _pointEnergyOfNeighbors(task, bin, point, &amp;fracNixed);</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">  <span class='keyword'>if</span> (fracNixed &lt; task-&gt;pctx-&gt;sysParm.fracNeighNixedMax) {</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">    <span class='comment'>/* is energy lower without us around? */</span></td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">    enrWith = enrNeigh + _pullEnergyFromPoints(task, bin, point, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">    point-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;    <span class='comment'>/* turn nixme on */</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">    enrWithout = _pointEnergyOfNeighbors(task, bin, point, &amp;fracNixed);</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">    <span class='keyword'>if</span> (enrWith &lt;= enrWithout) {</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">      <span class='comment'>/* Energy isn't distinctly lowered without the point, so keep it;</span></td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">         <span class='comment'>turn off nixing.  If enrWith == enrWithout == 0, as happens to</span></td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">         <span class='comment'>isolated points, then the difference between "&lt;=" and "&lt;"</span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">         <span class='comment'>keeps the isolated points from getting nixed */</span></td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">      point-&gt;status &amp;= ~<span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>; <span class='comment'>/* turn nixme off */</span></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">    <span class='comment'>/* else energy is certainly higher with the point, do nix it */</span></td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">_pullIterFinishNeighLearn(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullIterFinishNeighLearn"</span>;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">  <span class='comment'>/* a no-op for now */</span></td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">  <span class='macro'>AIR_UNUSED(pctx)<span class='expansion'>(void)(pctx)</span></span>;</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">  <span class='macro'>AIR_UNUSED(me)<span class='expansion'>(void)(me)</span></span>;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">_pullIterFinishAdding(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullIterFinishAdding"</span>;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> taskIdx;</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">  pctx-&gt;addNum = 0;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">  <span class='keyword'>for</span> (taskIdx=0; taskIdx&lt;pctx-&gt;threadNum; taskIdx++) {</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">    pullTask *task;</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">    task = pctx-&gt;task[taskIdx];</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">    <span class='keyword'>if</span> (task-&gt;addPointNum) {</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> pointIdx;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">      <span class='keyword'>int</span> added;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">      <span class='keyword'>for</span> (pointIdx=0; pointIdx&lt;task-&gt;addPointNum; pointIdx++) {</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">        pullPoint *point;</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">        pullBin *bin;</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        point = task-&gt;addPoint[pointIdx];</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">        point-&gt;status &amp;= ~<span class='macro'>PULL_STATUS_NEWBIE_BIT<span class='expansion'>(1&lt;&lt; 2)</span></span>;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">        <span class='keyword'>if</span> (pullBinsPointMaybeAdd(pctx, point, &amp;bin, &amp;added)) {</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">          biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble binning new point %u"</span>, me, point-&gt;idtag);</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">        <span class='keyword'>if</span> (added) {</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">          pctx-&gt;addNum++;</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">          <span class='keyword'>unsigned</span> <span class='keyword'>int</span> npi, xpi;</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">          <span class='keyword'>if</span> (pctx-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">            printf(<span class='string_literal'>"%s: decided NOT to add new point %u\n"</span>, me, point-&gt;idtag);</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">          <span class='comment'>/* HEY: copied from above */</span></td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">          <span class='comment'>/* ugh, have to signal to neigs that its no longer their neighbor */</span></td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">          task-&gt;processMode = pullProcessModeNeighLearn;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">          point-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">          <span class='keyword'>for</span> (npi=0; npi&lt;point-&gt;neighPointNum; npi++) {</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">            _pullEnergyFromPoints(task, bin, point-&gt;neighPoint[npi], <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">          task-&gt;processMode = pullProcessModeAdding;</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">          <span class='comment'>/* can't do immediate nix for reasons GLK doesn't quite understand */</span></td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">          xpi = airArrayLenIncr(task-&gt;nixPointArr, 1);</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">          task-&gt;nixPoint[xpi] = point;</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">      airArrayLenSet(task-&gt;addPointArr, 0);</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;verbose &amp;&amp; pctx-&gt;addNum) {</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">    printf(<span class='string_literal'>"%s: ADDED %u\n"</span>, me, pctx-&gt;addNum);</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">_pullNixTheNixed(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> binIdx;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">  pctx-&gt;nixNum = 0;</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">  <span class='keyword'>for</span> (binIdx=0; binIdx&lt;pctx-&gt;binNum; binIdx++) {</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">    pullBin *bin;</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> pointIdx;</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">    bin = pctx-&gt;bin + binIdx;</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">    pointIdx = 0;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">    <span class='keyword'>while</span> (pointIdx &lt; bin-&gt;pointNum) {</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">      pullPoint *point;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">      point = bin-&gt;point[pointIdx];</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">      <span class='keyword'>if</span> (pctx-&gt;flag.nixAtVolumeEdgeSpace</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">          &amp;&amp; (point-&gt;status &amp; <span class='macro'>PULL_STATUS_EDGE_BIT<span class='expansion'>(1&lt;&lt; 4)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        point-&gt;status |= <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>;</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">      <span class='keyword'>if</span> (point-&gt;status &amp; <span class='macro'>PULL_STATUS_NIXME_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span>) {</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        pullPointNix(point);</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        <span class='comment'>/* copy last point pointer to this slot */</span></td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">        bin-&gt;point[pointIdx] = bin-&gt;point[bin-&gt;pointNum-1];</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">        airArrayLenIncr(bin-&gt;pointArr, -1); <span class='comment'>/* will decrement bin-&gt;pointNum */</span></td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">        pctx-&gt;nixNum++;</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        pointIdx++;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">_pullIterFinishNixing(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullIterFinishNixing"</span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> taskIdx;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">  _pullNixTheNixed(pctx);</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">  <span class='comment'>/* finish nixing the things that we decided not to add */</span></td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">  <span class='keyword'>for</span> (taskIdx=0; taskIdx&lt;pctx-&gt;threadNum; taskIdx++) {</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">    pullTask *task;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">    task = pctx-&gt;task[taskIdx];</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">    <span class='keyword'>if</span> (task-&gt;nixPointNum) {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xpi;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">      <span class='keyword'>for</span> (xpi=0; xpi&lt;task-&gt;nixPointNum; xpi++) {</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">        pullPointNix(task-&gt;nixPoint[xpi]);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">      airArrayLenSet(task-&gt;nixPointArr, 0);</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;verbose &amp;&amp; pctx-&gt;nixNum) {</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">    printf(<span class='string_literal'>"%s: NIXED %u\n"</span>, me, pctx-&gt;nixNum);</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+</table></body></html>

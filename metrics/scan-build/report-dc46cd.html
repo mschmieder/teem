@@ -1,0 +1,1214 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/nrrd/apply1D.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'mapLup' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/nrrd/apply1D.c -->
+
+<!-- FILENAME apply1D.c -->
+
+<!-- FUNCTIONNAME nrrdApply1DIrregMap -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT f49ac3f4656151d4591a6a3ec6ff796d -->
+
+<!-- BUGLINE 935 -->
+
+<!-- BUGCOLUMN 3 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/nrrd/apply1D.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 935, column 3</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'mapLup' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "nrrd.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privateNrrd.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='comment'>** learned: even when using doubles, because of limited floating point</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='comment'>** precision, you can get different results between quantizing</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='comment'>** unrescaled (value directly from nrrd, map domain set to nrrd range,</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='comment'>** as with early behavior of unu rmap) and rescaled (value from nrrd</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='comment'>** scaled to fit in existing map domain, as with unu imap -r) value,</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='comment'>** to the exact same index space.</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"><span class='comment'>** I won't try to support mapping individual values through a</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line"><span class='comment'>** colormap, as with a function evaluation on a single passed value.</span></td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"><span class='comment'>** That will be handled in an upcoming library...</span></td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"><span class='comment'>** this identifies the different kinds of 1D maps, useful for the</span></td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"><span class='comment'>** functions in this file only</span></td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"><span class='keyword'>enum</span> {</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">  kindLut=0,</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">  kindRmap=1,</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">  kindImap=2</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"><span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">_nrrdApplyDomainMin(<span class='keyword'>const</span> Nrrd *nmap, <span class='keyword'>int</span> ramps, <span class='keyword'>int</span> mapAxis) {</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">  <span class='keyword'>double</span> ret;</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">  <span class='macro'>AIR_UNUSED(ramps)<span class='expansion'>(void)(ramps)</span></span>;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">  ret = nmap-&gt;axis[mapAxis].min;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">  ret = <span class='macro'>AIR_EXISTS(ret)<span class='expansion'>(((int)(!((ret) - (ret)))))</span></span> ? ret : 0;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"><span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">_nrrdApplyDomainMax(<span class='keyword'>const</span> Nrrd *nmap, <span class='keyword'>int</span> ramps, <span class='keyword'>int</span> mapAxis) {</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">  <span class='keyword'>double</span> ret;</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">  ret = nmap-&gt;axis[mapAxis].max;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">  <span class='keyword'>if</span> (!<span class='macro'>AIR_EXISTS(ret)<span class='expansion'>(((int)(!((ret) - (ret)))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">    ret = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, nmap-&gt;axis[mapAxis].size)<span class='expansion'>((double)(nmap-&gt;axis[mapAxis].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">    ret = ramps ? ret-1 : ret;</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line"><span class='comment'>** _nrrdApply1DSetUp()</span></td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line"><span class='comment'>** some error checking and initializing needed for 1D LUTS, regular,</span></td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line"><span class='comment'>** and irregular maps.  The intent is that if this succeeds, then</span></td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"><span class='comment'>** there is no need for any further error checking.</span></td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line"><span class='comment'>** The only thing this function DOES is allocate the output nrrd, and</span></td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line"><span class='comment'>** set meta information.  The rest is just error checking.</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line"><span class='comment'>** The given NrrdRange has to be fleshed out by the caller: it can't</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line"><span class='comment'>** be NULL, and both range-&gt;min and range-&gt;max must exist.</span></td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">_nrrdApply1DSetUp(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>const</span> NrrdRange *range,</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">                  <span class='keyword'>const</span> Nrrd *nmap, <span class='keyword'>int</span> kind, <span class='keyword'>int</span> typeOut,</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">                  <span class='keyword'>int</span> rescale, <span class='keyword'>int</span> multi) {</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdApply1DSetUp"</span>;</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">  <span class='keyword'>char</span> *mapcnt;</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">  <span class='keyword'>char</span> nounStr[][<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>]={<span class='string_literal'>"lut"</span>,</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">                                    <span class='string_literal'>"regular map"</span>,</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">                                    <span class='string_literal'>"irregular map"</span>};</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">  <span class='keyword'>char</span> mnounStr[][<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>]={<span class='string_literal'>"multi lut"</span>,</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">                                     <span class='string_literal'>"multi regular map"</span>,</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">                                     <span class='string_literal'>"multi irregular map"</span>};</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">                                      <span class='comment'>/* wishful thinking */</span></td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">  <span class='keyword'>char</span> verbStr[][<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>]={<span class='string_literal'>"lut"</span>,</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">                                    <span class='string_literal'>"rmap"</span>,</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">                                    <span class='string_literal'>"imap"</span>};</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  <span class='keyword'>char</span> mverbStr[][<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>]={<span class='string_literal'>"mlut"</span>,</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">                                     <span class='string_literal'>"mrmap"</span>,</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">                                     <span class='string_literal'>"mimap"</span>}; <span class='comment'>/* wishful thinking */</span></td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">  <span class='keyword'>int</span> mapAxis, copyMapAxis0=<span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, axisMap[<span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>];</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ax, dim, entLen;</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">  size_t size[<span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>];</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">  <span class='keyword'>double</span> domMin, domMax;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">  <span class='keyword'>if</span> (nout == nin) {</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: due to laziness, nout==nin always disallowed"</span>, me);</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">  <span class='keyword'>if</span> (airEnumValCheck(nrrdType, typeOut)) {</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: invalid requested output type %d"</span>, me, typeOut);</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  <span class='keyword'>if</span> (nrrdTypeBlock == nin-&gt;type || nrrdTypeBlock == typeOut) {</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: input or requested output type is %s, need scalar"</span>,</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">             me, airEnumStr(nrrdType, nrrdTypeBlock));</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">  <span class='keyword'>if</span> (rescale) {</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    <span class='keyword'>if</span> (!range) {</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: want rescaling but didn't get a range"</span>, me);</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    <span class='keyword'>if</span> (!( <span class='macro'>AIR_EXISTS(range-&gt;min)<span class='expansion'>(((int)(!((range-&gt;min) - (range-&gt;min)))))</span></span> &amp;&amp; <span class='macro'>AIR_EXISTS(range-&gt;max)<span class='expansion'>(((int)(!((range-&gt;max) - (range-&gt;max)))))</span></span> )) {</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: want rescaling but not both "</span></td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">               <span class='string_literal'>"range-&gt;{min,max} %g %g exist"</span>, me, range-&gt;min, range-&gt;max);</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    <span class='comment'>/* HEY: consider adding an error check for range-&gt;min == range-&gt;max</span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">       <span class='comment'>here; the code below now guards</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">       <span class='comment'>AIR_AFFINE(range-&gt;min, val, range-&gt;max, domMin, domMax)</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">       <span class='comment'>against producing NaNs, but maybe that's too clever */</span></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">  <span class='keyword'>if</span> (kindLut == kind || kindRmap == kind) {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">    <span class='keyword'>if</span> (!multi) {</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">      mapAxis = nmap-&gt;dim - 1;</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">      <span class='keyword'>if</span> (!(0 == mapAxis || 1 == mapAxis)) {</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">        biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: dimension of %s should be 1 or 2, not %d"</span>,</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">                 me, nounStr[kind], nmap-&gt;dim);</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">      copyMapAxis0 = (1 == mapAxis);</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">      mapAxis = nmap-&gt;dim - nin-&gt;dim - 1;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">      <span class='keyword'>if</span> (!(0 == mapAxis || 1 == mapAxis)) {</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">        biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: dimension of %s should be %d or %d, not %d"</span>,</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">                 me, mnounStr[kind],</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">                 nin-&gt;dim + 1, nin-&gt;dim + 2, nmap-&gt;dim);</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">      copyMapAxis0 = (1 == mapAxis);</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">      <span class='comment'>/* need to make sure the relevant sizes match */</span></td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">      <span class='keyword'>for</span> (ax=0; ax&lt;nin-&gt;dim; ax++) {</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>int</span> taxi = mapAxis + 1 + ax;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">        <span class='keyword'>if</span> (taxi &gt; <span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>-1) {</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">          biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: test axis index %u exceeds NRRD_DIM_MAX-1 %u"</span>,</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                   me, taxi, <span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>-1);</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">        <span class='keyword'>if</span> (nin-&gt;axis[ax].size != nmap-&gt;axis[taxi].size) {</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">          <span class='keyword'>char</span> stmp1[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>], stmp2[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">          biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: input and mmap don't have compatible sizes: "</span></td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                   <span class='string_literal'>"nin-&gt;axis[%d].size (%s) "</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                   <span class='string_literal'>"!= nmap-&gt;axis[%d].size (%s): "</span>, me,</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">                   ax, airSprintSize_t(stmp1, nin-&gt;axis[ax].size),</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">                   mapAxis + 1 + ax,</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">                   airSprintSize_t(stmp2, nmap-&gt;axis[taxi].size));</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">    domMin = _nrrdApplyDomainMin(nmap, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, mapAxis);</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">    domMax = _nrrdApplyDomainMax(nmap, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, mapAxis);</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">    <span class='keyword'>if</span> (!( domMin &lt; domMax )) {</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: (axis %d) domain min (%g) not less than max (%g)"</span>,</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">               me, mapAxis, domMin, domMax);</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">    <span class='keyword'>if</span> (nrrdHasNonExist(nmap)) {</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: %s nrrd has non-existent values"</span>,</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">               me, multi ? mnounStr[kind] : nounStr[kind]);</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">    entLen = mapAxis ? <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nmap-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[0].size))</span></span> : 1;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">    <span class='keyword'>if</span> (multi) {</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: sorry, multi irregular maps not implemented"</span>, me);</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">    <span class='comment'>/* its an irregular map */</span></td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">    <span class='keyword'>if</span> (nrrd1DIrregMapCheck(nmap)) {</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: problem with irregular map"</span>, me);</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">    <span class='comment'>/* mapAxis has no meaning for irregular maps, but we'll pretend ... */</span></td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">    mapAxis = nmap-&gt;axis[0].size == 2 ? 0 : 1;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">    copyMapAxis0 = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">    entLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nmap-&gt;axis[0].size-1)<span class='expansion'>((unsigned int)(nmap-&gt;axis[0].size-1))</span></span>;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">  <span class='keyword'>if</span> (mapAxis + nin-&gt;dim &gt; <span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>) {</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: input nrrd dim %d through non-scalar %s exceeds "</span></td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">             <span class='string_literal'>"NRRD_DIM_MAX %d"</span>,</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">             me, nin-&gt;dim,</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">             multi ? mnounStr[kind] : nounStr[kind], <span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>);</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">  nrrdAxisInfoGet_nva(nin, nrrdAxisInfoSize, size+mapAxis);</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">  <span class='keyword'>if</span> (mapAxis) {</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">    size[0] = entLen;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">    axisMap[0] = -1;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">  <span class='keyword'>for</span> (dim=0; dim&lt;nin-&gt;dim; dim++) {</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">    axisMap[dim+mapAxis] = dim;</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">  <span class='comment'>fprintf(stderr, "##%s: pre maybe alloc: nout-&gt;data = %p\n", me, nout-&gt;data);</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">  <span class='comment'>for (dim=0; dim&lt;mapAxis + nin-&gt;dim; dim++) {</span></td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">    <span class='comment'>fprintf(stderr, "    size[%d] = %d\n", d, (int)size[d]);</span></td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">  <span class='comment'>fprintf(stderr, "   nout-&gt;dim = %d; nout-&gt;type = %d = %s; sizes = %d,%d\n",</span></td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">          <span class='comment'>nout-&gt;dim, nout-&gt;type,</span></td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">          <span class='comment'>airEnumStr(nrrdType, nout-&gt;type));</span></td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">  <span class='comment'>fprintf(stderr, "   typeOut = %d = %s\n", typeOut,</span></td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">          <span class='comment'>airEnumStr(nrrdType, typeOut));</span></td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_nva(nout, typeOut, mapAxis + nin-&gt;dim, size)) {</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate output nrrd"</span>, me);</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">  <span class='comment'>fprintf(stderr, "   nout-&gt;dim = %d; nout-&gt;type = %d = %s\n",</span></td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">          <span class='comment'>nout-&gt;dim, nout-&gt;type,</span></td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">          <span class='comment'>airEnumStr(nrrdType, nout-&gt;type),</span></td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">          <span class='comment'>nout-&gt;axis[0].size, nout-&gt;axis[1].size);</span></td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">  <span class='comment'>for (d=0; d&lt;nout-&gt;dim; d++) {</span></td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">    <span class='comment'>fprintf(stderr, "    size[%d] = %d\n", d, (int)nout-&gt;axis[d].size);</span></td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">  <span class='comment'>fprintf(stderr, "##%s: post maybe alloc: nout-&gt;data = %p\n", me, nout-&gt;data);</span></td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">  <span class='keyword'>if</span> (nrrdAxisInfoCopy(nout, nin, axisMap, <span class='macro'>NRRD_AXIS_INFO_NONE<span class='expansion'>0</span></span>)) {</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble copying axis info"</span>, me);</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">  <span class='keyword'>if</span> (copyMapAxis0) {</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">    _nrrdAxisInfoCopy(nout-&gt;axis + 0, nmap-&gt;axis + 0,</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">                      <span class='macro'>NRRD_AXIS_INFO_SIZE_BIT<span class='expansion'>(1&lt;&lt; 1)</span></span>);</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">  mapcnt = _nrrdContentGet(nmap);</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">  <span class='keyword'>if</span> (nrrdContentSet_va(nout, multi ? mverbStr[kind] : verbStr[kind],</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">                        nin, <span class='string_literal'>"%s"</span>, mapcnt)) {</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">    free(mapcnt); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  free(mapcnt);</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">  <span class='keyword'>if</span> (nrrdBasicInfoCopy(nout, nin,</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">                        <span class='macro'>NRRD_BASIC_INFO_DATA_BIT<span class='expansion'>(1&lt;&lt; 1)</span></span></td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">                        | <span class='macro'>NRRD_BASIC_INFO_TYPE_BIT<span class='expansion'>(1&lt;&lt; 2)</span></span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">                        | <span class='macro'>NRRD_BASIC_INFO_BLOCKSIZE_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span></td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">                        | <span class='macro'>NRRD_BASIC_INFO_DIMENSION_BIT<span class='expansion'>(1&lt;&lt; 4)</span></span></td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">                        | <span class='macro'>NRRD_BASIC_INFO_CONTENT_BIT<span class='expansion'>(1&lt;&lt; 5)</span></span></td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">                        | (nrrdStateKeyValuePairsPropagate</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                           ? 0</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">                           : <span class='macro'>NRRD_BASIC_INFO_KEYVALUEPAIRS_BIT<span class='expansion'>(1&lt;&lt;15)</span></span>))) {</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line"><span class='comment'>** _nrrdApply1DLutOrRegMap()</span></td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line"><span class='comment'>** the guts of nrrdApply1DLut and nrrdApply1DRegMap</span></td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line"><span class='comment'>** yikes, does NOT use biff, since we're only supposed to be called</span></td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line"><span class='comment'>** after copious error checking.</span></td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line"><span class='comment'>** FOR INSTANCE, this allows nout == nin, which could be a big</span></td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line"><span class='comment'>** problem if mapAxis == 1.</span></td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line"><span class='comment'>** we don't need a typeOut arg because nout has already been allocated</span></td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line"><span class='comment'>** as some specific type; we'll look at that.</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line"><span class='comment'>** NOTE: non-existent values get passed through regular maps and luts</span></td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line"><span class='comment'>** "unchanged".  However, if the output type is integral, the results</span></td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line"><span class='comment'>** are probaby undefined.  HEY: there is currently no warning message</span></td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"><span class='comment'>** or error handling based on nrrdStateDisallowIntegerNonExist, but</span></td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line"><span class='comment'>** there really should be.</span></td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">_nrrdApply1DLutOrRegMap(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>const</span> NrrdRange *range,</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">                        <span class='keyword'>const</span> Nrrd *nmap, <span class='keyword'>int</span> ramps, <span class='keyword'>int</span> rescale, <span class='keyword'>int</span> multi) {</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">  <span class='comment'>/* static const char me[]="_nrrdApply1DLutOrRegMap"; */</span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">  <span class='keyword'>char</span> *inData, *outData, *mapData, *entData0, *entData1;</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">  size_t N, I;</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">  <span class='keyword'>double</span> (*inLoad)(<span class='keyword'>const</span> <span class='keyword'>void</span> *v), (*mapLup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *v, size_t I),</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">    (*outInsert)(<span class='keyword'>void</span> *v, size_t I, <span class='keyword'>double</span> d),</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">    val, mapIdxFrac, domMin, domMax;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> i, mapAxis, mapLen, mapIdx, entSize, entLen, inSize, outSize;</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">  <span class='keyword'>if</span> (!multi) {</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">    mapAxis = nmap-&gt;dim - 1;           <span class='comment'>/* axis of nmap containing entries */</span></td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">    mapAxis = nmap-&gt;dim - nin-&gt;dim - 1;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">  mapData = (<span class='keyword'>char</span> *)nmap-&gt;data;        <span class='comment'>/* map data, as char* */</span></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">                                       <span class='comment'>/* low end of map domain */</span></td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  domMin = _nrrdApplyDomainMin(nmap, ramps, mapAxis);</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                                       <span class='comment'>/* high end of map domain */</span></td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">  domMax = _nrrdApplyDomainMax(nmap, ramps, mapAxis);</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">  mapLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nmap-&gt;axis[mapAxis].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[mapAxis].size))</span></span>;   <span class='comment'>/* number of entries in map */</span></td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  mapLup = nrrdDLookup[nmap-&gt;type];    <span class='comment'>/* how to get doubles out of map */</span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">  inData = (<span class='keyword'>char</span> *)nin-&gt;data;          <span class='comment'>/* input data, as char* */</span></td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">  inLoad = nrrdDLoad[nin-&gt;type];       <span class='comment'>/* how to get doubles out of nin */</span></td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">  inSize = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nrrdElementSize(nin))<span class='expansion'>((unsigned int)(nrrdElementSize(nin)))</span></span>;       <span class='comment'>/* size of one input value */</span></td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">  outData = (<span class='keyword'>char</span> *)nout-&gt;data;        <span class='comment'>/* output data, as char* */</span></td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">  outInsert = nrrdDInsert[nout-&gt;type]; <span class='comment'>/* putting doubles into output */</span></td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  entLen = (mapAxis                    <span class='comment'>/* number of elements in one entry */</span></td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">            ? <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nmap-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[0].size))</span></span></td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">            : 1);</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">  outSize = entLen*<span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nrrdElementSize(nout))<span class='expansion'>((unsigned int)(nrrdElementSize(nout)))</span></span>; <span class='comment'>/* size of entry in output */</span></td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">  entSize = entLen*<span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nrrdElementSize(nmap))<span class='expansion'>((unsigned int)(nrrdElementSize(nmap)))</span></span>; <span class='comment'>/* size of entry in map */</span></td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">  N = nrrdElementNumber(nin);       <span class='comment'>/* the number of values to be mapped */</span></td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">  <span class='keyword'>if</span> (ramps) {</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">    <span class='comment'>/* regular map */</span></td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">    <span class='keyword'>for</span> (I=0; I&lt;N; I++) {</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">      <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">      <span class='comment'>if (!(I % 100)) fprintf(stderr, "I = %d\n", (int)I);</span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">      <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">      val = inLoad(inData);</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">      <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">      <span class='comment'>fprintf(stderr, "##%s: val = \na% 31.15f --&gt; ", me, val);</span></td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">      <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">      <span class='keyword'>if</span> (rescale) {</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        val = (range-&gt;min != range-&gt;max</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">               ? <span class='macro'>AIR_AFFINE(range-&gt;min, val, range-&gt;max, domMin, domMax)<span class='expansion'>( ((double)(domMax)-(domMin))*((double)(val)-(range-&gt;min))<br> / ((double)(range-&gt;max)-(range-&gt;min)) + (domMin))</span></span></td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">               : domMin);</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">        <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">        <span class='comment'>fprintf(stderr, "\nb% 31.15f (min,max = %g,%g)--&gt; ", val,</span></td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                <span class='comment'>range-&gt;min, range-&gt;max);</span></td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">      <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">      <span class='comment'>fprintf(stderr, "\nc% 31.15f --&gt; clamp(%g,%g), %d --&gt; ",</span></td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">              <span class='comment'>val, domMin, domMax, mapLen);</span></td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">      <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">      <span class='keyword'>if</span> (<span class='macro'>AIR_EXISTS(val)<span class='expansion'>(((int)(!((val) - (val)))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        val = <span class='macro'>AIR_CLAMP(domMin, val, domMax)<span class='expansion'>((val) &lt; (domMin) ? (domMin) : ((val) &gt; (domMax) ? (domMax<br>) : (val)))</span></span>;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">        mapIdxFrac = <span class='macro'>AIR_AFFINE(domMin, val, domMax, 0, mapLen-1)<span class='expansion'>( ((double)(mapLen-1)-(0))*((double)(val)-(domMin)) / ((double<br>)(domMax)-(domMin)) + (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">        <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">        <span class='comment'>fprintf(stderr, "mapIdxFrac = \nd% 31.15f --&gt; ",</span></td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                <span class='comment'>mapIdxFrac);</span></td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        mapIdx = (<span class='keyword'>unsigned</span> <span class='keyword'>int</span>)mapIdxFrac;</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">        mapIdx -= mapIdx == mapLen-1;</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        mapIdxFrac -= mapIdx;</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        <span class='comment'>fprintf(stderr, "%s: (%d,\ne% 31.15f) --&gt; \n",</span></td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">                <span class='comment'>me, mapIdx, mapIdxFrac);</span></td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        entData0 = mapData + mapIdx*entSize;</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">        entData1 = mapData + (mapIdx+1)*entSize;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        <span class='keyword'>for</span> (i=0; i&lt;entLen; i++) {</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">          val = ((1-mapIdxFrac)*mapLup(entData0, i) +</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">                 mapIdxFrac*mapLup(entData1, i));</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">          outInsert(outData, i, val);</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">          <span class='comment'>/* ...</span></td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">          <span class='comment'>fprintf(stderr, "f% 31.15f\n", val);</span></td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">          <span class='comment'>... */</span></td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        <span class='comment'>/* copy non-existent values from input to output */</span></td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">        <span class='keyword'>for</span> (i=0; i&lt;entLen; i++) {</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">          outInsert(outData, i, val);</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">      inData += inSize;</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">      outData += outSize;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">      <span class='keyword'>if</span> (multi) {</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        mapData += mapLen*entSize;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">    <span class='comment'>/* lookup table */</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">    <span class='keyword'>for</span> (I=0; I&lt;N; I++) {</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">      val = inLoad(inData);</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">      <span class='keyword'>if</span> (rescale) {</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        val = (range-&gt;min != range-&gt;max</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">               ? <span class='macro'>AIR_AFFINE(range-&gt;min, val, range-&gt;max, domMin, domMax)<span class='expansion'>( ((double)(domMax)-(domMin))*((double)(val)-(range-&gt;min))<br> / ((double)(range-&gt;max)-(range-&gt;min)) + (domMin))</span></span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">               : domMin);</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">      <span class='keyword'>if</span> (<span class='macro'>AIR_EXISTS(val)<span class='expansion'>(((int)(!((val) - (val)))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">        mapIdx = airIndexClamp(domMin, val, domMax, mapLen);</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        entData0 = mapData + mapIdx*entSize;</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">        <span class='keyword'>for</span> (i=0; i&lt;entLen; i++) {</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">          outInsert(outData, i, mapLup(entData0, i));</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        <span class='comment'>/* copy non-existent values from input to output */</span></td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">        <span class='keyword'>for</span> (i=0; i&lt;entLen; i++) {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">          outInsert(outData, i, val);</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">      inData += inSize;</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">      outData += outSize;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">      <span class='keyword'>if</span> (multi) {</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">        mapData += mapLen*entSize;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"><span class='comment'>******** nrrdApply1DLut</span></td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line"><span class='comment'>** A "lut" is a simple lookup table: the data points are evenly spaced,</span></td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line"><span class='comment'>** with cell-centering assumed, and there is no interpolation except</span></td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line"><span class='comment'>** nearest neighbor.  The axis min and max are used to determine the</span></td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line"><span class='comment'>** range of values that can be mapped with the lut.</span></td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line"><span class='comment'>** Of the three kinds of 1-D maps, only luts can have output type block.</span></td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line"><span class='comment'>** If the lut nrrd is 1-D, then the output is a scalar nrrd with the</span></td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line"><span class='comment'>** same dimension as the input.  If the lut nrrd is 2-D, then each</span></td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line"><span class='comment'>** value in the input is mapped to a vector of values from the lut,</span></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line"><span class='comment'>** which is always a scanline along axis 0.</span></td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line"><span class='comment'>** This allows lut length to be simply 1.</span></td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">nrrdApply1DLut(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">               <span class='keyword'>const</span> NrrdRange *_range, <span class='keyword'>const</span> Nrrd *nlut,</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">               <span class='keyword'>int</span> typeOut, <span class='keyword'>int</span> rescale) {</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdApply1DLut"</span>;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">  NrrdRange *range;</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nlut &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">  <span class='keyword'>if</span> (_range) {</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">    range = nrrdRangeCopy(_range);</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">    nrrdRangeSafeSet(range, nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">    range = nrrdRangeNewSet(nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">  airMopAdd(mop, range, (airMopper)nrrdRangeNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">  <span class='keyword'>if</span> (_nrrdApply1DSetUp(nout, nin, range, nlut, kindLut, typeOut,</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">                        rescale, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* multi */</span>)</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">      || _nrrdApply1DLutOrRegMap(nout, nin, range, nlut, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* ramps */</span>,</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">                                 rescale, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* multi */</span>)) {</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">nrrdApplyMulti1DLut(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">                    <span class='keyword'>const</span> NrrdRange *_range, <span class='keyword'>const</span> Nrrd *nmlut,</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">                    <span class='keyword'>int</span> typeOut, <span class='keyword'>int</span> rescale) {</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdApplyMulti1DLut"</span>;</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">  NrrdRange *range;</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nmlut &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">  <span class='keyword'>if</span> (_range) {</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">    range = nrrdRangeCopy(_range);</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">    nrrdRangeSafeSet(range, nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">    range = nrrdRangeNewSet(nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">  airMopAdd(mop, range, (airMopper)nrrdRangeNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">  <span class='keyword'>if</span> (_nrrdApply1DSetUp(nout, nin, range, nmlut, kindLut, typeOut,</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">                        rescale, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* multi */</span>)</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">      || _nrrdApply1DLutOrRegMap(nout, nin, range, nmlut,</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">                                 <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* ramps */</span>,</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">                                 rescale, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* multi */</span>)) {</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line"><span class='comment'>******** nrrdApply1DRegMap</span></td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line"><span class='comment'>** A regular map has data points evenly spaced, with node-centering and</span></td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line"><span class='comment'>** and linear interpolation assumed.  As with luts, the axis min and</span></td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line"><span class='comment'>** max determine the range of values that are mapped.  This function</span></td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line"><span class='comment'>** is used in nrrdHistoEq() and is the basis of the very popular "unu rmap".</span></td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line"><span class='comment'>** If the lut nrrd is 1-D, then the output is a scalar nrrd with the</span></td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line"><span class='comment'>** same dimension as the input.  If the lut nrrd is 2-D, then each</span></td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line"><span class='comment'>** value in the input is mapped to a linear weighting of vectors</span></td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line"><span class='comment'>** from the map; the vectors are the scanlines along axis 0.</span></td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line"><span class='comment'>** NB: this function makes NO provisions for non-existent input values.</span></td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line"><span class='comment'>** There won't be any memory errors, but the results are undefined.</span></td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"><span class='comment'>** This allows map length to be simply 1.</span></td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">nrrdApply1DRegMap(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">                  <span class='keyword'>const</span> NrrdRange *_range, <span class='keyword'>const</span> Nrrd *nmap,</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">                  <span class='keyword'>int</span> typeOut, <span class='keyword'>int</span> rescale) {</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdApply1DRegMap"</span>;</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">  NrrdRange *range;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nmap &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">  <span class='keyword'>if</span> (_range) {</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">    range = nrrdRangeCopy(_range);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">    nrrdRangeSafeSet(range, nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">    range = nrrdRangeNewSet(nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">  airMopAdd(mop, range, (airMopper)nrrdRangeNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">  <span class='keyword'>if</span> (_nrrdApply1DSetUp(nout, nin, range, nmap, kindRmap, typeOut,</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">                        rescale, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* multi */</span>)</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">      || _nrrdApply1DLutOrRegMap(nout, nin, range, nmap, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* ramps */</span>,</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">                                 rescale, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* multi */</span>)) {</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">nrrdApplyMulti1DRegMap(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">                       <span class='keyword'>const</span> NrrdRange *_range, <span class='keyword'>const</span> Nrrd *nmmap,</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                       <span class='keyword'>int</span> typeOut, <span class='keyword'>int</span> rescale) {</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdApplyMulti1DRegMap"</span>;</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">  NrrdRange *range;</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nmmap &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">  <span class='keyword'>if</span> (_range) {</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">    range = nrrdRangeCopy(_range);</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">    nrrdRangeSafeSet(range, nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">    range = nrrdRangeNewSet(nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">  airMopAdd(mop, range, (airMopper)nrrdRangeNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">  <span class='keyword'>if</span> (_nrrdApply1DSetUp(nout, nin, range, nmmap, kindRmap, typeOut,</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">                        rescale, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* multi */</span>)</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">      || _nrrdApply1DLutOrRegMap(nout, nin, range, nmmap, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* ramps */</span>,</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">                                 rescale, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* multi */</span>)) {</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line"><span class='comment'>******** nrrd1DIrregMapCheck()</span></td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line"><span class='comment'>** return zero only for the valid forms of 1D irregular map.</span></td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line"><span class='comment'>** imap must be 2D, both sizes &gt;= 2, non-block-type, no non-existent</span></td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line"><span class='comment'>** values in range.  If the first point's position is non-existent,</span></td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line"><span class='comment'>** than the first three points positions must be -inf, NaN, and +inf,</span></td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line"><span class='comment'>** and none of the other points locations can be non-existent, and</span></td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"><span class='comment'>** they must increase monotonically.  There must be at least two</span></td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line"><span class='comment'>** points with existent positions.</span></td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">nrrd1DIrregMapCheck(<span class='keyword'>const</span> Nrrd *nmap) {</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrd1DIrregMapCheck"</span>;</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">  <span class='keyword'>double</span> (*mapLup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *v, size_t I);</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">  <span class='keyword'>int</span> i, entLen, mapLen, baseI;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">  size_t min[2], max[2];</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">  Nrrd *nrange;</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">  <span class='keyword'>if</span> (!nmap) {</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">  <span class='keyword'>if</span> (nrrdCheck(nmap)) {</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: "</span>, me);</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">  <span class='keyword'>if</span> (nrrdTypeBlock == nmap-&gt;type) {</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: map is %s type, need scalar"</span>,</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">             me, airEnumStr(nrrdType, nrrdTypeBlock));</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">  <span class='keyword'>if</span> (2 != nmap-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: map needs to have dimension 2, not %d"</span>,</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">             me, nmap-&gt;dim);</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">  entLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nmap-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">  mapLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nmap-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">  <span class='keyword'>if</span> (!( entLen &gt;= 2 &amp;&amp; mapLen &gt;= 2 )) {</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: both map's axes sizes should be &gt;= 2 (not %d,%d)"</span>,</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">             me, entLen, mapLen);</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">  min[0] = 1; max[0] = nmap-&gt;axis[0].size-1;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">  min[1] = 0; max[1] = nmap-&gt;axis[1].size-1;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">  <span class='keyword'>if</span> (nrrdCrop(nrange=nrrdNew(), nmap, min, max)) {</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't crop to isolate range of map"</span>, me);</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">    nrrdNuke(nrange); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">  <span class='keyword'>if</span> (nrrdHasNonExist(nrange)) {</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: map has non-existent values in its range"</span>, me);</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">    nrrdNuke(nrange); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">  nrrdNuke(nrange);</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">  mapLup = nrrdDLookup[nmap-&gt;type];</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>AIR_EXISTS(mapLup(nmap-&gt;data, 0))<span class='expansion'>(((int)(!((mapLup(nmap-&gt;data, 0)) - (mapLup(nmap-&gt;data,<br> 0))))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">    baseI = 0;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">    baseI = 3;</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">    <span class='keyword'>if</span> (!( mapLen &gt;= 5 )) {</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: length of map w/ non-existent locations must "</span></td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">               <span class='string_literal'>"be &gt;= 5 (not %d)"</span>, me, mapLen);</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">    <span class='keyword'>if</span> (!( airFP_NEG_INF == airFPClass_d(mapLup(nmap-&gt;data, 0*entLen)) &amp;&amp;</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">           airFP_QNAN    == airFPClass_d(mapLup(nmap-&gt;data, 1*entLen)) &amp;&amp;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">           airFP_POS_INF == airFPClass_d(mapLup(nmap-&gt;data, 2*entLen)) )) {</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: 1st entry's position non-existent, but position "</span></td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">               <span class='string_literal'>"of 1st three entries (%g:%d,%g:%d,%g:%d) not "</span></td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">               <span class='string_literal'>"-inf, NaN, and +inf"</span>, me,</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">               mapLup(nmap-&gt;data, 0*entLen),</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">               airFPClass_d(mapLup(nmap-&gt;data, 0*entLen)),</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">               mapLup(nmap-&gt;data, 1*entLen),</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">               airFPClass_d(mapLup(nmap-&gt;data, 1*entLen)),</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">               mapLup(nmap-&gt;data, 2*entLen),</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">               airFPClass_d(mapLup(nmap-&gt;data, 2*entLen)));</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">  <span class='keyword'>for</span> (i=baseI; i&lt;mapLen; i++) {</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">    <span class='keyword'>if</span> (!<span class='macro'>AIR_EXISTS(mapLup(nmap-&gt;data, i*entLen))<span class='expansion'>(((int)(!((mapLup(nmap-&gt;data, i*entLen)) - (mapLup(nmap-&gt;<br>data, i*entLen))))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: entry %d has non-existent position"</span>, me, i);</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">  <span class='keyword'>for</span> (i=baseI; i&lt;mapLen-1; i++) {</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">    <span class='keyword'>if</span> (!( mapLup(nmap-&gt;data, i*entLen) &lt; mapLup(nmap-&gt;data, (i+1)*entLen) )) {</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: map entry %d pos (%g) not &lt; entry %d pos (%g)"</span>,</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">               me, i, mapLup(nmap-&gt;data, i*entLen),</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">               i+1, mapLup(nmap-&gt;data, (i+1)*entLen));</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line"><span class='comment'>******** nrrd1DIrregAclCheck()</span></td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line"><span class='comment'>** returns zero only on valid accelerators for 1D irregular mappings</span></td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">nrrd1DIrregAclCheck(<span class='keyword'>const</span> Nrrd *nacl) {</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrd1DIrregAclCheck"</span>;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">  <span class='keyword'>if</span> (!nacl) {</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">  <span class='keyword'>if</span> (nrrdCheck(nacl)) {</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: "</span>, me);</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">  <span class='keyword'>if</span> (nrrdTypeUShort != nacl-&gt;type) {</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: type should be %s, not %s"</span>, me,</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">             airEnumStr(nrrdType, nrrdTypeUShort),</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">             airEnumStr(nrrdType, nacl-&gt;type));</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">  <span class='keyword'>if</span> (2 != nacl-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: dimension should be 2, not %d"</span>, me, nacl-&gt;dim);</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">  <span class='keyword'>if</span> (!( nacl-&gt;axis[0].size == 2 &amp;&amp; nacl-&gt;axis[1].size &gt;= 2 )) {</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">    <span class='keyword'>char</span> stmp1[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>], stmp2[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: sizes (%s,%s) not (2,&gt;=2)"</span>, me,</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">             airSprintSize_t(stmp1, nacl-&gt;axis[0].size),</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">             airSprintSize_t(stmp2, nacl-&gt;axis[1].size));</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line"><span class='comment'>** _nrrd1DIrregMapDomain()</span></td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line"><span class='comment'>** ALLOCATES an array of doubles storing the existent control point</span></td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line"><span class='comment'>** locations, and sets its length in *poslenP.  If there are the three</span></td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line"><span class='comment'>** points with non-existent locations, these are ignored.</span></td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line"><span class='comment'>** Assumes that nrrd1DIrregMapCheck has been called on "nmap".</span></td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line"><span class='keyword'>double</span> *</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">_nrrd1DIrregMapDomain(<span class='keyword'>int</span> *posLenP, <span class='keyword'>int</span> *baseIP, <span class='keyword'>const</span> Nrrd *nmap) {</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrd1DIrregMapDomain"</span>;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">  <span class='keyword'>int</span> i, entLen, baseI, posLen;</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">  <span class='keyword'>double</span> *pos, (*mapLup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *v, size_t I);</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">  mapLup = nrrdDLookup[nmap-&gt;type];</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">  baseI = <span class='macro'>AIR_EXISTS(mapLup(nmap-&gt;data, 0))<span class='expansion'>(((int)(!((mapLup(nmap-&gt;data, 0)) - (mapLup(nmap-&gt;data,<br> 0))))))</span></span> ? 0 : 3;</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">  <span class='keyword'>if</span> (baseIP) {</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">    *baseIP = baseI;</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">  entLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nmap-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">  posLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nmap-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[1].size))</span></span> - baseI;</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">  <span class='keyword'>if</span> (posLenP) {</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">    *posLenP = posLen;</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">  pos = (<span class='keyword'>double</span>*)malloc(posLen * <span class='keyword'>sizeof</span>(<span class='keyword'>double</span>));</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">  <span class='keyword'>if</span> (!pos) {</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate %d doubles\n"</span>, me, posLen);</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">  <span class='keyword'>for</span> (i=0; i&lt;posLen; i++) {</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">    pos[i] = mapLup(nmap-&gt;data, (baseI+i)*entLen);</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">  <span class='keyword'>return</span> pos;</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line"><span class='comment'>** _nrrd1DIrregFindInterval()</span></td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line"><span class='comment'>** The hard part of doing 1D irregular mapping: given an array of</span></td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line"><span class='comment'>** control point locations, and a value, find which interval the value</span></td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line"><span class='comment'>** lies in.  The lowest and highest possible indices are given in</span></td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line"><span class='comment'>** "loI" and "hiI".  Results are undefined if these do not in fact</span></td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line"><span class='comment'>** bound the location of correct interval, or if loI &gt; hiI, or if the</span></td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line"><span class='comment'>** query positon "p" is not in the domain vector "pos".  Intervals are</span></td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line"><span class='comment'>** identified by the integral index of the LOWER of the two control</span></td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line"><span class='comment'>** points spanning the interval.</span></td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line"><span class='comment'>** This imposes the same structure of half-open intervals that</span></td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line"><span class='comment'>** is done by airIndex().  That is, a value p is in interval i</span></td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line"><span class='comment'>** if pos[i] &lt;= p &lt; pos[i+1] for all but the last interval, and</span></td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line"><span class='comment'>** pos[i] &lt;= p &lt;= pos[i+1] for the last interval (in which case</span></td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line"><span class='comment'>** i == hiI)</span></td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">_nrrd1DIrregFindInterval(<span class='keyword'>const</span> <span class='keyword'>double</span> *pos, <span class='keyword'>double</span> p, <span class='keyword'>int</span> loI, <span class='keyword'>int</span> hiI) {</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">  <span class='keyword'>int</span> midI;</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">  <span class='comment'>fprintf(stderr, "##%s(%g): hi: %d/%g-%g | %d/%g-%g\n",</span></td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">          <span class='comment'>"_nrrd1DIrregFindInterval", p,</span></td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">          <span class='comment'>loI, pos[loI], pos[loI+1],</span></td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">          <span class='comment'>hiI, pos[hiI], pos[hiI+1]);</span></td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">  <span class='keyword'>while</span> (loI &lt; hiI) {</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">    midI = (loI + hiI)/2;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">    <span class='keyword'>if</span> ( pos[midI] &lt;= p &amp;&amp; ((midI &lt;  hiI &amp;&amp; p &lt;  pos[midI+1]) ||</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">                            (midI == hiI &amp;&amp; p &lt;= pos[midI+1])) ) {</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">      <span class='comment'>/* p is between (pos[midI],pos[midI+1]): we're done */</span></td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">      loI = hiI = midI;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">    } <span class='keyword'>else</span> <span class='keyword'>if</span> (pos[midI] &gt; p) {</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">      <span class='comment'>/* p is below interval midI: midI-1 is valid upper bound */</span></td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">      hiI = midI-1;</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">      <span class='comment'>/* p is above interval midI: midI+1 is valid lower bound */</span></td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">      loI = midI+1;</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">    <span class='comment'>fprintf(stderr, "##%s(%g): %d/%g-%g | %d/%g-%g | %d/%g-%g\n",</span></td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">            <span class='comment'>"_nrrd1DIrregFindInterval", p,</span></td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">            <span class='comment'>loI, pos[loI], pos[loI+1],</span></td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">            <span class='comment'>midI, pos[midI], pos[midI+1],</span></td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">            <span class='comment'>hiI, pos[hiI], pos[hiI+1]);</span></td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">  <span class='keyword'>return</span> loI;</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line"><span class='comment'>******** nrrd1DIrregAclGenerate()</span></td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line"><span class='comment'>** Generates the "acl" that is used to speed up the action of</span></td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line"><span class='comment'>** nrrdApply1DIrregMap().  Basically, the domain of the map</span></td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line"><span class='comment'>** is quantized into "acllen" bins, and for each bin, the</span></td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line"><span class='comment'>** lowest and highest possible map interval is stored. This</span></td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line"><span class='comment'>** either obviates or speeds up the task of finding which</span></td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line"><span class='comment'>** interval contains a given value.</span></td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line"><span class='comment'>** Assumes that nrrd1DIrregMapCheck has been called on "nmap".</span></td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">nrrd1DIrregAclGenerate(Nrrd *nacl, <span class='keyword'>const</span> Nrrd *nmap, size_t aclLen) {</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrd1DIrregAclGenerate"</span>;</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">  <span class='keyword'>int</span> posLen;</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii;</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>short</span> *acl;</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">  <span class='keyword'>double</span> lo, hi, min, max, *pos;</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">  <span class='keyword'>if</span> (!(nacl &amp;&amp; nmap)) {</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">  <span class='keyword'>if</span> (!(aclLen &gt;= 2)) {</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">    <span class='keyword'>char</span> stmp[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: given acl length (%s) is too small"</span>, me,</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">             airSprintSize_t(stmp, aclLen));</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_va(nacl, nrrdTypeUShort, 2,</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, 2)<span class='expansion'>((size_t)(2))</span></span>, <span class='macro'>AIR_CAST(size_t, aclLen)<span class='expansion'>((size_t)(aclLen))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: "</span>, me);</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">  acl = (<span class='keyword'>unsigned</span> <span class='keyword'>short</span> *)nacl-&gt;data;</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">  pos = _nrrd1DIrregMapDomain(&amp;posLen, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nmap);</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">  <span class='keyword'>if</span> (!pos) {</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't determine domain"</span>, me);</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">  nacl-&gt;axis[1].min = min = pos[0];</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">  nacl-&gt;axis[1].max = max = pos[posLen-1];</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;=aclLen-1; ii++) {</td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">    lo = <span class='macro'>AIR_AFFINE(0, ii, aclLen, min, max)<span class='expansion'>( ((double)(max)-(min))*((double)(ii)-(0)) / ((double)(aclLen<br>)-(0)) + (min))</span></span>;</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line">    hi = <span class='macro'>AIR_AFFINE(0, ii+1, aclLen, min, max)<span class='expansion'>( ((double)(max)-(min))*((double)(ii+1)-(0)) / ((double)(aclLen<br>)-(0)) + (min))</span></span>;</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">    acl[0 + 2*ii] = _nrrd1DIrregFindInterval(pos, lo, 0, posLen-2);</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">    acl[1 + 2*ii] = _nrrd1DIrregFindInterval(pos, hi, 0, posLen-2);</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line">  free(pos);</td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN860">860</td><td class="line"><span class='comment'>******** nrrdApply1DIrregMap()</span></td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line"><span class='comment'>** Linear interpolation between irregularly spaced control points.</span></td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line"><span class='comment'>** Obviously, the location of the control point has to be given</span></td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line"><span class='comment'>** explicitly.  The map nrrd must have dimension 2, and each</span></td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line"><span class='comment'>** control point is represented by a scanline along axis 0.  The</span></td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line"><span class='comment'>** first value is the position of the control point, and the remaining</span></td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line"><span class='comment'>** value(s) are linearly weighted according to the position of the</span></td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line"><span class='comment'>** input value among the control point locations.</span></td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line"><span class='comment'>** To allow "coloring" of non-existent values -inf, NaN, and +inf, if</span></td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line"><span class='comment'>** the very first value of the map (the location of the first control</span></td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line"><span class='comment'>** point) is non-existent, then the first three control point locations</span></td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line"><span class='comment'>** must be -inf, NaN, and +inf, in that order, and the information</span></td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line"><span class='comment'>** about these points will be used for corresponding input values.</span></td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line"><span class='comment'>** Doing this makes everything slower, however, because airFPClass_f()</span></td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line"><span class='comment'>** is called on every single value.</span></td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line"><span class='comment'>** This assumes that nrrd1DIrregMapCheck has been called on "nmap",</span></td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line"><span class='comment'>** and that nrrd1DIrregAclCheck has been called on "nacl" (if it is</span></td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line"><span class='comment'>** non-NULL).</span></td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">nrrdApply1DIrregMap(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>const</span> NrrdRange *_range,</td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">                    <span class='keyword'>const</span> Nrrd *nmap, <span class='keyword'>const</span> Nrrd *nacl,</td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">                    <span class='keyword'>int</span> typeOut, <span class='keyword'>int</span> rescale) {</td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdApply1DIrregMap"</span>;</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">  size_t N, I;</td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">  <span class='keyword'>int</span> i, *acl, entLen, posLen, aclLen, mapIdx, aclIdx,</td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line">    entSize, colSize, inSize, lo, hi, baseI;</td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line">  <span class='keyword'>double</span> val, *pos, domMin, domMax, mapIdxFrac,</td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">    (*mapLup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *v, size_t I),</td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line">    (*inLoad)(<span class='keyword'>const</span> <span class='keyword'>void</span> *v), (*outInsert)(<span class='keyword'>void</span> *v, size_t I, <span class='keyword'>double</span> d);</td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line">  <span class='keyword'>char</span> *inData, *outData, *entData0, *entData1;</td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line">  NrrdRange *range;</td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line">  <span class='comment'>fprintf(stderr, "!%s: rescale = %d\n", me, rescale);</span></td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nmap &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line">  <span class='keyword'>if</span> (_range) {</td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line">    range = nrrdRangeCopy(_range);</td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">    nrrdRangeSafeSet(range, nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">    range = nrrdRangeNewSet(nin, nrrdBlind8BitRangeState);</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">  airMopAdd(mop, range, (airMopper)nrrdRangeNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line">  <span class='keyword'>if</span> (_nrrdApply1DSetUp(nout, nin, range, nmap,</td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">                        kindImap, typeOut, rescale, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* multi */</span>)) {</td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">  <span class='keyword'>if</span> (nacl &amp;&amp; nrrd1DIrregAclCheck(nacl)) {</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: given acl isn't valid"</span>, me);</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">  <span class='keyword'>if</span> (nacl) {</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line">    acl = (<span class='keyword'>int</span> *)nacl-&gt;data;</td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line">    aclLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nacl-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nacl-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">    acl = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN927">927</td><td class="line">    aclLen = 0;</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">  pos = _nrrd1DIrregMapDomain(&amp;posLen, &amp;baseI, nmap);</td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line">  <span class='keyword'>if</span> (!pos) {</td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't determine domain"</span>, me);</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">  airMopAdd(mop, pos, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN935">935</td><td class="line">  mapLup = <span class="mrange">nrrdDLookup[nmap-&gt;type]</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:3ex">Value stored to 'mapLup' is never read</div></td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line">  inData = (<span class='keyword'>char</span> *)nin-&gt;data;</td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line">  inLoad = nrrdDLoad[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">  inSize = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nrrdElementSize(nin))<span class='expansion'>((unsigned int)(nrrdElementSize(nin)))</span></span>;</td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line">  mapLup = nrrdDLookup[nmap-&gt;type];</td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">  entLen = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nmap-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nmap-&gt;axis[0].size))</span></span>;    <span class='comment'>/* entLen is really 1 + entry length */</span></td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line">  entSize = entLen*<span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nrrdElementSize(nmap))<span class='expansion'>((unsigned int)(nrrdElementSize(nmap)))</span></span>;</td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line">  colSize = (entLen-1)*<span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>,nrrdTypeSize[typeOut])<span class='expansion'>((unsigned int)(nrrdTypeSize[typeOut]))</span></span>;</td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">  outData = (<span class='keyword'>char</span> *)nout-&gt;data;</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">  outInsert = nrrdDInsert[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line">  domMin = pos[0];</td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line">  domMax = pos[posLen-1];</td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line">  <span class='comment'>fprintf(stderr, "!%s: domMin, domMax = %g, %g\n", me, domMin, domMax);</span></td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line">  N = nrrdElementNumber(nin);</td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">  <span class='keyword'>for</span> (I=0;</td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line">       I&lt;N;</td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">       I++, inData += inSize, outData += colSize) {</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">    val = inLoad(inData);</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line">    <span class='comment'>fprintf(stderr, "!%s: (%d) val = % 31.15f\n", me, (int)I, val);</span></td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line">    <span class='keyword'>if</span> (!<span class='macro'>AIR_EXISTS(val)<span class='expansion'>(((int)(!((val) - (val)))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line">      <span class='comment'>/* got a non-existent value */</span></td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">      <span class='keyword'>if</span> (baseI) {</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">        <span class='comment'>/* and we know how to deal with them */</span></td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line">        <span class='keyword'>switch</span> (airFPClass_d(val)) {</td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">        <span class='keyword'>case</span> airFP_NEG_INF:</td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line">          mapIdx = 0;</td></tr>
+<tr><td class="num" id="LN967">967</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">        <span class='keyword'>case</span> airFP_SNAN:</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line">        <span class='keyword'>case</span> airFP_QNAN:</td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">          mapIdx = 1;</td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line">        <span class='keyword'>case</span> airFP_POS_INF:</td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line">          mapIdx = 2;</td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line">          mapIdx = 0;</td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line">          fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: PANIC: non-existent value/class %g/%d "</span></td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line">                  <span class='string_literal'>"not handled\n"</span>,</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">                  me, val, airFPClass_d(val));</td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line">          exit(1);</td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line">        entData0 = (<span class='keyword'>char</span>*)(nmap-&gt;data) + mapIdx*entSize;</td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">        <span class='keyword'>for</span> (i=1; i&lt;entLen; i++) {</td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line">          outInsert(outData, i-1, mapLup(entData0, i));</td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN986">986</td><td class="line">        <span class='keyword'>continue</span>;  <span class='comment'>/* we're done! (with this value) */</span></td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line">        <span class='comment'>/* we don't know how to properly deal with this non-existent value:</span></td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line">           <span class='comment'>we use the first entry, and then fall through to code below */</span></td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">        mapIdx = 0;</td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line">        mapIdxFrac = 0.0;</td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">      <span class='comment'>/* we have an existent value */</span></td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line">      <span class='keyword'>if</span> (rescale) {</td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line">        val = (range-&gt;min != range-&gt;max</td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line">               ? <span class='macro'>AIR_AFFINE(range-&gt;min, val, range-&gt;max, domMin, domMax)<span class='expansion'>( ((double)(domMax)-(domMin))*((double)(val)-(range-&gt;min))<br> / ((double)(range-&gt;max)-(range-&gt;min)) + (domMin))</span></span></td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line">               : domMin);</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line">      val = <span class='macro'>AIR_CLAMP(domMin, val, domMax)<span class='expansion'>((val) &lt; (domMin) ? (domMin) : ((val) &gt; (domMax) ? (domMax<br>) : (val)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">      <span class='keyword'>if</span> (acl) {</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">        aclIdx = airIndex(domMin, val, domMax, aclLen);</td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line">        lo = acl[0 + 2*aclIdx];</td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line">        hi = acl[1 + 2*aclIdx];</td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line">        lo = 0;</td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line">        hi = posLen-2;</td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN1009">1009</td><td class="line">      <span class='keyword'>if</span> (lo &lt; hi) {</td></tr>
+<tr><td class="num" id="LN1010">1010</td><td class="line">        mapIdx = _nrrd1DIrregFindInterval(pos, val, lo, hi);</td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">        <span class='comment'>/* acl did its job ==&gt; lo == hi */</span></td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line">        mapIdx = lo;</td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN1015">1015</td><td class="line">      <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line">      <span class='comment'>fprintf(stderr, "!%s:   --&gt; val = %g; lo,hi = %d,%d, mapIdx = %d\n",</span></td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">              <span class='comment'>me, val, lo, hi, mapIdx);</span></td></tr>
+<tr><td class="num" id="LN1018">1018</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">    mapIdxFrac = <span class='macro'>AIR_AFFINE(pos[mapIdx], val, pos[mapIdx+1], 0.0, 1.0)<span class='expansion'>( ((double)(1.0)-(0.0))*((double)(val)-(pos[mapIdx])) / ((double<br>)(pos[mapIdx+1])-(pos[mapIdx])) + (0.0))</span></span>;</td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line">    <span class='comment'>fprintf(stderr, "!%s:    mapIdxFrac = %g\n", me, mapIdxFrac);</span></td></tr>
+<tr><td class="num" id="LN1023">1023</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">    entData0 = (<span class='keyword'>char</span>*)(nmap-&gt;data) + (baseI+mapIdx)*entSize;</td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line">    entData1 = (<span class='keyword'>char</span>*)(nmap-&gt;data) + (baseI+mapIdx+1)*entSize;</td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line">    <span class='keyword'>for</span> (i=1; i&lt;entLen; i++) {</td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">      val = ((1-mapIdxFrac)*mapLup(entData0, i) +</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line">             mapIdxFrac*mapLup(entData1, i));</td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line">      <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line">      <span class='comment'>fprintf(stderr, "!%s: %g * %g   +   %g * %g = %g\n", me,</span></td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line">              <span class='comment'>1-mapIdxFrac, mapLup(entData0, i),</span></td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">              <span class='comment'>mapIdxFrac, mapLup(entData1, i), val);</span></td></tr>
+<tr><td class="num" id="LN1033">1033</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN1034">1034</td><td class="line">      outInsert(outData, i-1, val);</td></tr>
+<tr><td class="num" id="LN1035">1035</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1036">1036</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1037">1037</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line"><span class='comment'>******** nrrdApply1DSubstitution</span></td></tr>
+<tr><td class="num" id="LN1043">1043</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line"><span class='comment'>** A "subst" is a substitution table, i.e. a list of pairs that</span></td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line"><span class='comment'>** describes what values should be substituted with what (substitution</span></td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line"><span class='comment'>** rules).  So, nsubst must be a scalar 2xN array.  The output is a</span></td></tr>
+<tr><td class="num" id="LN1047">1047</td><td class="line"><span class='comment'>** copy of the input with values substituted using this table.</span></td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line"><span class='comment'>** Unlike with lookup tables and maps (irregular and regular), we</span></td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line"><span class='comment'>** aren't at liberty to change the dimensionality of the data (can't</span></td></tr>
+<tr><td class="num" id="LN1051">1051</td><td class="line"><span class='comment'>** substitute a grayscale with a color).  The ability to apply</span></td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line"><span class='comment'>** substitutions to non-scalar data will be in a different function.</span></td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line"><span class='comment'>** Also unlike lookup tables and maps, the output type is the SAME as</span></td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line"><span class='comment'>** the input type; the output does NOT inherit the type of the</span></td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line"><span class='comment'>** substitution</span></td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN1058">1058</td><td class="line">nrrdApply1DSubstitution(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>const</span> Nrrd *_nsubst) {</td></tr>
+<tr><td class="num" id="LN1059">1059</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdApply1DSubstitution"</span>;</td></tr>
+<tr><td class="num" id="LN1060">1060</td><td class="line">  <span class='keyword'>double</span> (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t);</td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">  <span class='keyword'>double</span> (*ins)(<span class='keyword'>void</span> *, size_t, <span class='keyword'>double</span>);</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line">  Nrrd *nsubst;</td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">  <span class='keyword'>double</span> val, *subst;</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">  size_t ii, jj, num, asize0, asize1;</td></tr>
+<tr><td class="num" id="LN1065">1065</td><td class="line">  <span class='keyword'>int</span> changed;</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; _nsubst &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN1069">1069</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">  <span class='keyword'>if</span> (nrrdTypeBlock == nin-&gt;type || nrrdTypeBlock == _nsubst-&gt;type) {</td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: input or substitution type is %s, need scalar"</span>,</td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line">             me, airEnumStr(nrrdType, nrrdTypeBlock));</td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1076">1076</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line">  <span class='keyword'>if</span> (2 != _nsubst-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN1078">1078</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: substitution table has to be 2-D, not %d-D"</span>,</td></tr>
+<tr><td class="num" id="LN1079">1079</td><td class="line">             me, _nsubst-&gt;dim);</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1082">1082</td><td class="line">  <span class='comment'>/* nrrdAxisInfoGet_va(_nsubst, nrrdAxisInfoSize, &amp;asize0, &amp;asize1); */</span></td></tr>
+<tr><td class="num" id="LN1083">1083</td><td class="line">  asize0 = _nsubst-&gt;axis[0].size;</td></tr>
+<tr><td class="num" id="LN1084">1084</td><td class="line">  asize1 = _nsubst-&gt;axis[1].size;</td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">  <span class='keyword'>if</span> (2 != asize0) {</td></tr>
+<tr><td class="num" id="LN1086">1086</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: substitution table has to be 2xN, not %uxN"</span>,</td></tr>
+<tr><td class="num" id="LN1087">1087</td><td class="line">             me, <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, asize0)<span class='expansion'>((unsigned int)(asize0))</span></span>);</td></tr>
+<tr><td class="num" id="LN1088">1088</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1090">1090</td><td class="line">  <span class='keyword'>if</span> (nout != nin) {</td></tr>
+<tr><td class="num" id="LN1091">1091</td><td class="line">    <span class='keyword'>if</span> (nrrdCopy(nout, nin)) {</td></tr>
+<tr><td class="num" id="LN1092">1092</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't initialize by copy to output"</span>, me);</td></tr>
+<tr><td class="num" id="LN1093">1093</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1094">1094</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1095">1095</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1096">1096</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line">  nsubst = nrrdNew();</td></tr>
+<tr><td class="num" id="LN1099">1099</td><td class="line">  airMopAdd(mop, nsubst, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN1100">1100</td><td class="line">  <span class='keyword'>if</span> (nrrdConvert(nsubst, _nsubst, nrrdTypeDouble)) {</td></tr>
+<tr><td class="num" id="LN1101">1101</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't create double copy of substitution table"</span>,</td></tr>
+<tr><td class="num" id="LN1102">1102</td><td class="line">             me);</td></tr>
+<tr><td class="num" id="LN1103">1103</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1104">1104</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">  lup = nrrdDLookup[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN1106">1106</td><td class="line">  ins = nrrdDInsert[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN1107">1107</td><td class="line">  subst = (<span class='keyword'>double</span> *)nsubst-&gt;data;</td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">  num = nrrdElementNumber(nout);</td></tr>
+<tr><td class="num" id="LN1109">1109</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;num; ii++) {</td></tr>
+<tr><td class="num" id="LN1110">1110</td><td class="line">    val = lup(nout-&gt;data, ii);</td></tr>
+<tr><td class="num" id="LN1111">1111</td><td class="line">    changed = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1112">1112</td><td class="line">    <span class='keyword'>for</span> (jj=0; jj&lt;asize1; jj++) {</td></tr>
+<tr><td class="num" id="LN1113">1113</td><td class="line">      <span class='keyword'>if</span> (val == subst[jj*2+0]) {</td></tr>
+<tr><td class="num" id="LN1114">1114</td><td class="line">        val = subst[jj*2+1];</td></tr>
+<tr><td class="num" id="LN1115">1115</td><td class="line">        changed = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1118">1118</td><td class="line">    <span class='keyword'>if</span> (changed) {</td></tr>
+<tr><td class="num" id="LN1119">1119</td><td class="line">      ins(nout-&gt;data, ii, val);</td></tr>
+<tr><td class="num" id="LN1120">1120</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1121">1121</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1122">1122</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1123">1123</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN1124">1124</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1125">1125</td><td class="line">}</td></tr>
+</table></body></html>

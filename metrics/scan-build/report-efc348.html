@@ -1,0 +1,972 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/nrrd/cc.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'ret' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/nrrd/cc.c -->
+
+<!-- FILENAME cc.c -->
+
+<!-- FUNCTIONNAME nrrdCCFind -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 53f68f38cd6736a8a346047800fd9f34 -->
+
+<!-- BUGLINE 339 -->
+
+<!-- BUGCOLUMN 3 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/nrrd/cc.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 339, column 3</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'ret' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "nrrd.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privateNrrd.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='comment'>** learned: if you have globals, such as _nrrdCC_verb, which are</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='comment'>** defined and declared here, but which are NOT initialized, then</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='comment'>** C++ apps which are linking against Teem will have problems!!!</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='comment'>** This was first seen on the mac.</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='keyword'>int</span> _nrrdCC_verb = 0;</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='keyword'>int</span> _nrrdCC_EqvIncr = 10000; <span class='comment'>/* HEY: this has to be big so that ccfind is not</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">                                <span class='comment'>stuck constantly re-allocating the eqv array.</span></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">                                <span class='comment'>This is will be one of the best places to</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">                                <span class='comment'>test the new multiplicative reallocation</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">                                <span class='comment'>strategy, planned for Teem 2.0 */</span></td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">_nrrdCCFind_1(Nrrd *nout, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *numid, <span class='keyword'>const</span> Nrrd *nin) {</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">  <span class='comment'>/* static const char me[]="_nrrdCCFind_1"; */</span></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sx, I, id, lval, val, *out, (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t);</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">  out = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*, nout-&gt;data)<span class='expansion'>((unsigned int*)(nout-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">  out[0] = id = 0;</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">  *numid = 1;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">  lval = lup(nin-&gt;data, 0);</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">  <span class='keyword'>for</span> (I=1; I&lt;sx; I++) {</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">    val = lup(nin-&gt;data, I);</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">    <span class='keyword'>if</span> (lval != val) {</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">      id++;</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">      (*numid)++;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">    out[I] = id;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">    lval = val;</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line"><span class='comment'>** layout of value (pvl) and index (pid) cache:</span></td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"><span class='comment'>**  2  3  4 --&gt; X</span></td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line"><span class='comment'>**  1  .  .     oddly, index 0 is never used</span></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line"><span class='comment'>**  .  .  .</span></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line"><span class='comment'>**  |</span></td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"><span class='comment'>**  v Y</span></td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">_nrrdCCFind_2(Nrrd *nout, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *numid, airArray *eqvArr,</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">              <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdCCFind_2"</span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">  <span class='keyword'>double</span> vl=0, pvl[5]={0,0,0,0,0};</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> id, pid[5]={0,0,0,0,0}, (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), *out;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> p, x, y, sx, sy;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  id = 0; <span class='comment'>/* sssh! compiler warnings */</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">  out = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*, nout-&gt;data)<span class='expansion'>((unsigned int*)(nout-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line"><span class='directive'>#define <span class='macro'>GETV_2(x,y)<span class='expansion'>((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (x) + sx*(<br>y)) : 0.5)</span></span> ((<span class='macro'>AIR_IN_CL(0, AIR_CAST(int, x), AIR_CAST(int, sx-1))<span class='expansion'>((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int)<br>(sx-1))))</span></span>     \</span></td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">                      <span class='directive'>&amp;&amp; <span class='macro'>AIR_IN_CL(0, AIR_CAST(int, y), AIR_CAST(int, sy-1))<span class='expansion'>((0) &lt;= (((int)(y))) &amp;&amp; (((int)(y))) &lt;= (((int)<br>(sy-1))))</span></span>) \</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">                     <span class='directive'>? lup(nin-&gt;data, (x) + sx*(y)) \</span></td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">                     <span class='directive'>: 0.5) /* value that can't come from an array of uints */</span></td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"><span class='directive'>#define <span class='macro'>GETI_2(x,y)<span class='expansion'>((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1))))) ? out[(x) + sx*(y)] : ((unsigned<br> int)(-1)))</span></span> ((<span class='macro'>AIR_IN_CL(0, AIR_CAST(int, x), AIR_CAST(int, sx-1))<span class='expansion'>((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int)<br>(sx-1))))</span></span>     \</span></td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">                      <span class='directive'>&amp;&amp; <span class='macro'>AIR_IN_CL(0, AIR_CAST(int, y), AIR_CAST(int, sy-1))<span class='expansion'>((0) &lt;= (((int)(y))) &amp;&amp; (((int)(y))) &lt;= (((int)<br>(sy-1))))</span></span>) \</span></td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">                     <span class='directive'>? out[(x) + sx*(y)] \</span></td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">                     <span class='directive'>: <span class='macro'>AIR_CAST(unsigned int, -1)<span class='expansion'>((unsigned int)(-1))</span></span>)  /* CC index (probably!)</span></td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">                                                       <span class='directive'>never assigned */</span></td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  *numid = 0;</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">  <span class='keyword'>for</span> (y=0; y&lt;sy; y++) {</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">    <span class='keyword'>for</span> (x=0; x&lt;sx; x++) {</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">      <span class='keyword'>if</span> (_nrrdCC_verb) {</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s(%d,%d) -----------\n"</span>, me, x, y);</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">      <span class='keyword'>if</span> (!x) {</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        pvl[1] = <span class='macro'>GETV_2(-1, y)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (-1) +<br> sx*(y)) : 0.5)</span></span>;   pid[1] = <span class='macro'>GETI_2(-1, y)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1))))) ? out[(-1) + sx*(y)] : ((<br>unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        pvl[2] = <span class='macro'>GETV_2(-1, y-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (<br>-1) + sx*(y-1)) : 0.5)</span></span>; pid[2] = <span class='macro'>GETI_2(-1, y-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1))))) ? out[(-1) + sx*(y-1)<br>] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">        pvl[3] = <span class='macro'>GETV_2(0, y-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (0) +<br> sx*(y-1)) : 0.5)</span></span>;  pid[3] = <span class='macro'>GETI_2(0, y-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1))))) ? out[(0) + sx*(y-1)] : (<br>(unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">        pvl[1] = vl;              pid[1] = id;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">        pvl[2] = pvl[3];          pid[2] = pid[3];</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">        pvl[3] = pvl[4];          pid[3] = pid[4];</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">      pvl[4] = <span class='macro'>GETV_2(x+1, y-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (<br>x+1) + sx*(y-1)) : 0.5)</span></span>;  pid[4] = <span class='macro'>GETI_2(x+1, y-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1))))) ? out[(x+1) + sx*(y-1<br>)] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">      vl = <span class='macro'>GETV_2(x, y)<span class='expansion'>((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (x) + sx*(<br>y)) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">      p = 0;</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">      <span class='keyword'>if</span> (vl == pvl[1]) {</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">        id = pid[p=1];</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line"><span class='directive'>#define <span class='macro'>TEST(P)<span class='expansion'>if (vl == pvl[(P)]) { if (p) { if (id != pid[(P)]) { airEqvAdd<br>(eqvArr, pid[(P)], id); } } else { id = pid[p=(P)]; } }</span></span> \</span></td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">      <span class='directive'>if (vl == pvl[(P)]) {                         \</span></td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">        <span class='directive'>if (p) { /* we already had a value match */ \</span></td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">          <span class='directive'>if (id != pid[(P)]) {                     \</span></td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">            <span class='directive'>airEqvAdd(eqvArr, pid[(P)], id);        \</span></td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">          <span class='directive'>}                                         \</span></td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        <span class='directive'>} else {                                    \</span></td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">          <span class='directive'>id = pid[p=(P)];                          \</span></td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">        <span class='directive'>}                                           \</span></td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">      <span class='directive'>}</span></td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">      <span class='macro'>TEST(3)<span class='expansion'>if (vl == pvl[(3)]) { if (p) { if (id != pid[(3)]) { airEqvAdd<br>(eqvArr, pid[(3)], id); } } else { id = pid[p=(3)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">      <span class='keyword'>if</span> (2 == conny) {</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        <span class='macro'>TEST(2)<span class='expansion'>if (vl == pvl[(2)]) { if (p) { if (id != pid[(2)]) { airEqvAdd<br>(eqvArr, pid[(2)], id); } } else { id = pid[p=(2)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        <span class='macro'>TEST(4)<span class='expansion'>if (vl == pvl[(4)]) { if (p) { if (id != pid[(4)]) { airEqvAdd<br>(eqvArr, pid[(4)], id); } } else { id = pid[p=(4)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">      <span class='keyword'>if</span> (!p) {</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">        <span class='comment'>/* didn't match anything previous */</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">        id = *numid;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">        (*numid)++;</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">      <span class='keyword'>if</span> (_nrrdCC_verb) {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: pvl: %g %g %g %g (vl = %g)\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">                pvl[1], pvl[2], pvl[3], pvl[4], vl);</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"        pid: %d %d %d %d\n"</span>,</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">                pid[1], pid[2], pid[3], pid[4]);</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"    --&gt; p = %d, id = %d, *numid = %d\n"</span>,</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">                p, id, *numid);</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">      out[x + sx*y] = id;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line"><span class='comment'>**       5  6  7 --&gt; X</span></td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line"><span class='comment'>**       8  9 10</span></td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line"><span class='comment'>**      11 12 13</span></td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line"><span class='comment'>**      |</span></td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line"><span class='comment'>**      v Y</span></td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line"><span class='comment'>**    2  3  4</span></td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line"><span class='comment'>**  / 1  .  .  again, 0 index never used, for reasons forgotten</span></td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line"><span class='comment'>** Z  .  .  .</span></td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">_nrrdCCFind_3(Nrrd *nout, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *numid, airArray *eqvArr,</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">              <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">  <span class='comment'>/* static const char me[]="_nrrdCCFind_3" ; */</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">  <span class='keyword'>double</span> pvl[14]={0,0,0,0,0,0,0,0,0,0,0,0,0,0}, vl=0;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> id, *out, (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t),</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">    pid[14]={0,0,0,0,0,0,0,0,0,0,0,0,0,0};</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> p, x, y, z, sx, sy, sz;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  id = 0; <span class='comment'>/* sssh! compiler warnings */</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">  out = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*, nout-&gt;data)<span class='expansion'>((unsigned int*)(nout-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">  sz = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[2].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[2].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line"><span class='directive'>#define <span class='macro'>GETV_3(x,y,z)<span class='expansion'>((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int)(z<br>))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? lup(nin<br>-&gt;data, (x) + sx*((y) + sy*(z))) : 0.5)</span></span> ((<span class='macro'>AIR_IN_CL(0, AIR_CAST(int, x), AIR_CAST(int, sx-1))<span class='expansion'>((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int)<br>(sx-1))))</span></span>   \</span></td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">                       <span class='directive'>&amp;&amp; <span class='macro'>AIR_IN_CL(0, AIR_CAST(int, y), AIR_CAST(int, sy-1))<span class='expansion'>((0) &lt;= (((int)(y))) &amp;&amp; (((int)(y))) &lt;= (((int)<br>(sy-1))))</span></span> \</span></td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">                       <span class='directive'>&amp;&amp; <span class='macro'>AIR_IN_CL(0, AIR_CAST(int, z), AIR_CAST(int, sz-1))<span class='expansion'>((0) &lt;= (((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)<br>(sz-1))))</span></span>)\</span></td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">                       <span class='directive'>? lup(nin-&gt;data, (x) + sx*((y) + sy*(z)))              \</span></td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">                       <span class='directive'>: 0.5)</span></td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line"><span class='directive'>#define <span class='macro'>GETI_3(x,y,z)<span class='expansion'>((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int)(z<br>))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? out[(x)<br> + sx*((y) + sy*(z))] : ((unsigned int)(-1)))</span></span> ((<span class='macro'>AIR_IN_CL(0, AIR_CAST(int, x), AIR_CAST(int, sx-1))<span class='expansion'>((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int)<br>(sx-1))))</span></span>   \</span></td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">                       <span class='directive'>&amp;&amp; <span class='macro'>AIR_IN_CL(0, AIR_CAST(int, y), AIR_CAST(int, sy-1))<span class='expansion'>((0) &lt;= (((int)(y))) &amp;&amp; (((int)(y))) &lt;= (((int)<br>(sy-1))))</span></span> \</span></td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">                       <span class='directive'>&amp;&amp; <span class='macro'>AIR_IN_CL(0, AIR_CAST(int, z), AIR_CAST(int, sz-1))<span class='expansion'>((0) &lt;= (((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)<br>(sz-1))))</span></span>)\</span></td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">                       <span class='directive'>? out[(x) + sx*((y) + sy*(z))]                         \</span></td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">                       <span class='directive'>: <span class='macro'>AIR_CAST(unsigned int, -1)<span class='expansion'>((unsigned int)(-1))</span></span>)</span></td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">  *numid = 0;</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">  <span class='keyword'>for</span> (z=0; z&lt;sz; z++) {</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">    <span class='keyword'>for</span> (y=0; y&lt;sy; y++) {</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">      <span class='keyword'>for</span> (x=0; x&lt;sx; x++) {</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">        <span class='keyword'>if</span> (!x) {</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">          pvl[ 1] = <span class='macro'>GETV_3( -1,   y,   z)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int<br>)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? lup(<br>nin-&gt;data, (-1) + sx*((y) + sy*(z))) : 0.5)</span></span>; pid[ 1] = <span class='macro'>GETI_3( -1,   y,   z)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int<br>)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? out[<br>(-1) + sx*((y) + sy*(z))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">          pvl[ 2] = <span class='macro'>GETV_3( -1, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ?<br> lup(nin-&gt;data, (-1) + sx*((y-1) + sy*(z))) : 0.5)</span></span>; pid[ 2] = <span class='macro'>GETI_3( -1, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ?<br> out[(-1) + sx*((y-1) + sy*(z))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">          pvl[ 3] = <span class='macro'>GETV_3(  0, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? lup<br>(nin-&gt;data, (0) + sx*((y-1) + sy*(z))) : 0.5)</span></span>; pid[ 3] = <span class='macro'>GETI_3(  0, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? out<br>[(0) + sx*((y-1) + sy*(z))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">          pvl[ 5] = <span class='macro'>GETV_3( -1, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (-1) + sx*((y-1) + sy*(z-1))) : 0.5)</span></span>; pid[ 5] = <span class='macro'>GETI_3( -1, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? out[(-1) + sx*((y-1) + sy*(z-1))] : ((unsigned int)(-1))<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">          pvl[ 8] = <span class='macro'>GETV_3( -1,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int<br>)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))) ? lup<br>(nin-&gt;data, (-1) + sx*((y) + sy*(z-1))) : 0.5)</span></span>; pid[ 8] = <span class='macro'>GETI_3( -1,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int<br>)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))) ? out<br>[(-1) + sx*((y) + sy*(z-1))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">          pvl[11] = <span class='macro'>GETV_3( -1, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp;<br> (((int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (-1) + sx*((y+1) + sy*(z-1))) : 0.5)</span></span>; pid[11] = <span class='macro'>GETI_3( -1, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp;<br> (((int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? out[(-1) + sx*((y+1) + sy*(z-1))] : ((unsigned int)(-1))<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">          pvl[ 6] = <span class='macro'>GETV_3(  0, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))))<br> ? lup(nin-&gt;data, (0) + sx*((y-1) + sy*(z-1))) : 0.5)</span></span>; pid[ 6] = <span class='macro'>GETI_3(  0, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))))<br> ? out[(0) + sx*((y-1) + sy*(z-1))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">          pvl[ 9] = <span class='macro'>GETV_3(  0,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int)(z<br>-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))) ? lup<br>(nin-&gt;data, (0) + sx*((y) + sy*(z-1))) : 0.5)</span></span>; pid[ 9] = <span class='macro'>GETI_3(  0,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int)(z<br>-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))) ? out<br>[(0) + sx*((y) + sy*(z-1))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">          pvl[12] = <span class='macro'>GETV_3(  0, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp; ((<br>(int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))))<br> ? lup(nin-&gt;data, (0) + sx*((y+1) + sy*(z-1))) : 0.5)</span></span>; pid[12] = <span class='macro'>GETI_3(  0, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp; ((<br>(int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))))<br> ? out[(0) + sx*((y+1) + sy*(z-1))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">          pvl[ 1] = vl;                    pid[ 1] = id;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">          pvl[ 2] = pvl[ 3];               pid[ 2] = pid[ 3];</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">          pvl[ 3] = pvl[ 4];               pid[ 3] = pid[ 4];</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">          pvl[ 5] = pvl[ 6];               pid[ 5] = pid[ 6];</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">          pvl[ 8] = pvl[ 9];               pid[ 8] = pid[ 9];</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">          pvl[11] = pvl[12];               pid[11] = pid[12];</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">          pvl[ 6] = pvl[ 7];               pid[ 6] = pid[ 7];</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">          pvl[ 9] = pvl[10];               pid[ 9] = pid[10];</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">          pvl[12] = pvl[13];               pid[12] = pid[13];</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">        pvl[ 4] = <span class='macro'>GETV_3(x+1, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ?<br> lup(nin-&gt;data, (x+1) + sx*((y-1) + sy*(z))) : 0.5)</span></span>;   pid[ 4] = <span class='macro'>GETI_3(x+1, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ?<br> out[(x+1) + sx*((y-1) + sy*(z))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">        pvl[ 7] = <span class='macro'>GETV_3(x+1, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (x+1) + sx*((y-1) + sy*(z-1))) : 0.5)</span></span>;   pid[ 7] = <span class='macro'>GETI_3(x+1, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? out[(x+1) + sx*((y-1) + sy*(z-1))] : ((unsigned int)(-1)<br>))</span></span>;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">        pvl[10] = <span class='macro'>GETV_3(x+1,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp;<br> (((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= ((<br>(int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))<br>) ? lup(nin-&gt;data, (x+1) + sx*((y) + sy*(z-1))) : 0.5)</span></span>;   pid[10] = <span class='macro'>GETI_3(x+1,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp;<br> (((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= ((<br>(int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))<br>) ? out[(x+1) + sx*((y) + sy*(z-1))] : ((unsigned int)(-1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">        pvl[13] = <span class='macro'>GETV_3(x+1, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp;<br> (((int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (x+1) + sx*((y+1) + sy*(z-1))) : 0.5)</span></span>;   pid[13] = <span class='macro'>GETI_3(x+1, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp;<br> (((int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? out[(x+1) + sx*((y+1) + sy*(z-1))] : ((unsigned int)(-1)<br>))</span></span>;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">        vl = <span class='macro'>GETV_3(x, y, z)<span class='expansion'>((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(x))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int)(z<br>))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? lup(nin<br>-&gt;data, (x) + sx*((y) + sy*(z))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">        p = 0;</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">        <span class='keyword'>if</span> (vl == pvl[1]) {</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">          id = pid[p=1];</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">        <span class='macro'>TEST(3)<span class='expansion'>if (vl == pvl[(3)]) { if (p) { if (id != pid[(3)]) { airEqvAdd<br>(eqvArr, pid[(3)], id); } } else { id = pid[p=(3)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">        <span class='macro'>TEST(9)<span class='expansion'>if (vl == pvl[(9)]) { if (p) { if (id != pid[(9)]) { airEqvAdd<br>(eqvArr, pid[(9)], id); } } else { id = pid[p=(9)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">        <span class='keyword'>if</span> (2 &lt;= conny) {</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">          <span class='macro'>TEST(2)<span class='expansion'>if (vl == pvl[(2)]) { if (p) { if (id != pid[(2)]) { airEqvAdd<br>(eqvArr, pid[(2)], id); } } else { id = pid[p=(2)]; } }</span></span>; <span class='macro'>TEST(4)<span class='expansion'>if (vl == pvl[(4)]) { if (p) { if (id != pid[(4)]) { airEqvAdd<br>(eqvArr, pid[(4)], id); } } else { id = pid[p=(4)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">          <span class='macro'>TEST(6)<span class='expansion'>if (vl == pvl[(6)]) { if (p) { if (id != pid[(6)]) { airEqvAdd<br>(eqvArr, pid[(6)], id); } } else { id = pid[p=(6)]; } }</span></span>; <span class='macro'>TEST(8)<span class='expansion'>if (vl == pvl[(8)]) { if (p) { if (id != pid[(8)]) { airEqvAdd<br>(eqvArr, pid[(8)], id); } } else { id = pid[p=(8)]; } }</span></span>; <span class='macro'>TEST(10)<span class='expansion'>if (vl == pvl[(10)]) { if (p) { if (id != pid[(10)]) { airEqvAdd<br>(eqvArr, pid[(10)], id); } } else { id = pid[p=(10)]; } }</span></span>; <span class='macro'>TEST(12)<span class='expansion'>if (vl == pvl[(12)]) { if (p) { if (id != pid[(12)]) { airEqvAdd<br>(eqvArr, pid[(12)], id); } } else { id = pid[p=(12)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">          <span class='keyword'>if</span> (3 == conny) {</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">            <span class='macro'>TEST(5)<span class='expansion'>if (vl == pvl[(5)]) { if (p) { if (id != pid[(5)]) { airEqvAdd<br>(eqvArr, pid[(5)], id); } } else { id = pid[p=(5)]; } }</span></span>; <span class='macro'>TEST(7)<span class='expansion'>if (vl == pvl[(7)]) { if (p) { if (id != pid[(7)]) { airEqvAdd<br>(eqvArr, pid[(7)], id); } } else { id = pid[p=(7)]; } }</span></span>; <span class='macro'>TEST(11)<span class='expansion'>if (vl == pvl[(11)]) { if (p) { if (id != pid[(11)]) { airEqvAdd<br>(eqvArr, pid[(11)], id); } } else { id = pid[p=(11)]; } }</span></span>; <span class='macro'>TEST(13)<span class='expansion'>if (vl == pvl[(13)]) { if (p) { if (id != pid[(13)]) { airEqvAdd<br>(eqvArr, pid[(13)], id); } } else { id = pid[p=(13)]; } }</span></span>;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">        <span class='keyword'>if</span> (!p) {</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">          <span class='comment'>/* didn't match anything previous */</span></td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">          id = *numid;</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">          (*numid)++;</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">        out[x + sx*(y + sy*z)] = id;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">_nrrdCCFind_N(Nrrd *nout, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *numid, airArray *eqvArr,</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">              <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdCCFind_N"</span>;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">  <span class='macro'>AIR_UNUSED(nout)<span class='expansion'>(void)(nout)</span></span>;</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">  <span class='macro'>AIR_UNUSED(numid)<span class='expansion'>(void)(numid)</span></span>;</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">  <span class='macro'>AIR_UNUSED(eqvArr)<span class='expansion'>(void)(eqvArr)</span></span>;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">  <span class='macro'>AIR_UNUSED(nin)<span class='expansion'>(void)(nin)</span></span>;</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">  <span class='macro'>AIR_UNUSED(conny)<span class='expansion'>(void)(conny)</span></span>;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">  biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: sorry, not implemented yet"</span>, me);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">  <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line"><span class='comment'>******** nrrdCCFind</span></td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line"><span class='comment'>** finds connected components (CCs) in given integral type nrrd "nin",</span></td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line"><span class='comment'>** according to connectivity "conny", putting the results in "nout".</span></td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"><span class='comment'>** The "type" argument controls what type the output will be.  If</span></td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line"><span class='comment'>** type == nrrdTypeDefault, the type used will be the smallest that</span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line"><span class='comment'>** can contain the CC id values.  Otherwise, the specified type "type"</span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"><span class='comment'>** will be used, assuming that it is large enough to hold the CC ids.</span></td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line"><span class='comment'>** "conny": the number of coordinates that need to varied together in</span></td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line"><span class='comment'>** order to reach all the samples that are to consitute the neighborhood</span></td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line"><span class='comment'>** around a sample.  For 2-D, conny==1 specifies the 4 edge-connected</span></td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"><span class='comment'>** pixels, and 2 specifies the 8 edge- and corner-connected.</span></td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line"><span class='comment'>** The caller can get a record of the values in each CC by passing a</span></td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line"><span class='comment'>** non-NULL nval, which will be allocated to an array of the same type</span></td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line"><span class='comment'>** as nin, so that nval-&gt;data[I] is the value in nin inside CC #I.</span></td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">nrrdCCFind(Nrrd *nout, Nrrd **nvalP, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>int</span> type,</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">           <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdCCFind"</span>, func[]=<span class='string_literal'>"ccfind"</span>;</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">  Nrrd *nfpid;  <span class='comment'>/* first-pass IDs */</span></td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">  airArray *mop, *eqvArr;</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *fpid, numid, numsettleid, *map,</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">    (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), (*ins)(<span class='keyword'>void</span> *, size_t, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>);</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">  <span class='keyword'>int</span> ret;</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">  size_t I, NN;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">  <span class='keyword'>void</span> *val;</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">  <span class='keyword'>if</span> (!(nout &amp;&amp; nin)) {</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">    <span class='comment'>/* NULL nvalP okay */</span></td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">  <span class='keyword'>if</span> (nout == nin) {</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: nout == nin disallowed"</span>, me);</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">  <span class='keyword'>if</span> (!( nrrdTypeIsIntegral[nin-&gt;type]</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">         &amp;&amp; nrrdTypeIsUnsigned[nin-&gt;type]</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">         &amp;&amp; nrrdTypeSize[nin-&gt;type] &lt;= 4 )) {</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: can only find connected components in "</span></td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">             <span class='string_literal'>"1, 2, or 4 byte unsigned integral values (not %s)"</span>,</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">             me, airEnumStr(nrrdType, nin-&gt;type));</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  <span class='keyword'>if</span> (nrrdTypeDefault != type) {</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">    <span class='keyword'>if</span> (!( <span class='macro'>AIR_IN_OP(nrrdTypeUnknown, type, nrrdTypeLast)<span class='expansion'>((nrrdTypeUnknown) &lt; (type) &amp;&amp; (type) &lt; (nrrdTypeLast<br>))</span></span> )) {</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got invalid target type %d"</span>, me, type);</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">    <span class='keyword'>if</span> (!( nrrdTypeIsIntegral[type]</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">           &amp;&amp; nrrdTypeIsUnsigned[nin-&gt;type]</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">           &amp;&amp; nrrdTypeSize[type] &lt;= 4 )) {</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">               <span class='string_literal'>"%s: can only save connected components to 1, 2, or 4 byte "</span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">               <span class='string_literal'>"unsigned integral values (not %s)"</span>,</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">               me, airEnumStr(nrrdType, type));</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  <span class='keyword'>if</span> (!( conny &lt;= nin-&gt;dim )) {</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: connectivity value must be in [1..%d] for %d-D "</span></td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">             <span class='string_literal'>"data (not %d)"</span>, me, nin-&gt;dim, nin-&gt;dim, conny);</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">  <span class='keyword'>if</span> (nrrdConvert(nfpid=nrrdNew(), nin, nrrdTypeUInt)) {</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate fpid %s array to match input size"</span>,</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">             me, airEnumStr(nrrdType, nrrdTypeUInt));</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">  airMopAdd(mop, nfpid, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">  eqvArr = airArrayNew(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 2*<span class='keyword'>sizeof</span>(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>), _nrrdCC_EqvIncr);</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">  airMopAdd(mop, eqvArr, (airMopper)airArrayNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">  ret = <span class="mrange">0</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:3ex">Value stored to 'ret' is never read</div></td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">  <span class='keyword'>switch</span>(nin-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">  <span class='keyword'>case</span> 1:</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">    ret = _nrrdCCFind_1(nfpid, &amp;numid, nin);</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">  <span class='keyword'>case</span> 2:</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">    ret = _nrrdCCFind_2(nfpid, &amp;numid, eqvArr, nin, conny);</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">  <span class='keyword'>case</span> 3:</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">    ret = _nrrdCCFind_3(nfpid, &amp;numid, eqvArr, nin, conny);</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">    ret = _nrrdCCFind_N(nfpid, &amp;numid, eqvArr, nin, conny);</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">  <span class='keyword'>if</span> (ret) {</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: initial pass failed"</span>, me);</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">  map = <span class='macro'>AIR_MALLOC(numid, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(malloc((numid)*sizeof(unsigned int)))</span></span>;</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">  airMopAdd(mop, map, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">  numsettleid = airEqvMap(eqvArr, map, numid);</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">  <span class='comment'>/* convert fpid values to final id values */</span></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">  fpid = (<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*)(nfpid-&gt;data);</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">  NN = nrrdElementNumber(nfpid);</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">  <span class='keyword'>for</span> (I=0; I&lt;NN; I++) {</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">    fpid[I] = map[fpid[I]];</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">  <span class='keyword'>if</span> (nvalP) {</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">    <span class='keyword'>if</span> (!(*nvalP)) {</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">      *nvalP = nrrdNew();</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">    <span class='keyword'>if</span> (nrrdMaybeAlloc_va(*nvalP, nin-&gt;type, 1,</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">                          <span class='macro'>AIR_CAST(size_t, numsettleid)<span class='expansion'>((size_t)(numsettleid))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate output value list"</span>, me);</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">    airMopAdd(mop, nvalP, (airMopper)airSetNull, airMopOnError);</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">    airMopAdd(mop, *nvalP, (airMopper)nrrdNuke, airMopOnError);</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">    val = (*nvalP)-&gt;data;</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">    lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">    ins = nrrdUIInsert[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">    <span class='comment'>/* I'm not sure if its more work to do all the redundant assignments</span></td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">       <span class='comment'>or to check whether or not to do them */</span></td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">    <span class='keyword'>for</span> (I=0; I&lt;NN; I++) {</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">      ins(val, fpid[I], lup(nin-&gt;data, I));</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">  <span class='keyword'>if</span> (nrrdTypeDefault != type) {</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">    <span class='keyword'>if</span> (numsettleid-1 &gt; nrrdTypeMax[type]) {</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">               <span class='string_literal'>"%s: max cc id %u is too large to fit in output type %s"</span>,</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">               me, numsettleid-1, airEnumStr(nrrdType, type));</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">    type = (numsettleid-1 &lt;= nrrdTypeMax[nrrdTypeUChar]</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">            ? nrrdTypeUChar</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">            : (numsettleid-1 &lt;= nrrdTypeMax[nrrdTypeUShort]</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">               ? nrrdTypeUShort</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">               : nrrdTypeUInt));</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">  <span class='keyword'>if</span> (nrrdConvert(nout, nfpid, type)) {</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble converting to final output"</span>, me);</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">  <span class='keyword'>if</span> (nrrdContentSet_va(nout, func, nin, <span class='string_literal'>"%s,%d"</span>,</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                        airEnumStr(nrrdType, type), conny)) {</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">  <span class='keyword'>if</span> (nout != nin) {</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">    nrrdAxisInfoCopy(nout, nin, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NRRD_AXIS_INFO_NONE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">  <span class='comment'>/* basic info handled by nrrdConvert */</span></td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">_nrrdCCAdj_1(<span class='keyword'>unsigned</span> <span class='keyword'>char</span> *out, <span class='keyword'>int</span> numid, <span class='keyword'>const</span> Nrrd *nin) {</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">  <span class='macro'>AIR_UNUSED(out)<span class='expansion'>(void)(out)</span></span>;</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">  <span class='macro'>AIR_UNUSED(numid)<span class='expansion'>(void)(numid)</span></span>;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">  <span class='macro'>AIR_UNUSED(nin)<span class='expansion'>(void)(nin)</span></span>;</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">_nrrdCCAdj_2(<span class='keyword'>unsigned</span> <span class='keyword'>char</span> *out, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> numid, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">             <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), x, y, sx, sy, id=0;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">  <span class='keyword'>double</span> pid[5]={0,0,0,0,0};</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">  <span class='keyword'>for</span> (y=0; y&lt;sy; y++) {</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">    <span class='keyword'>for</span> (x=0; x&lt;sx; x++) {</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">      <span class='keyword'>if</span> (!x) {</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">        pid[1] = <span class='macro'>GETV_2(-1, y)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (-1) +<br> sx*(y)) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">        pid[2] = <span class='macro'>GETV_2(-1, y-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (<br>-1) + sx*(y-1)) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">        pid[3] = <span class='macro'>GETV_2(0, y-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (0) +<br> sx*(y-1)) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">        pid[1] = id;</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">        pid[2] = pid[3];</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">        pid[3] = pid[4];</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">      pid[4] = <span class='macro'>GETV_2(x+1, y-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;data, (<br>x+1) + sx*(y-1)) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">      id = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, GETV_2(x, y))<span class='expansion'>((unsigned int)(((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(<br>x))) &lt;= (((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))<br>) &amp;&amp; (((int)(y))) &lt;= (((int)(sy-1))))) ? lup(nin-&gt;<br>data, (x) + sx*(y)) : 0.5)))</span></span>;</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line"><span class='directive'>#define <span class='macro'>TADJ(P)<span class='expansion'>if (pid[(P)] != 0.5 &amp;&amp; id != pid[(P)]) { out[id + numid<br>*((unsigned int)(pid[(P)]))] = out[((unsigned int)(pid[(P)]))<br> + numid*id] = 1; }</span></span> \</span></td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">      <span class='directive'>if (pid[(P)] != 0.5 &amp;&amp; id != pid[(P)]) { \</span></td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        <span class='directive'>out[id + numid*<span class='macro'>AIR_CAST(unsigned int, pid[(P)])<span class='expansion'>((unsigned int)(pid[(P)]))</span></span>] = \</span></td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">          <span class='directive'>out[<span class='macro'>AIR_CAST(unsigned int, pid[(P)])<span class='expansion'>((unsigned int)(pid[(P)]))</span></span> + numid*id] = 1; \</span></td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">      <span class='directive'>}</span></td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">      <span class='macro'>TADJ(1)<span class='expansion'>if (pid[(1)] != 0.5 &amp;&amp; id != pid[(1)]) { out[id + numid<br>*((unsigned int)(pid[(1)]))] = out[((unsigned int)(pid[(1)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">      <span class='macro'>TADJ(3)<span class='expansion'>if (pid[(3)] != 0.5 &amp;&amp; id != pid[(3)]) { out[id + numid<br>*((unsigned int)(pid[(3)]))] = out[((unsigned int)(pid[(3)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">      <span class='keyword'>if</span> (2 == conny) {</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        <span class='macro'>TADJ(2)<span class='expansion'>if (pid[(2)] != 0.5 &amp;&amp; id != pid[(2)]) { out[id + numid<br>*((unsigned int)(pid[(2)]))] = out[((unsigned int)(pid[(2)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">        <span class='macro'>TADJ(4)<span class='expansion'>if (pid[(4)] != 0.5 &amp;&amp; id != pid[(4)]) { out[id + numid<br>*((unsigned int)(pid[(4)]))] = out[((unsigned int)(pid[(4)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">_nrrdCCAdj_3(<span class='keyword'>unsigned</span> <span class='keyword'>char</span> *out, <span class='keyword'>int</span> numid, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">             <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), x, y, z, sx, sy, sz, id=0;</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">  <span class='keyword'>double</span> pid[14]={0,0,0,0,0,0,0,0,0,0,0,0,0,0};</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">  sz = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nin-&gt;axis[2].size)<span class='expansion'>((unsigned int)(nin-&gt;axis[2].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">  <span class='keyword'>for</span> (z=0; z&lt;sz; z++) {</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">    <span class='keyword'>for</span> (y=0; y&lt;sy; y++) {</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">      <span class='keyword'>for</span> (x=0; x&lt;sx; x++) {</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        <span class='keyword'>if</span> (!x) {</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">          pid[ 1] = <span class='macro'>GETV_3(-1,   y,   z)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int<br>)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? lup(<br>nin-&gt;data, (-1) + sx*((y) + sy*(z))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">          pid[ 2] = <span class='macro'>GETV_3(-1, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ?<br> lup(nin-&gt;data, (-1) + sx*((y-1) + sy*(z))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">          pid[ 3] = <span class='macro'>GETV_3( 0, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ? lup<br>(nin-&gt;data, (0) + sx*((y-1) + sy*(z))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">          pid[ 5] = <span class='macro'>GETV_3(-1, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (-1) + sx*((y-1) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">          pid[ 8] = <span class='macro'>GETV_3(-1,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (<br>((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int<br>)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))) ? lup<br>(nin-&gt;data, (-1) + sx*((y) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">          pid[11] = <span class='macro'>GETV_3(-1, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(-1))) &amp;&amp; (((int)(-1))) &lt;= (((<br>int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp;<br> (((int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (-1) + sx*((y+1) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">          pid[ 6] = <span class='macro'>GETV_3( 0, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp; ((<br>(int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))))<br> ? lup(nin-&gt;data, (0) + sx*((y-1) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">          pid[ 9] = <span class='macro'>GETV_3( 0,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp; (((int<br>)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((int)(z<br>-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))) ? lup<br>(nin-&gt;data, (0) + sx*((y) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">          pid[12] = <span class='macro'>GETV_3( 0, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(0))) &amp;&amp; (((int)(0))) &lt;= (((int<br>)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp; ((<br>(int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (((<br>int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))))<br> ? lup(nin-&gt;data, (0) + sx*((y+1) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">          pid[ 1] = id;</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">          pid[ 2] = pid[ 3];</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">          pid[ 3] = pid[ 4];</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">          pid[ 5] = pid[ 6];</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">          pid[ 8] = pid[ 9];</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">          pid[11] = pid[12];</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">          pid[ 6] = pid[ 7];</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">          pid[ 9] = pid[10];</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">          pid[12] = pid[13];</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">        pid[ 4] = <span class='macro'>GETV_3(x+1, y-1,   z)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(sz-1))))) ?<br> lup(nin-&gt;data, (x+1) + sx*((y-1) + sy*(z))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        pid[ 7] = <span class='macro'>GETV_3(x+1, y-1, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y-1))) &amp;&amp;<br> (((int)(y-1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (x+1) + sx*((y-1) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        pid[10] = <span class='macro'>GETV_3(x+1,   y, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))) &amp;&amp;<br> (((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= ((<br>(int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1))))<br>) ? lup(nin-&gt;data, (x+1) + sx*((y) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">        pid[13] = <span class='macro'>GETV_3(x+1, y+1, z-1)<span class='expansion'>((((0) &lt;= (((int)(x+1))) &amp;&amp; (((int)(x+1))) &lt;= (<br>((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y+1))) &amp;&amp;<br> (((int)(y+1))) &lt;= (((int)(sy-1)))) &amp;&amp; ((0) &lt;= (<br>((int)(z-1))) &amp;&amp; (((int)(z-1))) &lt;= (((int)(sz-1)))<br>)) ? lup(nin-&gt;data, (x+1) + sx*((y+1) + sy*(z-1))) : 0.5)</span></span>;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">        id = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, GETV_3(x, y, z))<span class='expansion'>((unsigned int)(((((0) &lt;= (((int)(x))) &amp;&amp; (((int)(<br>x))) &lt;= (((int)(sx-1)))) &amp;&amp; ((0) &lt;= (((int)(y))<br>) &amp;&amp; (((int)(y))) &lt;= (((int)(sy-1)))) &amp;&amp; (<br>(0) &lt;= (((int)(z))) &amp;&amp; (((int)(z))) &lt;= (((int)(<br>sz-1))))) ? lup(nin-&gt;data, (x) + sx*((y) + sy*(z))) : 0.5)<br>))</span></span>;</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">        <span class='macro'>TADJ(1)<span class='expansion'>if (pid[(1)] != 0.5 &amp;&amp; id != pid[(1)]) { out[id + numid<br>*((unsigned int)(pid[(1)]))] = out[((unsigned int)(pid[(1)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        <span class='macro'>TADJ(3)<span class='expansion'>if (pid[(3)] != 0.5 &amp;&amp; id != pid[(3)]) { out[id + numid<br>*((unsigned int)(pid[(3)]))] = out[((unsigned int)(pid[(3)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">        <span class='macro'>TADJ(9)<span class='expansion'>if (pid[(9)] != 0.5 &amp;&amp; id != pid[(9)]) { out[id + numid<br>*((unsigned int)(pid[(9)]))] = out[((unsigned int)(pid[(9)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">        <span class='keyword'>if</span> (2 &lt;= conny) {</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">          <span class='macro'>TADJ(2)<span class='expansion'>if (pid[(2)] != 0.5 &amp;&amp; id != pid[(2)]) { out[id + numid<br>*((unsigned int)(pid[(2)]))] = out[((unsigned int)(pid[(2)]))<br> + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(4)<span class='expansion'>if (pid[(4)] != 0.5 &amp;&amp; id != pid[(4)]) { out[id + numid<br>*((unsigned int)(pid[(4)]))] = out[((unsigned int)(pid[(4)]))<br> + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">          <span class='macro'>TADJ(6)<span class='expansion'>if (pid[(6)] != 0.5 &amp;&amp; id != pid[(6)]) { out[id + numid<br>*((unsigned int)(pid[(6)]))] = out[((unsigned int)(pid[(6)]))<br> + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(8)<span class='expansion'>if (pid[(8)] != 0.5 &amp;&amp; id != pid[(8)]) { out[id + numid<br>*((unsigned int)(pid[(8)]))] = out[((unsigned int)(pid[(8)]))<br> + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(10)<span class='expansion'>if (pid[(10)] != 0.5 &amp;&amp; id != pid[(10)]) { out[id + numid<br>*((unsigned int)(pid[(10)]))] = out[((unsigned int)(pid[(10)]<br>)) + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(12)<span class='expansion'>if (pid[(12)] != 0.5 &amp;&amp; id != pid[(12)]) { out[id + numid<br>*((unsigned int)(pid[(12)]))] = out[((unsigned int)(pid[(12)]<br>)) + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">          <span class='keyword'>if</span> (3 == conny) {</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">            <span class='macro'>TADJ(5)<span class='expansion'>if (pid[(5)] != 0.5 &amp;&amp; id != pid[(5)]) { out[id + numid<br>*((unsigned int)(pid[(5)]))] = out[((unsigned int)(pid[(5)]))<br> + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(7)<span class='expansion'>if (pid[(7)] != 0.5 &amp;&amp; id != pid[(7)]) { out[id + numid<br>*((unsigned int)(pid[(7)]))] = out[((unsigned int)(pid[(7)]))<br> + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(11)<span class='expansion'>if (pid[(11)] != 0.5 &amp;&amp; id != pid[(11)]) { out[id + numid<br>*((unsigned int)(pid[(11)]))] = out[((unsigned int)(pid[(11)]<br>)) + numid*id] = 1; }</span></span>; <span class='macro'>TADJ(13)<span class='expansion'>if (pid[(13)] != 0.5 &amp;&amp; id != pid[(13)]) { out[id + numid<br>*((unsigned int)(pid[(13)]))] = out[((unsigned int)(pid[(13)]<br>)) + numid*id] = 1; }</span></span>;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">_nrrdCCAdj_N(<span class='keyword'>unsigned</span> <span class='keyword'>char</span> *out, <span class='keyword'>int</span> numid, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">             <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdCCAdj_N"</span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">  <span class='macro'>AIR_UNUSED(out)<span class='expansion'>(void)(out)</span></span>;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">  <span class='macro'>AIR_UNUSED(numid)<span class='expansion'>(void)(numid)</span></span>;</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">  <span class='macro'>AIR_UNUSED(nin)<span class='expansion'>(void)(nin)</span></span>;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">  <span class='macro'>AIR_UNUSED(conny)<span class='expansion'>(void)(conny)</span></span>;</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">  biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: sorry, not implemented"</span>, me);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">  <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">nrrdCCAdjacency(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdCCAdjacency"</span>, func[]=<span class='string_literal'>"ccadj"</span>;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">  <span class='keyword'>int</span> ret;</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> maxid;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>char</span> *out;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">  <span class='keyword'>if</span> (!( nout &amp;&amp; nrrdCCValid(nin) )) {</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: invalid args"</span>, me);</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">  <span class='keyword'>if</span> (nout == nin) {</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: nout == nin disallowed"</span>, me);</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">  <span class='keyword'>if</span> (!( <span class='macro'>AIR_IN_CL(1, conny, nin-&gt;dim)<span class='expansion'>((1) &lt;= (conny) &amp;&amp; (conny) &lt;= (nin-&gt;dim))</span></span> )) {</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: connectivity value must be in [1..%d] for %d-D "</span></td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">             <span class='string_literal'>"data (not %d)"</span>, me, nin-&gt;dim, nin-&gt;dim, conny);</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">  maxid = nrrdCCMax(nin);</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_va(nout, nrrdTypeUChar, 2,</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, maxid+1)<span class='expansion'>((size_t)(maxid+1))</span></span>,</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, maxid+1)<span class='expansion'>((size_t)(maxid+1))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble allocating output"</span>, me);</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">  out = (<span class='keyword'>unsigned</span> <span class='keyword'>char</span> *)(nout-&gt;data);</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">  <span class='keyword'>switch</span>(nin-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">  <span class='keyword'>case</span> 1:</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">    ret = _nrrdCCAdj_1(out, maxid+1, nin);</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">  <span class='keyword'>case</span> 2:</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">    ret = _nrrdCCAdj_2(out, maxid+1, nin, conny);</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">  <span class='keyword'>case</span> 3:</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">    ret = _nrrdCCAdj_3(out, maxid+1, nin, conny);</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">    ret = _nrrdCCAdj_N(out, maxid+1, nin, conny);</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">  <span class='keyword'>if</span> (ret) {</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble"</span>, me);</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">  <span class='comment'>/* this goofiness is just so that histo-based projections</span></td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">     <span class='comment'>return the sorts of values that we expect */</span></td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">  nout-&gt;axis[0].center = nout-&gt;axis[1].center = nrrdCenterCell;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">  nout-&gt;axis[0].min = nout-&gt;axis[1].min = -0.5;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">  nout-&gt;axis[0].max = nout-&gt;axis[1].max = maxid + 0.5;</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">  <span class='keyword'>if</span> (nrrdContentSet_va(nout, func, nin, <span class='string_literal'>"%d"</span>, conny)) {</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line"><span class='comment'>******** nrrdCCMerge</span></td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line"><span class='comment'>** Slightly-too-multi-purpose tool for merging small connected components</span></td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line"><span class='comment'>** (CCs) into larger ones, according to a number of possible different</span></td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line"><span class='comment'>** constraints, as explained below.</span></td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line"><span class='comment'>** valDir: (value direction) uses information about the original values</span></td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line"><span class='comment'>** in the CC to constrain whether darker gets merged into brighter, or vice</span></td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line"><span class='comment'>** versa, or neither.  For non-zero valDir values, a non-NULL _nval (from</span></td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line"><span class='comment'>** nrrdCCFind) must be passed.</span></td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line"><span class='comment'>**   valDir &gt; 0 : merge dark CCs into bright, but not vice versa</span></td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line"><span class='comment'>**   valDir = 0 : merge either way, values are irrelevant</span></td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line"><span class='comment'>**   valDir &lt; 0 : merge bright CCs into dark, but not vice versa</span></td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line"><span class='comment'>** When merging with multiple neighbors (maxNeighbor &gt; 1), the value</span></td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line"><span class='comment'>** of the largest neighbor is considered.</span></td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line"><span class='comment'>** maxSize: a cap on how large "small" is- CCs any larger than maxSize are</span></td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line"><span class='comment'>** not merged, as they are deemed too significant.  Or, a maxSize of 0 says</span></td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line"><span class='comment'>** size is no object for merging CCs.</span></td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line"><span class='comment'>** maxNeighbor: a maximum number of neighbors that a CC can have (either</span></td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line"><span class='comment'>** bigger than the CC or not) if it is to be merged.  Use 1 to merge</span></td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line"><span class='comment'>** isolated islands into their surrounds, 2 to merge CC with the larger</span></td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"><span class='comment'>** of their two neighbors, etc., or 0 to allow any number of neighbors.</span></td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line"><span class='comment'>** conny: passed to nrrdCCAdjacency() when determining neighbors</span></td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line"><span class='comment'>** In order to prevent weirdness, the merging done in one call to this</span></td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line"><span class='comment'>** function is not transitive: if A is merged to B, then B will not be</span></td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line"><span class='comment'>** merged to anything else, even if meets all the requirements defined</span></td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line"><span class='comment'>** by the given parameters.  This is accomplished by working from the</span></td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line"><span class='comment'>** smallest CCs to the largest. Iterated calls may be needed to acheive</span></td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line"><span class='comment'>** the desired effect.</span></td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line"><span class='comment'>** Note: the output of this is not "settled"- the CC id values are not</span></td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line"><span class='comment'>** shiftward downwards to their lowest possible values, since this would</span></td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line"><span class='comment'>** needlessly invalidate the nval value store.</span></td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">nrrdCCMerge(Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, Nrrd *_nval,</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">            <span class='keyword'>int</span> valDir, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> maxSize, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> maxNeighbor,</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">            <span class='keyword'>unsigned</span> <span class='keyword'>int</span> conny) {</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdCCMerge"</span>, func[]=<span class='string_literal'>"ccmerge"</span>;</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">  <span class='keyword'>const</span> <span class='keyword'>char</span> *valcnt;</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> _i, i, j, bigi=0, numid, *size, *sizeId,</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">    *nn,  <span class='comment'>/* number of neighbors */</span></td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">    *val=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *hit,</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">    (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), (*ins)(<span class='keyword'>void</span> *, size_t, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>);</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">  Nrrd *nadj, *nsize, *nval=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *nnn;</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>char</span> *adj;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> *map, *id;</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">  size_t I, NN;</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">  <span class='keyword'>if</span> (!( nout &amp;&amp; nrrdCCValid(nin) )) {</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">    <span class='comment'>/* _nval can be NULL */</span></td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: invalid args"</span>, me);</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">  <span class='keyword'>if</span> (valDir) {</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">    airMopAdd(mop, nval = nrrdNew(), (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">    <span class='keyword'>if</span> (nrrdConvert(nval, _nval, nrrdTypeUInt)) {</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: value-directed merging needs usable nval"</span>, me);</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">    val = (<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*)(nval-&gt;data);</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">  <span class='keyword'>if</span> (nout != nin) {</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">    <span class='keyword'>if</span> (nrrdCopy(nout, nin)) {</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">  airMopAdd(mop, nadj = nrrdNew(), (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">  airMopAdd(mop, nsize = nrrdNew(), (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">  airMopAdd(mop, nnn = nrrdNew(), (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">  <span class='keyword'>if</span> (nrrdCCSize(nsize, nin)</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">      || nrrdCopy(nnn, nsize)  <span class='comment'>/* just to allocate to right size and type */</span></td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">      || nrrdCCAdjacency(nadj, nin, conny)) {</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">  size = (<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*)(nsize-&gt;data);</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">  adj = (<span class='keyword'>unsigned</span> <span class='keyword'>char</span>*)(nadj-&gt;data);</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">  nn = (<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*)(nnn-&gt;data);</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">  numid = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nsize-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nsize-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">  <span class='keyword'>for</span> (i=0; i&lt;numid; i++) {</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">    nn[i] = 0;</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">    <span class='keyword'>for</span> (j=0; j&lt;numid; j++) {</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">      nn[i] += adj[j + numid*i];</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">  map = <span class='macro'>AIR_MALLOC(numid, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(malloc((numid)*sizeof(unsigned int)))</span></span>;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">  id = <span class='macro'>AIR_MALLOC(numid, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(malloc((numid)*sizeof(unsigned int)))</span></span>;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">  hit = <span class='macro'>AIR_MALLOC(numid, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(malloc((numid)*sizeof(unsigned int)))</span></span>;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">  sizeId = <span class='macro'>AIR_MALLOC(2*numid, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(malloc((2*numid)*sizeof(unsigned int)))</span></span>;</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">  <span class='comment'>/* we add to the mops BEFORE error checking so that anything non-NULL</span></td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">     <span class='comment'>will get airFree'd, and happily airFree is a no-op on NULL */</span></td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">  airMopAdd(mop, map, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">  airMopAdd(mop, id, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">  airMopAdd(mop, hit, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">  airMopAdd(mop, sizeId, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">  <span class='keyword'>if</span> (!(map &amp;&amp; id &amp;&amp; hit &amp;&amp; sizeId)) {</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate buffers"</span>, me);</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">  <span class='comment'>/* store and sort size/id pairs */</span></td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">  <span class='keyword'>for</span> (i=0; i&lt;numid; i++) {</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">    sizeId[0 + 2*i] = size[i];</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">    sizeId[1 + 2*i] = i;</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">  qsort(sizeId, numid, 2*<span class='keyword'>sizeof</span>(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>), nrrdValCompare[nrrdTypeUInt]);</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">  <span class='keyword'>for</span> (i=0; i&lt;numid; i++) {</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">    id[i] = sizeId[1 + 2*i];</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">  <span class='comment'>/* initialize arrays */</span></td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">  <span class='keyword'>for</span> (i=0; i&lt;numid; i++) {</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">    map[i] = i;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">    hit[i] = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">  <span class='comment'>/* _i goes through 0 to numid-1,</span></td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">     <span class='comment'>i goes through the CC ids in ascending order of size */</span></td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">  <span class='keyword'>for</span> (_i=0; _i&lt;numid; _i++) {</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">    i = id[_i];</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">    <span class='keyword'>if</span> (hit[i]) {</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">      <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">    <span class='keyword'>if</span> (maxSize &amp;&amp; (size[i] &gt; maxSize)) {</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">      <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">    <span class='keyword'>if</span> (maxNeighbor &amp;&amp; (nn[i] &gt; maxNeighbor)) {</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">      <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">    <span class='comment'>/* find biggest neighbor, exploiting the fact that we already</span></td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">       <span class='comment'>sorted CC ids on size.  j descends through indices of id[],</span></td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">       <span class='comment'>bigi goes through CC ids which are larger than CC i */</span></td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">    <span class='keyword'>for</span> (j=numid-1; j&gt;_i; j--) {</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">      bigi = id[j];</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">      <span class='keyword'>if</span> (adj[bigi + numid*i])</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">    <span class='keyword'>if</span> (j == _i) {</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">      <span class='keyword'>continue</span>;   <span class='comment'>/* we had no neighbors ?!?! */</span></td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">    <span class='keyword'>if</span> (valDir &amp;&amp; (<span class='macro'>AIR_CAST(<span class='keyword'>int</span>, val[bigi])<span class='expansion'>((int)(val[bigi]))</span></span></td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">                   - <span class='macro'>AIR_CAST(<span class='keyword'>int</span>, val[i])<span class='expansion'>((int)(val[i]))</span></span>)*valDir &lt; 0 ) {</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">      <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">    <span class='comment'>/* else all criteria for merging have been met */</span></td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">    map[i] = bigi;</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">    hit[bigi] = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">  ins = nrrdUIInsert[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">  NN = nrrdElementNumber(nin);</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">  <span class='keyword'>for</span> (I=0; I&lt;NN; I++) {</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">    ins(nout-&gt;data, I, map[lup(nin-&gt;data, I)]);</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">  valcnt = ((_nval &amp;&amp; _nval-&gt;content)</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">            ? _nval-&gt;content</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">            : nrrdStateUnknownContent);</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">  <span class='keyword'>if</span> ( (valDir &amp;&amp; nrrdContentSet_va(nout, func, nin, <span class='string_literal'>"%c(%s),%d,%d,%d"</span>,</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">                                    (valDir &gt; 0 ? '+' : '-'), valcnt,</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">                                    maxSize, maxNeighbor, conny))</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">       ||</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">       (!valDir &amp;&amp; nrrdContentSet_va(nout, func, nin, <span class='string_literal'>".,%d,%d,%d"</span>,</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">                                     maxSize, maxNeighbor, conny)) ) {</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">  <span class='comment'>/* basic info handled by nrrdCopy */</span></td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line"><span class='comment'>******** nrrdCCRevalue()</span></td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line"><span class='comment'>** assigns the original values back to the connected components</span></td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line"><span class='comment'>** obviously, this could be subsumed by nrrdApply1DLut(), but this</span></td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line"><span class='comment'>** is so special purpose that it seemed simpler to code from scratch</span></td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">nrrdCCRevalue (Nrrd *nout, <span class='keyword'>const</span> Nrrd *nin, <span class='keyword'>const</span> Nrrd *nval) {</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdCCRevalue"</span>;</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">  size_t I, NN;</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> (*vlup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), (*ilup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t),</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">    (*ins)(<span class='keyword'>void</span> *, size_t, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>);</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">  <span class='keyword'>if</span> (!( nout &amp;&amp; nrrdCCValid(nin) &amp;&amp; nval )) {</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: invalid args"</span>, me);</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">  <span class='keyword'>if</span> (nrrdConvert(nout, nin, nval-&gt;type)) {</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't initialize output"</span>, me);</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">  NN = nrrdElementNumber(nin);</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">  vlup = nrrdUILookup[nval-&gt;type];</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">  ilup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">  ins = nrrdUIInsert[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">  <span class='keyword'>for</span> (I=0; I&lt;NN; I++) {</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">    ins(nout-&gt;data, I, vlup(nval-&gt;data, ilup(nin-&gt;data, I)));</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">  <span class='comment'>/* basic info handled by nrrdConvert */</span></td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">nrrdCCSettle(Nrrd *nout, Nrrd **nvalP, <span class='keyword'>const</span> Nrrd *nin) {</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"nrrdCCSettle"</span>, func[]=<span class='string_literal'>"ccsettle"</span>;</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> numid, maxid, jd, id, *map,</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">    (*lup)(<span class='keyword'>const</span> <span class='keyword'>void</span> *, size_t), (*ins)(<span class='keyword'>void</span> *, size_t, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>);</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">  size_t I, NN;</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">  <span class='keyword'>if</span> (!( nout &amp;&amp; nrrdCCValid(nin) )) {</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">    <span class='comment'>/* nvalP can be NULL */</span></td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: invalid args"</span>, me);</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">  <span class='keyword'>if</span> (nrrdCopy(nout, nin)) {</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: initial copy failed"</span>, me);</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">  maxid = nrrdCCMax(nin);</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">  lup = nrrdUILookup[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">  ins = nrrdUIInsert[nin-&gt;type];</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">  NN = nrrdElementNumber(nin);</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">  map = <span class='macro'>AIR_CALLOC(maxid+1, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(calloc((maxid+1), sizeof(unsigned int)))</span></span>;  <span class='comment'>/* we do need it zeroed out */</span></td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">  <span class='keyword'>if</span> (!map) {</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate internal LUT"</span>, me);</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">  airMopAdd(mop, map, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">  <span class='keyword'>for</span> (I=0; I&lt;NN; I++) {</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">    map[lup(nin-&gt;data, I)] = 1;</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">  numid = 0;</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">  <span class='keyword'>for</span> (jd=0; jd&lt;=maxid; jd++) {</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">    numid += map[jd];</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">  <span class='keyword'>if</span> (nvalP) {</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line">    <span class='keyword'>if</span> (!(*nvalP)) {</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">      *nvalP = nrrdNew();</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">    <span class='keyword'>if</span> (nrrdMaybeAlloc_va(*nvalP, nin-&gt;type, 1,</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line">                          <span class='macro'>AIR_CAST(size_t, numid)<span class='expansion'>((size_t)(numid))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate output value list"</span>, me);</td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">    airMopAdd(mop, nvalP, (airMopper)airSetNull, airMopOnError);</td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">    airMopAdd(mop, *nvalP, (airMopper)nrrdNuke, airMopOnError);</td></tr>
+<tr><td class="num" id="LN860">860</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line">  id = 0;</td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line">  <span class='keyword'>for</span> (jd=0; jd&lt;=maxid; jd++) {</td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">    <span class='keyword'>if</span> (map[jd]) {</td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line">      map[jd] = id;</td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">      <span class='keyword'>if</span> (nvalP) {</td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">        ins((*nvalP)-&gt;data, id, jd);</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line">      id++;</td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">  <span class='keyword'>for</span> (I=0; I&lt;NN; I++) {</td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line">    ins(nout-&gt;data, I, map[lup(nin-&gt;data, I)]);</td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line">  <span class='keyword'>if</span> (nrrdContentSet_va(nout, func, nin, <span class='string_literal'>""</span>)) {</td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s:"</span>, me);</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">  <span class='comment'>/* basic info handled by nrrdCopy */</span></td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">}</td></tr>
+</table></body></html>

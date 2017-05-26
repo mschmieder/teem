@@ -1,0 +1,490 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/echo/sqd.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'Vmax' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/echo/sqd.c -->
+
+<!-- FILENAME sqd.c -->
+
+<!-- FUNCTIONNAME _echoRayIntx_Superquad -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT dfd606c73c1b27049a5b572a1f514916 -->
+
+<!-- BUGLINE 344 -->
+
+<!-- BUGCOLUMN 5 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/echo/sqd.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 344, column 5</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'Vmax' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "echo.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privateEcho.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">_echo_SuperquadX_v(echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">                   echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  echoPos_t xxb, yya, zza;</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  xxb = pow(x*x, 1/B);  yya = pow(y*y, 1/A);  zza = pow(z*z, 1/A);</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">  <span class='keyword'>return</span> pow(yya + zza, A/B) + xxb - 1;</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">_echo_SuperquadY_v(echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">                   echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">  echoPos_t xxa, yyb, zza;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">  xxa = pow(x*x, 1/A);  yyb = pow(y*y, 1/B);  zza = pow(z*z, 1/A);</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">  <span class='keyword'>return</span> pow(xxa + zza, A/B) + yyb - 1;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">_echo_SuperquadZ_v(echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">                   echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">  echoPos_t xxa, yya, zzb;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">  xxa = pow(x*x, 1/A);  yya = pow(y*y, 1/A);  zzb = pow(z*z, 1/B);</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">  <span class='keyword'>return</span> pow(xxa + yya, A/B) + zzb - 1;</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line"><span class='comment'>/* -------------------------------------------------------- */</span></td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">_echo_SuperquadX_vg(echoPos_t grad[3],</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">                    echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">                    echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  echoPos_t R, xxb, yya, zza;</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  xxb = pow(x*x, 1/B);  yya = pow(y*y, 1/A);  zza = pow(z*z, 1/A);</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">  R = pow(yya + zza, (A/B)-1);</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">  <span class='macro'>ELL_3V_SET(grad, 2*xxb/(B*x), 2*R*yya/(B*y), 2*R*zza/(B*z))<span class='expansion'>((grad)[0] = (2*xxb/(B*x)), (grad)[1] = (2*R*yya/(B*y)), (grad<br>)[2] = (2*R*zza/(B*z)))</span></span>;</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">  <span class='keyword'>return</span> pow(yya + zza, A/B) + xxb - 1;</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">_echo_SuperquadY_vg(echoPos_t grad[3],</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">                    echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">                    echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">  echoPos_t R, xxa, yyb, zza;</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">  xxa = pow(x*x, 1/A);  yyb = pow(y*y, 1/B);  zza = pow(z*z, 1/A);</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">  R = pow(xxa + zza, (A/B)-1);</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">  <span class='macro'>ELL_3V_SET(grad, 2*R*xxa/(B*x), 2*yyb/(B*y), 2*R*zza/(B*z))<span class='expansion'>((grad)[0] = (2*R*xxa/(B*x)), (grad)[1] = (2*yyb/(B*y)), (grad<br>)[2] = (2*R*zza/(B*z)))</span></span>;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">  <span class='keyword'>return</span> pow(xxa + zza, A/B) + yyb - 1;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">_echo_SuperquadZ_vg(echoPos_t grad[3],</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">                    echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">                    echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">  echoPos_t R, xxa, yya, zzb;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  xxa = pow(x*x, 1/A);  yya = pow(y*y, 1/A);  zzb = pow(z*z, 1/B);</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">  R = pow(xxa + yya, (A/B)-1);</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">  <span class='macro'>ELL_3V_SET(grad, 2*R*xxa/(B*x), 2*R*yya/(B*y), 2*zzb/(B*z))<span class='expansion'>((grad)[0] = (2*R*xxa/(B*x)), (grad)[1] = (2*R*yya/(B*y)), (grad<br>)[2] = (2*zzb/(B*z)))</span></span>;</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">  <span class='keyword'>return</span> pow(xxa + yya, A/B) + zzb - 1;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line"><span class='comment'>/* -------------------------------------------------------- */</span></td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">_echo_SuperquadX_lvg(echoPos_t grad[3],</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">                     echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">                     echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">  echoPos_t R, xxb, yya, zza, larg;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">  echoPos_t ret;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">  xxb = pow(x*x, 1/B);  yya = pow(y*y, 1/A);  zza = pow(z*z, 1/A);</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  R = pow(yya + zza, 1-(A/B))*xxb;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">  <span class='macro'>ELL_3V_SET(grad,<span class='expansion'>((grad)[0] = (2/(B*x*(1 + pow(yya + zza, A/B)/xxb))), (grad)[<br>1] = (2*yya/(B*y*(yya + zza + R))), (grad)[2] = (2*zza/(B*z*(<br>yya + zza + R))))</span></span></td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">             <span class='macro'>2/(B*x*(1 + pow(yya + zza, A/B)/xxb)),<span class='expansion'>((grad)[0] = (2/(B*x*(1 + pow(yya + zza, A/B)/xxb))), (grad)[<br>1] = (2*yya/(B*y*(yya + zza + R))), (grad)[2] = (2*zza/(B*z*(<br>yya + zza + R))))</span></span></td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">             <span class='macro'>2*yya/(B*y*(yya + zza + R)),<span class='expansion'>((grad)[0] = (2/(B*x*(1 + pow(yya + zza, A/B)/xxb))), (grad)[<br>1] = (2*yya/(B*y*(yya + zza + R))), (grad)[2] = (2*zza/(B*z*(<br>yya + zza + R))))</span></span></td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">             <span class='macro'>2*zza/(B*z*(yya + zza + R)))<span class='expansion'>((grad)[0] = (2/(B*x*(1 + pow(yya + zza, A/B)/xxb))), (grad)[<br>1] = (2*yya/(B*y*(yya + zza + R))), (grad)[2] = (2*zza/(B*z*(<br>yya + zza + R))))</span></span>;</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">  larg = pow(yya + zza, A/B) + xxb;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">  ret= larg &gt; 0 ? log(larg) : <span class='macro'>ECHO_POS_MIN<span class='expansion'>(-1.7976931348623157e+308)</span></span>;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">  <span class='comment'>if (!( AIR_EXISTS(grad[0]) &amp;&amp; AIR_EXISTS(grad[1]) &amp;&amp; AIR_EXISTS(grad[2]) )) {</span></td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">    <span class='comment'>fprintf(stderr, "_echo_SuperquadX_lvg: PANIC\n");</span></td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">    <span class='comment'>fprintf(stderr, "x = %g, y = %g, z = %g, A = %g, B = %g\n",</span></td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">            <span class='comment'>x, y, z, A, B);</span></td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">    <span class='comment'>fprintf(stderr, "pow(%g * %g = %g, 1/%g = %g) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">            <span class='comment'>x, x, x*x, B, 1/B, pow(x*x, 1/B));</span></td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">    <span class='comment'>fprintf(stderr, "xxb = %g, yya = %g, zza = %g\n",</span></td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">            <span class='comment'>xxb, yya, zza);</span></td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">    <span class='comment'>fprintf(stderr, "R: pow(%g + %g = %g, 1-(%g/%g = %g) = %g) = %g*%g = %g\n",</span></td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">            <span class='comment'>yya, zza, yya + zza,</span></td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">            <span class='comment'>A, B, A/B, 1-(A/B),</span></td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">            <span class='comment'>pow(yya + zza, 1-(A/B)), xxb,</span></td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">            <span class='comment'>pow(yya + zza, 1-(A/B))*xxb);</span></td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">    <span class='comment'>fprintf(stderr, "grad[0]: 2/(%g * %g * (1 + pow(%g + %g = %g, %g/%g = %g)/%g = %g)) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">            <span class='comment'>B, x, yya, zza, yya+zza, A, B, A/B, xxb,</span></td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">            <span class='comment'>pow(yya + zza, A/B)/xxb, grad[0]);</span></td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">    <span class='comment'>fprintf(stderr, "grad[1]: 2*%g/(%g*%g*(%g + %g + %g = %g) = %g) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">            <span class='comment'>yya, B, y, yya, zza, R, yya + zza + R,</span></td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">            <span class='comment'>B*y*(yya + zza + R),</span></td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">            <span class='comment'>2*yya/(B*y*(yya + zza + R)));</span></td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">    <span class='comment'>fprintf(stderr, "log(pow(%g + %g = %g, %g) = %g + %g) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">            <span class='comment'>yya, zza, yya+zza, A/B, pow(yya + zza, A/B), xxb, ret);</span></td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    <span class='comment'>fprintf(stderr, "grad = %g %g %g\n", grad[0], grad[1], grad[2]);</span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">    <span class='comment'>fprintf(stderr, "\n----------\n\n");</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">_echo_SuperquadY_lvg(echoPos_t grad[3],</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">                     echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">                     echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">  echoPos_t R, xxa, yyb, zza, larg;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">  xxa = pow(x*x, 1/A);  yyb = pow(y*y, 1/B);  zza = pow(z*z, 1/A);</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">  R = pow(xxa + zza, 1-(A/B))*yyb;</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  <span class='macro'>ELL_3V_SET(grad,<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + zza + R))), (grad)[1] = (2/(B<br>*y*(1 + pow(xxa + zza, A/B)/yyb))), (grad)[2] = (2*zza/(B*z*(<br>xxa + zza + R))))</span></span></td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">             <span class='macro'>2*xxa/(B*x*(xxa + zza + R)),<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + zza + R))), (grad)[1] = (2/(B<br>*y*(1 + pow(xxa + zza, A/B)/yyb))), (grad)[2] = (2*zza/(B*z*(<br>xxa + zza + R))))</span></span></td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">             <span class='macro'>2/(B*y*(1 + pow(xxa + zza, A/B)/yyb)),<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + zza + R))), (grad)[1] = (2/(B<br>*y*(1 + pow(xxa + zza, A/B)/yyb))), (grad)[2] = (2*zza/(B*z*(<br>xxa + zza + R))))</span></span></td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">             <span class='macro'>2*zza/(B*z*(xxa + zza + R)))<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + zza + R))), (grad)[1] = (2/(B<br>*y*(1 + pow(xxa + zza, A/B)/yyb))), (grad)[2] = (2*zza/(B*z*(<br>xxa + zza + R))))</span></span>;</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">  larg = pow(xxa + zza, A/B) + yyb;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">  <span class='keyword'>return</span> larg &gt; 0 ? log(larg) : <span class='macro'>ECHO_POS_MIN<span class='expansion'>(-1.7976931348623157e+308)</span></span>;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">echoPos_t</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">_echo_SuperquadZ_lvg(echoPos_t grad[3],</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">                     echoPos_t x, echoPos_t y, echoPos_t z,</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                     echoPos_t A, echoPos_t B) {</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">  echoPos_t R, xxa, yya, zzb, larg;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">  echoPos_t ret;</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">  xxa = pow(x*x, 1/A);  yya = pow(y*y, 1/A);  zzb = pow(z*z, 1/B);</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">  R = pow(xxa + yya, 1-(A/B))*zzb;</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">  <span class='macro'>ELL_3V_SET(grad,<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + yya + R))), (grad)[1] = (2*yya<br>/(B*y*(xxa + yya + R))), (grad)[2] = (2/(B*z*(1 + pow(xxa + yya<br>, A/B)/zzb))))</span></span></td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">             <span class='macro'>2*xxa/(B*x*(xxa + yya + R)),<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + yya + R))), (grad)[1] = (2*yya<br>/(B*y*(xxa + yya + R))), (grad)[2] = (2/(B*z*(1 + pow(xxa + yya<br>, A/B)/zzb))))</span></span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">             <span class='macro'>2*yya/(B*y*(xxa + yya + R)),<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + yya + R))), (grad)[1] = (2*yya<br>/(B*y*(xxa + yya + R))), (grad)[2] = (2/(B*z*(1 + pow(xxa + yya<br>, A/B)/zzb))))</span></span></td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">             <span class='macro'>2/(B*z*(1 + pow(xxa + yya, A/B)/zzb)))<span class='expansion'>((grad)[0] = (2*xxa/(B*x*(xxa + yya + R))), (grad)[1] = (2*yya<br>/(B*y*(xxa + yya + R))), (grad)[2] = (2/(B*z*(1 + pow(xxa + yya<br>, A/B)/zzb))))</span></span>;</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">  larg = pow(xxa + yya, A/B) + zzb;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">  ret = larg &gt; 0 ? log(larg) : <span class='macro'>ECHO_POS_MIN<span class='expansion'>(-1.7976931348623157e+308)</span></span>;</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">  <span class='comment'>if (!AIR_EXISTS(ret)) {</span></td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">    <span class='comment'>fprintf(stderr, "_echo_SuperquadZ_lvg: PANIC\n");</span></td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">    <span class='comment'>fprintf(stderr, "x = %g, y = %g, z = %g, A = %g, B = %g\n",</span></td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">            <span class='comment'>x, y, z, A, B);</span></td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">    <span class='comment'>fprintf(stderr, "pow(%g*%g = %g, %g) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">            <span class='comment'>x, x, x*x, 1/A, xxa);</span></td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">    <span class='comment'>fprintf(stderr, "pow(%g*%g = %g, %g) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">            <span class='comment'>y, y, y*y, 1/A, yya);</span></td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">    <span class='comment'>fprintf(stderr, "log(pow(%g, %g) = %g + %g) = %g\n",</span></td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">            <span class='comment'>xxa + yya, A/B, pow(xxa + yya, A/B), zzb, ret);</span></td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">    <span class='comment'>exit(0);</span></td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line"><span class='comment'>/* -------------------------------------------------------- */</span></td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">_echoRayIntx_Superquad(<span class='macro'>RAYINTX_ARGS(Superquad)<span class='expansion'>echoIntx *intx, echoRay *ray, echoSuperquad *obj, echoRTParm *<br>parm, echoThreadState *tstate</span></span>) {</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">  <span class='keyword'>char</span> me[]=<span class='string_literal'>"_echoRayIntx_Superquad"</span>;</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">  echoPos_t TT=0, Tmin, Tmax, t0, t1, t2, t3, v1, v2, diff, tol,</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">    saveTmin, Vmin, Vmax, VV=0, dV, dVmin, dVmax, tmp,</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">    (*v)(echoPos_t, echoPos_t, echoPos_t,</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">         echoPos_t, echoPos_t),</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">    (*vg)(echoPos_t[3],</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">          echoPos_t, echoPos_t, echoPos_t,</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">          echoPos_t, echoPos_t),</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">    (*lvg)(echoPos_t[3],</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">           echoPos_t, echoPos_t, echoPos_t,</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">           echoPos_t, echoPos_t),</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">    from[3], grad[3], pos[3];  <span class='comment'>/* these two used only by macros */</span></td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">  <span class='keyword'>int</span> iter;</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">  <span class='keyword'>if</span> (!_echoRayIntx_CubeSolid(&amp;Tmin, &amp;Tmax,</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">                              -1-2*<span class='macro'>ECHO_EPSILON<span class='expansion'>0.00005</span></span>, 1+2*<span class='macro'>ECHO_EPSILON<span class='expansion'>0.00005</span></span>,</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">                              -1-2*<span class='macro'>ECHO_EPSILON<span class='expansion'>0.00005</span></span>, 1+2*<span class='macro'>ECHO_EPSILON<span class='expansion'>0.00005</span></span>,</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">                              -1-2*<span class='macro'>ECHO_EPSILON<span class='expansion'>0.00005</span></span>, 1+2*<span class='macro'>ECHO_EPSILON<span class='expansion'>0.00005</span></span>, ray)) {</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">  <span class='keyword'>switch</span>(obj-&gt;axis) {</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">    <span class='keyword'>case</span> 0:</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">      v = _echo_SuperquadX_v;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">      vg = _echo_SuperquadX_vg;</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">      lvg = _echo_SuperquadX_lvg;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">    <span class='keyword'>case</span> 1:</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">      v = _echo_SuperquadY_v;</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">      vg = _echo_SuperquadY_vg;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">      lvg = _echo_SuperquadY_lvg;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">    <span class='keyword'>case</span> 2: <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">      v = _echo_SuperquadZ_v;</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">      vg = _echo_SuperquadZ_vg;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">      lvg = _echo_SuperquadZ_lvg;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">  <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: Tmin, Tmax = %g, %g, ax = %d\n"</span>,</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">            _echoDot(tstate-&gt;depth), me, Tmin, Tmax, obj-&gt;axis);</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line"><span class='directive'>#define <span class='macro'>VAL(TT)<span class='expansion'>(((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1<br>] = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(<br>from)[2] + ((TT))*(ray-&gt;dir)[2]), v(pos[0], pos[1], pos[2]<br>, obj-&gt;A, obj-&gt;B))</span></span>                               \</span></td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">  <span class='directive'>(<span class='macro'>ELL_3V_SCALE_ADD2(pos, 1, from, (TT), ray-&gt;dir)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2])</span></span>,  \</span></td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">   <span class='directive'>v(pos[0], pos[1], pos[2], obj-&gt;A, obj-&gt;B))</span></td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"><span class='directive'>#define <span class='macro'>VALGRAD(VV, DV, TT)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2]); (VV) = vg(grad, pos[0], pos[<br>1], pos[2], obj-&gt;A, obj-&gt;B); (DV) = ((grad)[0]*(ray-&gt;<br>dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]*(ray-&gt;dir<br>)[2])</span></span>                                \</span></td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">  <span class='directive'><span class='macro'>ELL_3V_SCALE_ADD2(pos, 1, from, (TT), ray-&gt;dir)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2])</span></span>;                \</span></td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">  <span class='directive'>(VV) = vg(grad, pos[0], pos[1], pos[2], obj-&gt;A, obj-&gt;B); \</span></td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">  <span class='directive'>(DV) = <span class='macro'>ELL_3V_DOT(grad, ray-&gt;dir)<span class='expansion'>((grad)[0]*(ray-&gt;dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad<br>)[2]*(ray-&gt;dir)[2])</span></span></span></td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line"><span class='directive'>#define <span class='macro'>LVALGRAD(VV, DV, TT)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2]); (VV) = lvg(grad, pos[0], pos<br>[1], pos[2], obj-&gt;A, obj-&gt;B); (DV) = ((grad)[0]*(ray-&gt;<br>dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]*(ray-&gt;dir<br>)[2])</span></span>                                \</span></td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">  <span class='directive'><span class='macro'>ELL_3V_SCALE_ADD2(pos, 1, from, (TT), ray-&gt;dir)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2])</span></span>;                 \</span></td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">  <span class='directive'>(VV) = lvg(grad, pos[0], pos[1], pos[2], obj-&gt;A, obj-&gt;B); \</span></td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">  <span class='directive'>(DV) = <span class='macro'>ELL_3V_DOT(grad, ray-&gt;dir)<span class='expansion'>((grad)[0]*(ray-&gt;dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad<br>)[2]*(ray-&gt;dir)[2])</span></span></span></td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line"><span class='directive'>#define <span class='macro'>RR<span class='expansion'>0.61803399</span></span> 0.61803399</span></td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line"><span class='directive'>#define <span class='macro'>CC<span class='expansion'>(1.0-0.61803399)</span></span> (1.0-<span class='macro'>RR<span class='expansion'>0.61803399</span></span>)</span></td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line"><span class='directive'>#define <span class='macro'>SHIFT3(a,b,c,d)<span class='expansion'>(a)=(b); (b)=(c); (c)=(d)</span></span> (a)=(b); (b)=(c); (c)=(d)</span></td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line"><span class='directive'>#define <span class='macro'>SHIFT2(a,b,c)<span class='expansion'>(a)=(b); (b)=(c)</span></span>   (a)=(b); (b)=(c)</span></td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">  <span class='comment'>/* testing */</span></td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">  <span class='macro'>ELL_3V_SCALE_ADD2(from, 1, ray-&gt;from, Tmin, ray-&gt;dir)<span class='expansion'>((from)[0] = (1)*(ray-&gt;from)[0] + (Tmin)*(ray-&gt;dir)[0],<br> (from)[1] = (1)*(ray-&gt;from)[1] + (Tmin)*(ray-&gt;dir)[1],<br> (from)[2] = (1)*(ray-&gt;from)[2] + (Tmin)*(ray-&gt;dir)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">  saveTmin = Tmin;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  Tmin = 0;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  Tmax -= saveTmin;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">  <span class='comment'>ELL_3V_COPY(from, ray-&gt;from);</span></td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">  <span class='comment'>saveTmin = 0;</span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">  <span class='comment'>/* evaluate value and derivatives at Tmin and Tmax */</span></td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">  <span class='macro'>VALGRAD(Vmin, dVmin, Tmin)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((Tmin))*(ray-&gt;dir)[0], (pos)[<br>1] = (1)*(from)[1] + ((Tmin))*(ray-&gt;dir)[1], (pos)[2] = (1<br>)*(from)[2] + ((Tmin))*(ray-&gt;dir)[2]); (Vmin) = vg(grad, pos<br>[0], pos[1], pos[2], obj-&gt;A, obj-&gt;B); (dVmin) = ((grad)<br>[0]*(ray-&gt;dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]<br>*(ray-&gt;dir)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">  <span class='macro'>VALGRAD(Vmax, dVmax, Tmax)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((Tmax))*(ray-&gt;dir)[0], (pos)[<br>1] = (1)*(from)[1] + ((Tmax))*(ray-&gt;dir)[1], (pos)[2] = (1<br>)*(from)[2] + ((Tmax))*(ray-&gt;dir)[2]); (Vmax) = vg(grad, pos<br>[0], pos[1], pos[2], obj-&gt;A, obj-&gt;B); (dVmax) = ((grad)<br>[0]*(ray-&gt;dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]<br>*(ray-&gt;dir)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">  <span class='comment'>/* if the segment start and end are both positive or both negative,</span></td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">     <span class='comment'>and if the derivatives also don't change sign, there's no root.</span></td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">     <span class='comment'>Also, due to convexity, if values at start and end are negative,</span></td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">     <span class='comment'>then there is no root */</span></td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">  <span class='keyword'>if</span> ( (Vmin*Vmax &gt;= 0 &amp;&amp; dVmin*dVmax &gt;= 0)</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">       || (Vmin &lt;= 0 &amp;&amp; Vmax &lt;= 0) ) {</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">  <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: dVmin = %g, dVmax = %g, Vmin = %g, Vmax = %g\n"</span>,</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">            _echoDot(tstate-&gt;depth), me, dVmin, dVmax, Vmin, Vmax);</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">  <span class='comment'>/* either the value changed sign, or the derivative changed sign, or</span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">     <span class='comment'>both.  If, as is common, the derivatives changed sign, but the</span></td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">     <span class='comment'>values didn't (which means they are both positive, due to a test</span></td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">     <span class='comment'>above), we need to limit the interval by minimizing the value</span></td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">     <span class='comment'>until either we see a negative value, or until the minimization</span></td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">     <span class='comment'>converged.  Based on Golden Section Search, NR pg.401 */</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">  <span class='keyword'>if</span> (dVmin*dVmax &lt; 0 &amp;&amp; Vmin*Vmax &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">    t0 = Tmin;</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">    t1 = <span class='macro'>RR<span class='expansion'>0.61803399</span></span>*Tmin + <span class='macro'>CC<span class='expansion'>(1.0-0.61803399)</span></span>*Tmax;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">    t2 = <span class='macro'>CC<span class='expansion'>(1.0-0.61803399)</span></span>*Tmin + <span class='macro'>RR<span class='expansion'>0.61803399</span></span>*Tmax;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">    t3 = Tmax;</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">    v1 = <span class='macro'>VAL(t1)<span class='expansion'>(((pos)[0] = (1)*(from)[0] + ((t1))*(ray-&gt;dir)[0], (pos)[1<br>] = (1)*(from)[1] + ((t1))*(ray-&gt;dir)[1], (pos)[2] = (1)*(<br>from)[2] + ((t1))*(ray-&gt;dir)[2]), v(pos[0], pos[1], pos[2]<br>, obj-&gt;A, obj-&gt;B))</span></span>;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">    v2 = <span class='macro'>VAL(t2)<span class='expansion'>(((pos)[0] = (1)*(from)[0] + ((t2))*(ray-&gt;dir)[0], (pos)[1<br>] = (1)*(from)[1] + ((t2))*(ray-&gt;dir)[1], (pos)[2] = (1)*(<br>from)[2] + ((t2))*(ray-&gt;dir)[2]), v(pos[0], pos[1], pos[2]<br>, obj-&gt;A, obj-&gt;B))</span></span>;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">    <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: \n"</span></td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">              <span class='string_literal'>"     t0 = % 31.15f\n"</span></td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">              <span class='string_literal'>"     t1 = % 31.15f  -&gt; v1 = % 31.15f\n"</span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">              <span class='string_literal'>"     t2 = % 31.15f  -&gt; v2 = % 31.15f\n"</span></td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">              <span class='string_literal'>"     t3 = % 31.15f\n"</span>,</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">              _echoDot(tstate-&gt;depth), me,</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">              t0, t1, v1, t2, v2, t3);</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">    tol = sqrt(<span class='macro'>ECHO_POS_EPS<span class='expansion'>2.2204460492503131e-16</span></span>);</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">    <span class='keyword'>while</span> ( (t3-t0 &gt; tol*(t1+t2))         <span class='comment'>/* still haven't converged */</span></td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">            &amp;&amp; (v1 &gt; 0 &amp;&amp; v2 &gt; 0) ) {     <span class='comment'>/* v1 and v2 both positive */</span></td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">      diff = v2 - v1;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">      <span class='keyword'>if</span> (v1 &lt; v2) {</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        <span class='macro'>SHIFT3(t3, t2, t1, CC*t0 + RR*t2)<span class='expansion'>(t3)=(t2); (t2)=(t1); (t1)=((1.0-0.61803399)*t0 + 0.61803399*<br>t2)</span></span>;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        <span class='macro'>SHIFT2(v2, v1, VAL(t1))<span class='expansion'>(v2)=(v1); (v1)=((((pos)[0] = (1)*(from)[0] + ((t1))*(ray-&gt;<br>dir)[0], (pos)[1] = (1)*(from)[1] + ((t1))*(ray-&gt;dir)[1], (<br>pos)[2] = (1)*(from)[2] + ((t1))*(ray-&gt;dir)[2]), v(pos[0],<br> pos[1], pos[2], obj-&gt;A, obj-&gt;B)))</span></span>;</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        <span class='macro'>SHIFT3(t0, t1, t2, RR*t1 + CC*t3)<span class='expansion'>(t0)=(t1); (t1)=(t2); (t2)=(0.61803399*t1 + (1.0-0.61803399)*<br>t3)</span></span>;</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        <span class='macro'>SHIFT2(v1, v2, VAL(t2))<span class='expansion'>(v1)=(v2); (v2)=((((pos)[0] = (1)*(from)[0] + ((t2))*(ray-&gt;<br>dir)[0], (pos)[1] = (1)*(from)[1] + ((t2))*(ray-&gt;dir)[1], (<br>pos)[2] = (1)*(from)[2] + ((t2))*(ray-&gt;dir)[2]), v(pos[0],<br> pos[1], pos[2], obj-&gt;A, obj-&gt;B)))</span></span>;</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">      <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: %s ---&gt; \n"</span></td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">                <span class='string_literal'>"     t0 = % 31.15f\n"</span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">                <span class='string_literal'>"     t1 = % 31.15f  -&gt; v1 = % 31.15f\n"</span></td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">                <span class='string_literal'>"     t2 = % 31.15f  -&gt; v2 = % 31.15f\n"</span></td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">                <span class='string_literal'>"     t3 = % 31.15f\n"</span>,</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">                _echoDot(tstate-&gt;depth), me,</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">                diff &gt; 0 ? <span class='string_literal'>"v1 &lt; v2"</span> : <span class='string_literal'>"v1 &gt; v2"</span>,</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">                t0, t1, v1, t2, v2, t3);</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">    <span class='keyword'>if</span> (v1 &gt; 0 &amp;&amp; v2 &gt; 0) {</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">      <span class='comment'>/* the minimization stopped, yet both v1 and v2 are still positive,</span></td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">         <span class='comment'>so there's no way we can have a root */</span></td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">      <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: minimization found no root\n"</span>,</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">                _echoDot(tstate-&gt;depth), me);</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">      <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">    <span class='comment'>/* else either v1 or v2 &lt;= 0, so there is a root (actually two).</span></td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">       <span class='comment'>By construction, f(t0) is positive, so we can now bracket the</span></td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">       <span class='comment'>root between t0 and t1 or t2, whichever one is associated with</span></td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">       <span class='comment'>a smaller value */</span></td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">    Tmin = t0;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">    <span class='comment'>/* HEY: shouldn't I just be using whichever one is closer? */</span></td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">    Tmax = v1 &lt; v2 ? t1 : t2;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">    Vmin = <span class='macro'>VAL(Tmin)<span class='expansion'>(((pos)[0] = (1)*(from)[0] + ((Tmin))*(ray-&gt;dir)[0], (pos)<br>[1] = (1)*(from)[1] + ((Tmin))*(ray-&gt;dir)[1], (pos)[2] = (<br>1)*(from)[2] + ((Tmin))*(ray-&gt;dir)[2]), v(pos[0], pos[1], pos<br>[2], obj-&gt;A, obj-&gt;B))</span></span>;</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">    Vmax = <span class="mrange"><span class='macro'>VAL</span>(Tmax)<span class='expansion'>(((pos)[0] = (1)*(from)[0] + ((Tmax))*(ray-&gt;dir)[0], (pos)<br>[1] = (1)*(from)[1] + ((Tmax))*(ray-&gt;dir)[1], (pos)[2] = (<br>1)*(from)[2] + ((Tmax))*(ray-&gt;dir)[2]), v(pos[0], pos[1], pos<br>[2], obj-&gt;A, obj-&gt;B))</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:5ex">Value stored to 'Vmax' is never read</div></td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">  <span class='comment'>/* the value isn't necessarily monotonic between Tmin and Tmax, but</span></td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">     <span class='comment'>we know that there is only one root. Find it with newton-raphson,</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">     <span class='comment'>using the log of function, both for values and for derivatives */</span></td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">  iter = 0;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">  TT = (Tmin + Tmax)/2;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">  <span class='macro'>LVALGRAD(VV, dV, TT)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2]); (VV) = lvg(grad, pos[0], pos<br>[1], pos[2], obj-&gt;A, obj-&gt;B); (dV) = ((grad)[0]*(ray-&gt;<br>dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]*(ray-&gt;dir<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">  <span class='keyword'>while</span> (iter &lt; parm-&gt;sqNRI &amp;&amp; <span class='macro'>AIR_ABS(VV)<span class='expansion'>((VV) &gt; 0.0f ? (VV) : -(VV))</span></span> &gt; parm-&gt;sqTol</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">         &amp;&amp; <span class='macro'>AIR_EXISTS(VV)<span class='expansion'>(((int)(!((VV) - (VV)))))</span></span> &amp;&amp; <span class='macro'>AIR_EXISTS(dV)<span class='expansion'>(((int)(!((dV) - (dV)))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">    <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: iter = %d: TT = %g, VV = %g, dV = %g\n"</span>,</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">              _echoDot(tstate-&gt;depth), me, iter, TT, VV, dV);</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">    TT -= VV/dV;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">    <span class='keyword'>if</span> (!<span class='macro'>AIR_IN_OP(Tmin, TT, Tmax)<span class='expansion'>((Tmin) &lt; (TT) &amp;&amp; (TT) &lt; (Tmax))</span></span>) {</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">      <span class='comment'>/* newton-raphson sent us flying out of bounds; find a tighter</span></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">         <span class='comment'>[Tmin,Tmax] bracket with bisection and try again */</span></td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">      TT = (Tmin + Tmax)/2;</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">      VV = <span class='macro'>VAL(TT)<span class='expansion'>(((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1<br>] = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(<br>from)[2] + ((TT))*(ray-&gt;dir)[2]), v(pos[0], pos[1], pos[2]<br>, obj-&gt;A, obj-&gt;B))</span></span>;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">      <span class='keyword'>if</span> (Vmin*VV &lt; 0) {</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        Tmax = TT;</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        Vmax = VV;</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        Tmin = TT;</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        Vmin = VV;</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">      TT = (Tmin + Tmax)/2;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">    <span class='macro'>LVALGRAD(VV, dV, TT)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2]); (VV) = lvg(grad, pos[0], pos<br>[1], pos[2], obj-&gt;A, obj-&gt;B); (dV) = ((grad)[0]*(ray-&gt;<br>dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]*(ray-&gt;dir<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">    iter++;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">  <span class='keyword'>if</span> (!( <span class='macro'>AIR_EXISTS(VV)<span class='expansion'>(((int)(!((VV) - (VV)))))</span></span> &amp;&amp; <span class='macro'>AIR_EXISTS(dV)<span class='expansion'>(((int)(!((dV) - (dV)))))</span></span> )) {</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">    <span class='comment'>/* we bailed out of the loop above because</span></td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">       <span class='comment'>we got screwed by numerical errors</span></td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">       <span class='comment'>--&gt; pretend that there was no intersection,</span></td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">       <span class='comment'>and HEY this will have to be debugged later */</span></td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">    <span class='keyword'>if</span> (tstate-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s%s: SORRY, numerical problems!\n"</span>,</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">              _echoDot(tstate-&gt;depth), me);</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">  <span class='comment'>/* else we succeeded in finding the intersection */</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">  intx-&gt;t = TT + saveTmin;</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">  <span class='macro'>VALGRAD(VV, dV, TT)<span class='expansion'>((pos)[0] = (1)*(from)[0] + ((TT))*(ray-&gt;dir)[0], (pos)[1]<br> = (1)*(from)[1] + ((TT))*(ray-&gt;dir)[1], (pos)[2] = (1)*(from<br>)[2] + ((TT))*(ray-&gt;dir)[2]); (VV) = vg(grad, pos[0], pos[<br>1], pos[2], obj-&gt;A, obj-&gt;B); (dV) = ((grad)[0]*(ray-&gt;<br>dir)[0] + (grad)[1]*(ray-&gt;dir)[1] + (grad)[2]*(ray-&gt;dir<br>)[2])</span></span>;   <span class='comment'>/* puts gradient into grad */</span></td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">  <span class='macro'>ELL_3V_NORM(intx-&gt;norm, grad, tmp)<span class='expansion'>(tmp = (sqrt((((grad))[0]*((grad))[0] + ((grad))[1]*((grad))[<br>1] + ((grad))[2]*((grad))[2]))), ((intx-&gt;norm)[0] = (1.0/tmp<br>)*(grad)[0], (intx-&gt;norm)[1] = (1.0/tmp)*(grad)[1], (intx-&gt;<br>norm)[2] = (1.0/tmp)*(grad)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">  intx-&gt;obj = <span class='macro'>OBJECT(obj)<span class='expansion'>((echoObject*)obj)</span></span>;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">  <span class='comment'>/* set in intx:</span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">     <span class='comment'>yes: t, norm</span></td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">     <span class='comment'>no: u, v</span></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">}</td></tr>
+</table></body></html>

@@ -1,0 +1,660 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/pull/volumePull.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Access to field 'shape' results in a dereference of a null pointer (loaded from variable 'gctx') -->
+
+<!-- BUGTYPE Dereference of null pointer -->
+
+<!-- BUGCATEGORY Logic error -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/pull/volumePull.c -->
+
+<!-- FILENAME volumePull.c -->
+
+<!-- FUNCTIONNAME _pullVolumeSetup -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT e4bd7973c7611ab29923c70072b6e1fd -->
+
+<!-- BUGLINE 379 -->
+
+<!-- BUGCOLUMN 36 -->
+
+<!-- BUGPATHLENGTH 8 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/pull/volumePull.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 379, column 36</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Access to field 'shape' results in a dereference of a null pointer (loaded from variable 'gctx')</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "pull.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "privatePull.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">pullVolume *</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">pullVolumeNew() {</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  pullVolume *vol;</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  vol = <span class='macro'>AIR_CAST(pullVolume *, calloc(1, <span class='keyword'>sizeof</span>(pullVolume)))<span class='expansion'>((pullVolume *)(calloc(1, sizeof(pullVolume))))</span></span>;</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">  <span class='keyword'>if</span> (vol) {</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">    vol-&gt;verbose = 0;</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">    vol-&gt;name = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">    vol-&gt;kind = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">    vol-&gt;ninSingle = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">    vol-&gt;ninScale = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">    vol-&gt;scaleNum = 0;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">    vol-&gt;scalePos = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">    vol-&gt;scaleDerivNorm = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    vol-&gt;scaleDerivNormBias = 0.0;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">    vol-&gt;ksp00 = nrrdKernelSpecNew();</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">    vol-&gt;ksp11 = nrrdKernelSpecNew();</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">    vol-&gt;ksp22 = nrrdKernelSpecNew();</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">    vol-&gt;kspSS = nrrdKernelSpecNew();</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">    <span class='macro'>GAGE_QUERY_RESET(vol-&gt;pullValQuery)<span class='expansion'>vol-&gt;pullValQuery[ 0] = vol-&gt;pullValQuery[ 1] = vol-&gt;<br>pullValQuery[ 2] = vol-&gt;pullValQuery[ 3] = vol-&gt;pullValQuery<br>[ 4] = vol-&gt;pullValQuery[ 5] = vol-&gt;pullValQuery[ 6] = vol<br>-&gt;pullValQuery[ 7] = vol-&gt;pullValQuery[ 8] = vol-&gt;pullValQuery<br>[ 9] = vol-&gt;pullValQuery[10] = vol-&gt;pullValQuery[11] = vol<br>-&gt;pullValQuery[12] = vol-&gt;pullValQuery[13] = vol-&gt;pullValQuery<br>[14] = vol-&gt;pullValQuery[15] = vol-&gt;pullValQuery[16] = vol<br>-&gt;pullValQuery[17] = vol-&gt;pullValQuery[18] = vol-&gt;pullValQuery<br>[19] = vol-&gt;pullValQuery[20] = vol-&gt;pullValQuery[21] = vol<br>-&gt;pullValQuery[22] = vol-&gt;pullValQuery[23] = vol-&gt;pullValQuery<br>[24] = vol-&gt;pullValQuery[25] = vol-&gt;pullValQuery[26] = vol<br>-&gt;pullValQuery[27] = vol-&gt;pullValQuery[28] = vol-&gt;pullValQuery<br>[29] = vol-&gt;pullValQuery[30] = vol-&gt;pullValQuery[31] = 0</span></span>;</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">    vol-&gt;gctx = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">    vol-&gt;gpvl = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">    vol-&gt;gpvlSS = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">    <span class='comment'>/* this is turned OFF in volumes that have infos that aren't seedthresh,</span></td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">       <span class='comment'>see pullInfoSpecAdd() */</span></td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">    vol-&gt;seedOnly = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">    vol-&gt;forSeedPreThresh = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">  <span class='keyword'>return</span> vol;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">pullVolume *</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">pullVolumeNix(pullVolume *vol) {</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  <span class='keyword'>if</span> (vol) {</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">    airFree(vol-&gt;name);</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">    airFree(vol-&gt;scalePos);</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">    vol-&gt;ksp00 = nrrdKernelSpecNix(vol-&gt;ksp00);</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">    vol-&gt;ksp11 = nrrdKernelSpecNix(vol-&gt;ksp11);</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">    vol-&gt;ksp22 = nrrdKernelSpecNix(vol-&gt;ksp22);</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">    vol-&gt;kspSS = nrrdKernelSpecNix(vol-&gt;kspSS);</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">    <span class='keyword'>if</span> (vol-&gt;gctx) {</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">      vol-&gt;gctx = gageContextNix(vol-&gt;gctx);</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">    airFree(vol-&gt;gpvlSS);</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">    airFree(vol);</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"><span class='comment'>** used to set all the fields of pullVolume at once, including the</span></td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line"><span class='comment'>** gageContext inside the pullVolume</span></td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line"><span class='comment'>** OLD description ...</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"><span class='comment'>** used both for top-level volumes in the pullContext (pctx-&gt;vol[i])</span></td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line"><span class='comment'>** in which case pctx is non-NULL,</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line"><span class='comment'>** and for the per-task volumes (task-&gt;vol[i]),</span></td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"><span class='comment'>** in which case pctx is NULL</span></td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line"><span class='comment'>** ...................</span></td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">_pullVolumeSet(<span class='keyword'>const</span> pullContext *pctx, <span class='keyword'>int</span> taskCopy, pullVolume *vol,</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">               <span class='keyword'>const</span> gageKind *kind,</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">               <span class='keyword'>int</span> verbose, <span class='keyword'>const</span> <span class='keyword'>char</span> *name,</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">               <span class='keyword'>const</span> Nrrd *ninSingle,</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">               <span class='keyword'>const</span> Nrrd *<span class='keyword'>const</span> *ninScale,</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">               <span class='keyword'>double</span> *scalePos,</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">               <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ninNum,</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">               <span class='keyword'>int</span> scaleDerivNorm,</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">               <span class='keyword'>double</span> scaleDerivNormBias,</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">               <span class='keyword'>const</span> NrrdKernelSpec *ksp00,</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">               <span class='keyword'>const</span> NrrdKernelSpec *ksp11,</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">               <span class='keyword'>const</span> NrrdKernelSpec *ksp22,</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">               <span class='keyword'>const</span> NrrdKernelSpec *kspSS) {</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullVolumeSet"</span>;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">  <span class='keyword'>int</span> E;</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> vi;</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">  <span class='keyword'>if</span> (!( vol &amp;&amp; kind &amp;&amp; airStrlen(name) &amp;&amp; ksp00 &amp;&amp; ksp11 &amp;&amp; ksp22 )) {</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">  <span class='keyword'>if</span> (!ninSingle) {</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: needed non-NULL ninSingle"</span>, me);</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">  <span class='keyword'>if</span> (!taskCopy) {</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">    <span class='keyword'>for</span> (vi=0; vi&lt;pctx-&gt;volNum; vi++) {</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">      <span class='keyword'>if</span> (pctx-&gt;vol[vi] == vol) {</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">        biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: already got vol %p as vol[%u]"</span>, me,</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">                 <span class='macro'>AIR_VOIDP(vol)<span class='expansion'>((void *)(vol))</span></span>, vi);</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">  <span class='keyword'>if</span> (ninNum) {</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    <span class='keyword'>if</span> (!( ninNum &gt;= 2 )) {</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need at least 2 volumes (not %u)"</span>, me, ninNum);</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    <span class='keyword'>if</span> (!scalePos) {</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need non-NULL scalePos with ninNum %u"</span>, me, ninNum);</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">    <span class='keyword'>if</span> (!ninScale) {</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need non-NULL ninScale with ninNum %u"</span>, me, ninNum);</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">  vol-&gt;verbose = verbose;</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">  vol-&gt;kind = kind;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">  vol-&gt;gctx = gageContextNew();</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmVerbose,</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">              vol-&gt;verbose &gt; 0 ? vol-&gt;verbose - 1 : 0);</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmRenormalize, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">  <span class='comment'>/* because we're likely only using accurate kernels */</span></td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmStackNormalizeRecon, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">  vol-&gt;scaleDerivNorm = scaleDerivNorm;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmStackNormalizeDeriv, scaleDerivNorm);</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  vol-&gt;scaleDerivNormBias = scaleDerivNormBias;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmStackNormalizeDerivBias,</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">              scaleDerivNormBias);</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmTwoDimZeroZ, pctx-&gt;flag.zeroZ);</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">  gageParmSet(vol-&gt;gctx, gageParmCheckIntegrals, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">  E = 0;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageKernelSet(vol-&gt;gctx, gageKernel00,</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                             ksp00-&gt;kernel, ksp00-&gt;parm);</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageKernelSet(vol-&gt;gctx, gageKernel11,</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">                             ksp11-&gt;kernel, ksp11-&gt;parm);</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageKernelSet(vol-&gt;gctx, gageKernel22,</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                             ksp22-&gt;kernel, ksp22-&gt;parm);</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">  <span class='keyword'>if</span> (ninScale) {</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">    <span class='keyword'>if</span> (!kspSS) {</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL kspSS"</span>, me);</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">    gageParmSet(vol-&gt;gctx, gageParmStackUse, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">    <span class='keyword'>if</span> (!E) E |= !(vol-&gt;gpvl = gagePerVolumeNew(vol-&gt;gctx, ninSingle, kind));</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">    vol-&gt;gpvlSS = <span class='macro'>AIR_CAST(gagePerVolume **,<span class='expansion'>((gagePerVolume **)(calloc(ninNum, sizeof(gagePerVolume *))))</span></span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                           <span class='macro'>calloc(ninNum, <span class='keyword'>sizeof</span>(gagePerVolume *)))<span class='expansion'>((gagePerVolume **)(calloc(ninNum, sizeof(gagePerVolume *))))</span></span>;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gageStackPerVolumeNew(vol-&gt;gctx, vol-&gt;gpvlSS,</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">                                       ninScale, ninNum, kind);</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gageStackPerVolumeAttach(vol-&gt;gctx, vol-&gt;gpvl, vol-&gt;gpvlSS,</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">                                          scalePos, ninNum);</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gageKernelSet(vol-&gt;gctx, gageKernelStack,</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">                               kspSS-&gt;kernel, kspSS-&gt;parm);</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">    vol-&gt;gpvlSS = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">    <span class='keyword'>if</span> (!E) E |= !(vol-&gt;gpvl = gagePerVolumeNew(vol-&gt;gctx, ninSingle, kind));</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gagePerVolumeAttach(vol-&gt;gctx, vol-&gt;gpvl);</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">  <span class='keyword'>if</span> (E) {</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">    biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: trouble (%s %s)"</span>, me,</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">              ninSingle ? <span class='string_literal'>"ninSingle"</span> : <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">              ninScale ? <span class='string_literal'>"ninScale"</span> : <span class='string_literal'>""</span>);</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">  gageQueryReset(vol-&gt;gctx, vol-&gt;gpvl);</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">  <span class='comment'>/* the query is the single thing remaining unset in the gageContext */</span></td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">  vol-&gt;name = airStrdup(name);</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">  <span class='keyword'>if</span> (!vol-&gt;name) {</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't strdup name (len %u)"</span>, me,</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">             <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, airStrlen(name))<span class='expansion'>((unsigned int)(airStrlen(name)))</span></span>);</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">  <span class='keyword'>if</span> (vol-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">    printf(<span class='string_literal'>"%s: ---- vol=%p, name = %p = |%s|\n"</span>, me, <span class='macro'>AIR_VOIDP(vol)<span class='expansion'>((void *)(vol))</span></span>,</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">           <span class='macro'>AIR_VOIDP(vol-&gt;name)<span class='expansion'>((void *)(vol-&gt;name))</span></span>, vol-&gt;name);</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">    <span class='keyword'>if</span> (0 != vol-&gt;scaleDerivNormBias) {</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">      printf(<span class='string_literal'>"%s: ---- scale deriv norm bias = %g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">             vol-&gt;scaleDerivNormBias);</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">  nrrdKernelSpecSet(vol-&gt;ksp00, ksp00-&gt;kernel, ksp00-&gt;parm);</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">  nrrdKernelSpecSet(vol-&gt;ksp11, ksp11-&gt;kernel, ksp11-&gt;parm);</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">  nrrdKernelSpecSet(vol-&gt;ksp22, ksp22-&gt;kernel, ksp22-&gt;parm);</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">  <span class='keyword'>if</span> (ninScale) {</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">    vol-&gt;ninSingle = ninSingle;</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">    vol-&gt;ninScale = ninScale;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">    vol-&gt;scaleNum = ninNum;</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">    vol-&gt;scalePos = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, calloc(ninNum, <span class='keyword'>sizeof</span>(<span class='keyword'>double</span>)))<span class='expansion'>((double *)(calloc(ninNum, sizeof(double))))</span></span>;</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">    <span class='keyword'>if</span> (!vol-&gt;scalePos) {</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't calloc scalePos"</span>, me);</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">    <span class='keyword'>for</span> (vi=0; vi&lt;ninNum; vi++) {</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">      vol-&gt;scalePos[vi] = scalePos[vi];</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">    nrrdKernelSpecSet(vol-&gt;kspSS, kspSS-&gt;kernel, kspSS-&gt;parm);</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">    vol-&gt;ninSingle = ninSingle;</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">    vol-&gt;ninScale = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">    vol-&gt;scaleNum = 0;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">    <span class='comment'>/* leave kspSS as is (unset) */</span></td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line"><span class='comment'>** the effect is to give pctx ownership of the vol</span></td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">pullVolumeSingleAdd(pullContext *pctx,</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">                    <span class='keyword'>const</span> gageKind *kind,</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">                    <span class='keyword'>char</span> *name, <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">                    <span class='keyword'>const</span> NrrdKernelSpec *ksp00,</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                    <span class='keyword'>const</span> NrrdKernelSpec *ksp11,</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">                    <span class='keyword'>const</span> NrrdKernelSpec *ksp22) {</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullVolumeSingleSet"</span>;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">  pullVolume *vol;</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">  vol = pullVolumeNew();</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">  <span class='keyword'>if</span> (_pullVolumeSet(pctx, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* taskCopy */</span>, vol, kind,</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">                     pctx-&gt;verbose, name,</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">                     nin,</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">                     <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>, 0.0,</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">                     ksp00, ksp11, ksp22, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble"</span>, me);</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">  <span class='comment'>/* add this volume to context */</span></td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">    printf(<span class='string_literal'>"%s: adding pctx-&gt;vol[%u] = %p\n"</span>, me, pctx-&gt;volNum,</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">           <span class='macro'>AIR_VOIDP(vol)<span class='expansion'>((void *)(vol))</span></span>);</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">  pctx-&gt;vol[pctx-&gt;volNum] = vol;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  pctx-&gt;volNum++;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line"><span class='comment'>** the effect is to give pctx ownership of the vol</span></td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">pullVolumeStackAdd(pullContext *pctx,</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                   <span class='keyword'>const</span> gageKind *kind,</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">                   <span class='keyword'>char</span> *name,</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">                   <span class='keyword'>const</span> Nrrd *nin,</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">                   <span class='keyword'>const</span> Nrrd *<span class='keyword'>const</span> *ninSS,</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">                   <span class='keyword'>double</span> *scalePos,</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">                   <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ninNum,</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">                   <span class='keyword'>int</span> scaleDerivNorm,</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">                   <span class='keyword'>double</span> scaleDerivNormBias,</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">                   <span class='keyword'>const</span> NrrdKernelSpec *ksp00,</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                   <span class='keyword'>const</span> NrrdKernelSpec *ksp11,</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">                   <span class='keyword'>const</span> NrrdKernelSpec *ksp22,</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">                   <span class='keyword'>const</span> NrrdKernelSpec *kspSS) {</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullVolumeStackAdd"</span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">  pullVolume *vol;</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">  vol = pullVolumeNew();</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">  <span class='keyword'>if</span> (_pullVolumeSet(pctx, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span> <span class='comment'>/* taskCopy */</span>, vol, kind,</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">                     pctx-&gt;verbose, name,</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">                     nin,</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">                     ninSS, scalePos, ninNum,</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">                     scaleDerivNorm, scaleDerivNormBias,</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">                     ksp00, ksp11, ksp22, kspSS)) {</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble"</span>, me);</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">  <span class='comment'>/* add this volume to context */</span></td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">  pctx-&gt;vol[pctx-&gt;volNum++] = vol;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"><span class='comment'>** this is only used to create pullVolumes for the pullTasks</span></td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line"><span class='comment'>** DOES use biff</span></td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">pullVolume *</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">_pullVolumeCopy(<span class='keyword'>const</span> pullContext *pctx, <span class='keyword'>const</span> pullVolume *volOrig) {</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullVolumeCopy"</span>;</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">  pullVolume *volNew;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  volNew = pullVolumeNew();</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">  <span class='keyword'>if</span> (_pullVolumeSet(pctx, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> <span class='comment'>/* taskCopy */</span>, volNew, volOrig-&gt;kind,</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">                     volOrig-&gt;verbose, volOrig-&gt;name,</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">                     volOrig-&gt;ninSingle,</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">                     volOrig-&gt;ninScale,</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">                     volOrig-&gt;scalePos,</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                     volOrig-&gt;scaleNum,</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">                     volOrig-&gt;scaleDerivNorm,</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">                     volOrig-&gt;scaleDerivNormBias,</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">                     volOrig-&gt;ksp00, volOrig-&gt;ksp11,</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">                     volOrig-&gt;ksp22, volOrig-&gt;kspSS)) {</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble creating new volume"</span>, me);</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">  volNew-&gt;seedOnly = volOrig-&gt;seedOnly;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  volNew-&gt;forSeedPreThresh = volOrig-&gt;forSeedPreThresh;</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">  <span class='comment'>/* _pullVolumeSet just created a new (per-task) gageContext, and</span></td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">     <span class='comment'>it will not learn the items from the info specs, so we have to</span></td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">     <span class='comment'>add query here */</span></td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">  <span class='keyword'>if</span> (gageQuerySet(volNew-&gt;gctx, volNew-&gt;gpvl, volOrig-&gt;gpvl-&gt;query)</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">      || gageUpdate(volNew-&gt;gctx)) {</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">    biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: trouble with new volume gctx"</span>, me);</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">  <span class='keyword'>return</span> volNew;</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">_pullInsideBBox(pullContext *pctx, <span class='keyword'>double</span> pos[4]) {</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">  <span class='keyword'>return</span> (<span class='macro'>AIR_IN_CL(pctx-&gt;bboxMin[0], pos[0], pctx-&gt;bboxMax[0])<span class='expansion'>((pctx-&gt;bboxMin[0]) &lt;= (pos[0]) &amp;&amp; (pos[0]) &lt;=<br> (pctx-&gt;bboxMax[0]))</span></span> &amp;&amp;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">          <span class='macro'>AIR_IN_CL(pctx-&gt;bboxMin[1], pos[1], pctx-&gt;bboxMax[1])<span class='expansion'>((pctx-&gt;bboxMin[1]) &lt;= (pos[1]) &amp;&amp; (pos[1]) &lt;=<br> (pctx-&gt;bboxMax[1]))</span></span> &amp;&amp;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">          <span class='macro'>AIR_IN_CL(pctx-&gt;bboxMin[2], pos[2], pctx-&gt;bboxMax[2])<span class='expansion'>((pctx-&gt;bboxMin[2]) &lt;= (pos[2]) &amp;&amp; (pos[2]) &lt;=<br> (pctx-&gt;bboxMax[2]))</span></span> &amp;&amp;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">          <span class='macro'>AIR_IN_CL(pctx-&gt;bboxMin[3], pos[3], pctx-&gt;bboxMax[3])<span class='expansion'>((pctx-&gt;bboxMin[3]) &lt;= (pos[3]) &amp;&amp; (pos[3]) &lt;=<br> (pctx-&gt;bboxMax[3]))</span></span>);</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line"><span class='comment'>** sets:</span></td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line"><span class='comment'>** pctx-&gt;haveScale</span></td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line"><span class='comment'>** pctx-&gt;voxelSizeSpace, voxelSizeScale</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line"><span class='comment'>** pctx-&gt;bboxMin  ([0] through [3], always)</span></td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line"><span class='comment'>** pctx-&gt;bboxMax  (same)</span></td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">_pullVolumeSetup(pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullVolumeSetup"</span>;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ii, numScale;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">  <span class='comment'>/* first see if there are any gage problems */</span></td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;pctx-&gt;volNum; ii++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 374</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">    <span class='keyword'>if</span> (pctx-&gt;verbose) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">      printf(<span class='string_literal'>"%s: gageUpdate(vol[%u])\n"</span>, me, ii);</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">    <span class='keyword'>if</span> (<span class="mrange">pctx-&gt;vol[ii]-&gt;gctx</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming pointer value is null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">      <span class='keyword'>if</span> (gageUpdate(pctx-&gt;vol[ii]-&gt;gctx)) {</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: trouble setting up gage on vol "</span></td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">                  <span class='string_literal'>"%u/%u (\"%s\")"</span>,  me, ii, pctx-&gt;volNum,</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">                  pctx-&gt;vol[ii]-&gt;name);</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: vol[%u] has NULL gctx"</span>, me, ii);</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">  pctx-&gt;voxelSizeSpace = 0.0;</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;pctx-&gt;volNum; ii++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">    <span class='keyword'>double</span> min[3], max[3];</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">    gageContext *gctx;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">    <span class="mrange">gctx = pctx-&gt;vol[ii]-&gt;gctx</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Null pointer value stored to 'gctx'</td><td><div class="PathNav"><a href="#EndPath" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">    gageShapeBoundingBox(min, max, <span class="mrange">gctx</span>-&gt;shape);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:36ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Access to field 'shape' results in a dereference of a null pointer (loaded from variable 'gctx')</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">    <span class='keyword'>if</span> (!ii) {</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">      <span class='macro'>ELL_3V_COPY(pctx-&gt;bboxMin, min)<span class='expansion'>((pctx-&gt;bboxMin)[0] = (min)[0], (pctx-&gt;bboxMin)[1] = (min<br>)[1], (pctx-&gt;bboxMin)[2] = (min)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">      <span class='macro'>ELL_3V_COPY(pctx-&gt;bboxMax, max)<span class='expansion'>((pctx-&gt;bboxMax)[0] = (max)[0], (pctx-&gt;bboxMax)[1] = (max<br>)[1], (pctx-&gt;bboxMax)[2] = (max)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">      <span class='macro'>ELL_3V_MIN(pctx-&gt;bboxMin, pctx-&gt;bboxMin, min)<span class='expansion'>( (pctx-&gt;bboxMin)[0] = (((pctx-&gt;bboxMin)[0]) &lt; ((min<br>)[0]) ? ((pctx-&gt;bboxMin)[0]) : ((min)[0])), (pctx-&gt;bboxMin<br>)[1] = (((pctx-&gt;bboxMin)[1]) &lt; ((min)[1]) ? ((pctx-&gt;<br>bboxMin)[1]) : ((min)[1])), (pctx-&gt;bboxMin)[2] = (((pctx-&gt;<br>bboxMin)[2]) &lt; ((min)[2]) ? ((pctx-&gt;bboxMin)[2]) : ((min<br>)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">      <span class='macro'>ELL_3V_MIN(pctx-&gt;bboxMax, pctx-&gt;bboxMax, max)<span class='expansion'>( (pctx-&gt;bboxMax)[0] = (((pctx-&gt;bboxMax)[0]) &lt; ((max<br>)[0]) ? ((pctx-&gt;bboxMax)[0]) : ((max)[0])), (pctx-&gt;bboxMax<br>)[1] = (((pctx-&gt;bboxMax)[1]) &lt; ((max)[1]) ? ((pctx-&gt;<br>bboxMax)[1]) : ((max)[1])), (pctx-&gt;bboxMax)[2] = (((pctx-&gt;<br>bboxMax)[2]) &lt; ((max)[2]) ? ((pctx-&gt;bboxMax)[2]) : ((max<br>)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">    pctx-&gt;voxelSizeSpace += <span class='macro'>ELL_3V_LEN(gctx-&gt;shape-&gt;spacing)<span class='expansion'>(sqrt((((gctx-&gt;shape-&gt;spacing))[0]*((gctx-&gt;shape-&gt;<br>spacing))[0] + ((gctx-&gt;shape-&gt;spacing))[1]*((gctx-&gt;shape<br>-&gt;spacing))[1] + ((gctx-&gt;shape-&gt;spacing))[2]*((gctx-&gt;<br>shape-&gt;spacing))[2])))</span></span>/sqrt(3.0);</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">    <span class='keyword'>if</span> (ii &amp;&amp; !pctx-&gt;initParm.unequalShapesAllow) {</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">      <span class='keyword'>if</span> (!gageShapeEqual(pctx-&gt;vol[0]-&gt;gctx-&gt;shape, pctx-&gt;vol[0]-&gt;name,</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">                          pctx-&gt;vol[ii]-&gt;gctx-&gt;shape, pctx-&gt;vol[ii]-&gt;name)) {</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">        biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">                  <span class='string_literal'>"%s: need equal shapes, but vol 0 and %u different"</span>,</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">                  me, ii);</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">  pctx-&gt;voxelSizeSpace /= pctx-&gt;volNum;</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">  <span class='comment'>/* have now computed bbox{Min,Max}[0,1,2]; now do bbox{Min,Max}[3] */</span></td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">  pctx-&gt;bboxMin[3] = pctx-&gt;bboxMax[3] = 0.0;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">  pctx-&gt;haveScale = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">  pctx-&gt;voxelSizeScale = 0.0;</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">  numScale = 0;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">  <span class='keyword'>for</span> (ii=0; ii&lt;pctx-&gt;volNum; ii++) {</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">    <span class='keyword'>if</span> (pctx-&gt;vol[ii]-&gt;ninScale) {</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">      <span class='keyword'>double</span> sclMin, sclMax, sclStep;</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> si;</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">      numScale ++;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">      sclMin = pctx-&gt;vol[ii]-&gt;scalePos[0];</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">      <span class='keyword'>if</span> (pctx-&gt;flag.scaleIsTau) {</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        sclMin = <span class='macro'>gageTauOfSig(sclMin)<span class='expansion'>airTauOfSigma(sclMin)</span></span>;</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">      sclMax = pctx-&gt;vol[ii]-&gt;scalePos[pctx-&gt;vol[ii]-&gt;scaleNum-1];</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">      <span class='keyword'>if</span> (pctx-&gt;flag.scaleIsTau) {</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">        sclMax = <span class='macro'>gageTauOfSig(sclMax)<span class='expansion'>airTauOfSigma(sclMax)</span></span>;</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">      sclStep = 0;</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">      <span class='keyword'>for</span> (si=0; si&lt;pctx-&gt;vol[ii]-&gt;scaleNum-1; si++) {</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">        <span class='keyword'>double</span> scl0, scl1;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">        scl1 = pctx-&gt;vol[ii]-&gt;scalePos[si+1];</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">        scl0 = pctx-&gt;vol[ii]-&gt;scalePos[si];</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">        <span class='keyword'>if</span> (pctx-&gt;flag.scaleIsTau) {</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">          scl1 = <span class='macro'>gageTauOfSig(scl1)<span class='expansion'>airTauOfSigma(scl1)</span></span>;</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">          scl0 = <span class='macro'>gageTauOfSig(scl0)<span class='expansion'>airTauOfSigma(scl0)</span></span>;</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">        sclStep += (scl1 - scl0);</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">      sclStep /= pctx-&gt;vol[ii]-&gt;scaleNum-1;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">      pctx-&gt;voxelSizeScale += sclStep;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">      <span class='keyword'>if</span> (!pctx-&gt;haveScale) {</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">        pctx-&gt;bboxMin[3] = sclMin;</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        pctx-&gt;bboxMax[3] = sclMax;</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">        pctx-&gt;haveScale = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        <span class='comment'>/* we already know haveScale; expand existing range */</span></td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">        pctx-&gt;bboxMin[3] = <span class='macro'>AIR_MIN(sclMin, pctx-&gt;bboxMin[3])<span class='expansion'>((sclMin) &lt; (pctx-&gt;bboxMin[3]) ? (sclMin) : (pctx-&gt;bboxMin<br>[3]))</span></span>;</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">        pctx-&gt;bboxMax[3] = <span class='macro'>AIR_MAX(sclMax, pctx-&gt;bboxMax[3])<span class='expansion'>((sclMax) &gt; (pctx-&gt;bboxMax[3]) ? (sclMax) : (pctx-&gt;bboxMax<br>[3]))</span></span>;</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">  <span class='keyword'>if</span> (numScale) {</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">    pctx-&gt;voxelSizeScale /= numScale;</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">    printf(<span class='string_literal'>"%s: bboxMin (%g,%g,%g,%g) max (%g,%g,%g,%g)\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">           pctx-&gt;bboxMin[0], pctx-&gt;bboxMin[1],</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">           pctx-&gt;bboxMin[2], pctx-&gt;bboxMin[3],</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">           pctx-&gt;bboxMax[0], pctx-&gt;bboxMax[1],</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">           pctx-&gt;bboxMax[2], pctx-&gt;bboxMax[3]);</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">    printf(<span class='string_literal'>"%s: voxelSizeSpace %g Scale %g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">           pctx-&gt;voxelSizeSpace, pctx-&gt;voxelSizeScale);</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">  <span class='comment'>/* _energyInterParticle() depends on this error checking */</span></td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;haveScale) {</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">    <span class='keyword'>if</span> (pullInterTypeJustR == pctx-&gt;interType) {</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need scale-aware intertype (not %s) with "</span></td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">               <span class='string_literal'>"a scale-space volume"</span>,</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">               me, airEnumStr(pullInterType, pullInterTypeJustR));</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">    <span class='comment'>/* don't have scale */</span></td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">    <span class='keyword'>if</span> (pullInterTypeJustR != pctx-&gt;interType) {</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: can't use scale-aware intertype (%s) without "</span></td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">               <span class='string_literal'>"a scale-space volume"</span>,</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">               me, airEnumStr(pullInterType, pctx-&gt;interType));</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;flag.energyFromStrength</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">      &amp;&amp; !(pctx-&gt;ispec[pullInfoStrength] &amp;&amp; pctx-&gt;haveScale)) {</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: sorry, can use energyFromStrength only with both "</span></td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">             <span class='string_literal'>"a scale-space volume, and a strength info"</span>, me);</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line"><span class='comment'>** basis of pullVolumeLookup</span></td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line"><span class='comment'>** uses biff, returns UINT_MAX in case of error</span></td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line"><span class='keyword'>unsigned</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">_pullVolumeIndex(<span class='keyword'>const</span> pullContext *pctx,</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                 <span class='keyword'>const</span> <span class='keyword'>char</span> *volName) {</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullVolumeIndex"</span>;</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> vi;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">  <span class='keyword'>if</span> (!( pctx &amp;&amp; volName )) {</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>UINT_MAX<span class='expansion'>(2147483647 *2U +1U)</span></span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">  <span class='keyword'>if</span> (0 == pctx-&gt;volNum) {</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: given context has no volumes"</span>, me);</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>UINT_MAX<span class='expansion'>(2147483647 *2U +1U)</span></span>;</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">  <span class='keyword'>for</span> (vi=0; vi&lt;pctx-&gt;volNum; vi++) {</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">    <span class='keyword'>if</span> (!strcmp(pctx-&gt;vol[vi]-&gt;name, volName)) {</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">  <span class='keyword'>if</span> (vi == pctx-&gt;volNum) {</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: no volume has name \"%s\""</span>, me, volName);</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>UINT_MAX<span class='expansion'>(2147483647 *2U +1U)</span></span>;</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">  <span class='keyword'>return</span> vi;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line"><span class='keyword'>const</span> pullVolume *</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">pullVolumeLookup(<span class='keyword'>const</span> pullContext *pctx,</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">                 <span class='keyword'>const</span> <span class='keyword'>char</span> *volName) {</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullVolumeLookup"</span>;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> vi;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">  vi = _pullVolumeIndex(pctx, volName);</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>UINT_MAX<span class='expansion'>(2147483647 *2U +1U)</span></span> == vi) {</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble looking up \"%s\""</span>, me, volName);</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">  <span class='keyword'>return</span> pctx-&gt;vol[vi];</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line"><span class='comment'>******** pullConstraintScaleRange</span></td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"><span class='comment'>** returns scale range from a scale-space volume,</span></td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line"><span class='comment'>** either in terms of sigma, or (if pctx-&gt;flag.scaleIsTau), tau</span></td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">pullConstraintScaleRange(pullContext *pctx, <span class='keyword'>double</span> ssrange[2]) {</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullConstraintScaleRange"</span>;</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">  pullVolume *cvol;</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">  <span class='keyword'>if</span> (!(pctx &amp;&amp; ssrange)) {</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">  <span class='keyword'>if</span> (!(pctx-&gt;constraint)) {</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: given context doesn't have constraint set"</span>, me);</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">  <span class='keyword'>if</span> (!(pctx-&gt;ispec[pctx-&gt;constraint])) {</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: info %s not set for constriant"</span>, me,</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">             airEnumStr(pullInfo, pctx-&gt;constraint));</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">  cvol = pctx-&gt;vol[pctx-&gt;ispec[pctx-&gt;constraint]-&gt;volIdx];</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">  <span class='keyword'>if</span> (!cvol-&gt;ninScale) {</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: volume \"%s\" has constraint but no scale-space"</span>,</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">             me, cvol-&gt;name);</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">  ssrange[0] = cvol-&gt;scalePos[0];</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">  ssrange[1] = cvol-&gt;scalePos[cvol-&gt;scaleNum-1];</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;flag.scaleIsTau) {</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">    ssrange[0] = <span class='macro'>gageTauOfSig(ssrange[0])<span class='expansion'>airTauOfSigma(ssrange[0])</span></span>;</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">    ssrange[1] = <span class='macro'>gageTauOfSig(ssrange[1])<span class='expansion'>airTauOfSigma(ssrange[1])</span></span>;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">}</td></tr>
+</table></body></html>

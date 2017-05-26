@@ -1,0 +1,474 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/gage/sclanswer.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'pness' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/gage/sclanswer.c -->
+
+<!-- FILENAME sclanswer.c -->
+
+<!-- FUNCTIONNAME _gageSclAnswer -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 0f535c6f58b9aafc062d775144b7b0c5 -->
+
+<!-- BUGLINE 226 -->
+
+<!-- BUGCOLUMN 7 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/gage/sclanswer.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 226, column 7</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'pness' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "gage.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privateGage.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='comment'>/* HEY copied from ten.h */</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#define TEN_M2T(t, m) (                         \</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">                       <span class='directive'>(t)[1] = (m)[0],         \</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">                       <span class='directive'>(t)[2] = ((m)[1]+(m)[3])/2.0,    \</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line">                       <span class='directive'>(t)[3] = ((m)[2]+(m)[6])/2.0,    \</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">                       <span class='directive'>(t)[4] = (m)[4],                 \</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">                       <span class='directive'>(t)[5] = ((m)[5]+(m)[7])/2.0,    \</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">                       <span class='directive'>(t)[6] = (m)[8])</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"><span class='directive'>#define TEN_T_SCALE(a, s, b) (    \</span></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">                              <span class='directive'>(a)[0] = (b)[0],  \</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">                              <span class='directive'>(a)[1] = (s)*(b)[1],      \</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">                              <span class='directive'>(a)[2] = (s)*(b)[2],      \</span></td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">                              <span class='directive'>(a)[3] = (s)*(b)[3],      \</span></td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">                              <span class='directive'>(a)[4] = (s)*(b)[4],      \</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">                              <span class='directive'>(a)[5] = (s)*(b)[5],      \</span></td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">                              <span class='directive'>(a)[6] = (s)*(b)[6])</span></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">_gageSclAnswer(gageContext *ctx, gagePerVolume *pvl) {</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">  <span class='keyword'>char</span> me[]=<span class='string_literal'>"_gageSclAnswer"</span>;</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">  <span class='keyword'>double</span> gmag=0, *hess, *norm, *gvec, *gten, *k1, *k2, curv=0,</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">    sHess[9]={0,0,0,0,0,0,0,0,0};</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">  <span class='keyword'>double</span> tmpMat[9], tmpVec[3], hevec[9], heval[3];</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">  <span class='keyword'>double</span> len, gp1[3], gp2[3], *nPerp, ncTen[9], nProj[9]={0,0,0,0,0,0,0,0,0};</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">  <span class='keyword'>double</span> alpha = 0.5;</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">  <span class='keyword'>double</span> beta = 0.5;</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">  <span class='keyword'>double</span> _gamma = 5;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">  <span class='keyword'>double</span> cc = 1e-6;</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"><span class='directive'>#define <span class='macro'>FD_MEDIAN_MAX<span class='expansion'>16</span></span> 16</span></td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">  <span class='keyword'>int</span> fd, nidx, xi, yi, zi;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">  <span class='keyword'>double</span> *fw, iv3wght[2*<span class='macro'>FD_MEDIAN_MAX<span class='expansion'>16</span></span>*<span class='macro'>FD_MEDIAN_MAX<span class='expansion'>16</span></span>*<span class='macro'>FD_MEDIAN_MAX<span class='expansion'>16</span></span>],</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">    wghtSum, wght;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  <span class='comment'>/* convenience pointers for work below */</span></td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">  hess = pvl-&gt;directAnswer[gageSclHessian];</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  gvec = pvl-&gt;directAnswer[gageSclGradVec];</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">  norm = pvl-&gt;directAnswer[gageSclNormal];</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">  nPerp = pvl-&gt;directAnswer[gageSclNPerp];</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">  gten = pvl-&gt;directAnswer[gageSclGeomTens];</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">  k1 = pvl-&gt;directAnswer[gageSclK1];</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">  k2 = pvl-&gt;directAnswer[gageSclK2];</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclValue)<span class='expansion'>(pvl-&gt;query[gageSclValue/8] &amp; (1 &lt;&lt; (gageSclValue<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">    <span class='comment'>/* done if doV */</span></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    <span class='keyword'>if</span> (ctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: val = % 15.7f\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">              (<span class='keyword'>double</span>)(pvl-&gt;directAnswer[gageSclValue][0]));</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclGradVec)<span class='expansion'>(pvl-&gt;query[gageSclGradVec/8] &amp; (1 &lt;&lt; (gageSclGradVec<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">    <span class='comment'>/* done if doD1 */</span></td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">    <span class='keyword'>if</span> (ctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: gvec = "</span>, me);</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">      ell_3v_print_d(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, gvec);</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclGradMag)<span class='expansion'>(pvl-&gt;query[gageSclGradMag/8] &amp; (1 &lt;&lt; (gageSclGradMag<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">    <span class='comment'>/* this is the true value of gradient magnitude */</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">    gmag = pvl-&gt;directAnswer[gageSclGradMag][0] = sqrt(<span class='macro'>ELL_3V_DOT(gvec, gvec)<span class='expansion'>((gvec)[0]*(gvec)[0] + (gvec)[1]*(gvec)[1] + (gvec)[2]*(gvec)<br>[2])</span></span>);</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">  <span class='comment'>/* NB: it would seem that gageParmGradMagMin is completely ignored . . . */</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclNormal)<span class='expansion'>(pvl-&gt;query[gageSclNormal/8] &amp; (1 &lt;&lt; (gageSclNormal<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">    <span class='keyword'>if</span> (gmag) {</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">      <span class='macro'>ELL_3V_SCALE(norm, 1/gmag, gvec)<span class='expansion'>((norm)[0] = (1/gmag)*(gvec)[0], (norm)[1] = (1/gmag)*(gvec)[<br>1], (norm)[2] = (1/gmag)*(gvec)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">      <span class='comment'>/* polishing</span></td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">         <span class='comment'>len = sqrt(ELL_3V_DOT(norm, norm));</span></td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">         <span class='comment'>ELL_3V_SCALE(norm, 1/len, norm);</span></td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">      <span class='macro'>ELL_3V_COPY(norm, gageZeroNormal)<span class='expansion'>((norm)[0] = (gageZeroNormal)[0], (norm)[1] = (gageZeroNormal<br>)[1], (norm)[2] = (gageZeroNormal)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclNProj)<span class='expansion'>(pvl-&gt;query[gageSclNProj/8] &amp; (1 &lt;&lt; (gageSclNProj<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">    <span class='macro'>ELL_3MV_OUTER(pvl-&gt;directAnswer[gageSclNProj], norm, norm)<span class='expansion'>((((pvl-&gt;directAnswer[gageSclNProj])+0)[0] = ((norm)[0])*(<br>(norm))[0], ((pvl-&gt;directAnswer[gageSclNProj])+0)[1] = ((norm<br>)[0])*((norm))[1], ((pvl-&gt;directAnswer[gageSclNProj])+0)[2<br>] = ((norm)[0])*((norm))[2]), (((pvl-&gt;directAnswer[gageSclNProj<br>])+3)[0] = ((norm)[1])*((norm))[0], ((pvl-&gt;directAnswer[gageSclNProj<br>])+3)[1] = ((norm)[1])*((norm))[1], ((pvl-&gt;directAnswer[gageSclNProj<br>])+3)[2] = ((norm)[1])*((norm))[2]), (((pvl-&gt;directAnswer[<br>gageSclNProj])+6)[0] = ((norm)[2])*((norm))[0], ((pvl-&gt;directAnswer<br>[gageSclNProj])+6)[1] = ((norm)[2])*((norm))[1], ((pvl-&gt;directAnswer<br>[gageSclNProj])+6)[2] = ((norm)[2])*((norm))[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclNPerp)<span class='expansion'>(pvl-&gt;query[gageSclNPerp/8] &amp; (1 &lt;&lt; (gageSclNPerp<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">    <span class='comment'>/* nPerp = I - outer(norm, norm) */</span></td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">    <span class='comment'>/* NB: this sets both nPerp and nProj */</span></td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">    <span class='macro'>ELL_3MV_OUTER(nProj, norm, norm)<span class='expansion'>((((nProj)+0)[0] = ((norm)[0])*((norm))[0], ((nProj)+0)[1] = (<br>(norm)[0])*((norm))[1], ((nProj)+0)[2] = ((norm)[0])*((norm))<br>[2]), (((nProj)+3)[0] = ((norm)[1])*((norm))[0], ((nProj)+3)[<br>1] = ((norm)[1])*((norm))[1], ((nProj)+3)[2] = ((norm)[1])*((<br>norm))[2]), (((nProj)+6)[0] = ((norm)[2])*((norm))[0], ((nProj<br>)+6)[1] = ((norm)[2])*((norm))[1], ((nProj)+6)[2] = ((norm)[2<br>])*((norm))[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">    <span class='macro'>ELL_3M_SCALE(nPerp, -1, nProj)<span class='expansion'>((((nPerp)+0)[0] = ((-1))*((nProj)+0)[0], ((nPerp)+0)[1] = ((<br>-1))*((nProj)+0)[1], ((nPerp)+0)[2] = ((-1))*((nProj)+0)[2]),<br> (((nPerp)+3)[0] = ((-1))*((nProj)+3)[0], ((nPerp)+3)[1] = ((<br>-1))*((nProj)+3)[1], ((nPerp)+3)[2] = ((-1))*((nProj)+3)[2]),<br> (((nPerp)+6)[0] = ((-1))*((nProj)+6)[0], ((nPerp)+6)[1] = ((<br>-1))*((nProj)+6)[1], ((nPerp)+6)[2] = ((-1))*((nProj)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    nPerp[0] += 1;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">    nPerp[4] += 1;</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">    nPerp[8] += 1;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessian)<span class='expansion'>(pvl-&gt;query[gageSclHessian/8] &amp; (1 &lt;&lt; (gageSclHessian<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">    <span class='comment'>/* done if doD2 */</span></td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">    <span class='keyword'>if</span> (ctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: hess = \n"</span>, me);</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">      ell_3m_print_d(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, hess);</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessianTen)<span class='expansion'>(pvl-&gt;query[gageSclHessianTen/8] &amp; (1 &lt;&lt; (gageSclHessianTen<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">    pvl-&gt;directAnswer[gageSclHessianTen][0] = 1.0;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">    TEN_M2T(pvl-&gt;directAnswer[gageSclHessianTen],</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">            pvl-&gt;directAnswer[gageSclHessian]);</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclLaplacian)<span class='expansion'>(pvl-&gt;query[gageSclLaplacian/8] &amp; (1 &lt;&lt; (gageSclLaplacian<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">    pvl-&gt;directAnswer[gageSclLaplacian][0] = hess[0] + hess[4] + hess[8];</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">    <span class='keyword'>if</span> (ctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: lapl = %g + %g + %g  = %g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">              hess[0], hess[4], hess[8],</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">              pvl-&gt;directAnswer[gageSclLaplacian][0]);</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessFrob)<span class='expansion'>(pvl-&gt;query[gageSclHessFrob/8] &amp; (1 &lt;&lt; (gageSclHessFrob<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    pvl-&gt;directAnswer[gageSclHessFrob][0] = <span class='macro'>ELL_3M_FROB(hess)<span class='expansion'>(sqrt((((hess)+0)[0]*((hess)+0)[0] + ((hess)+0)[1]*((hess)+0)<br>[1] + ((hess)+0)[2]*((hess)+0)[2]) + (((hess)+3)[0]*((hess)+3<br>)[0] + ((hess)+3)[1]*((hess)+3)[1] + ((hess)+3)[2]*((hess)+3)<br>[2]) + (((hess)+6)[0]*((hess)+6)[0] + ((hess)+6)[1]*((hess)+6<br>)[1] + ((hess)+6)[2]*((hess)+6)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessEval)<span class='expansion'>(pvl-&gt;query[gageSclHessEval/8] &amp; (1 &lt;&lt; (gageSclHessEval<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">    <span class='keyword'>if</span> (ctx-&gt;parm.twoDimZeroZ) {</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">      ell_3m2sub_eigensolve_d(heval, hevec, hess);</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">      <span class='comment'>/* HEY: look at the return value for root multiplicity? */</span></td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">      ell_3m_eigensolve_d(heval, hevec, hess, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">    <span class='macro'>ELL_3V_COPY(pvl-&gt;directAnswer[gageSclHessEval], heval)<span class='expansion'>((pvl-&gt;directAnswer[gageSclHessEval])[0] = (heval)[0], (pvl<br>-&gt;directAnswer[gageSclHessEval])[1] = (heval)[1], (pvl-&gt;<br>directAnswer[gageSclHessEval])[2] = (heval)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessEvec)<span class='expansion'>(pvl-&gt;query[gageSclHessEvec/8] &amp; (1 &lt;&lt; (gageSclHessEvec<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">    <span class='macro'>ELL_3M_COPY(pvl-&gt;directAnswer[gageSclHessEvec], hevec)<span class='expansion'>((((pvl-&gt;directAnswer[gageSclHessEvec])+0)[0] = ((hevec)+0<br>)[0], ((pvl-&gt;directAnswer[gageSclHessEvec])+0)[1] = ((hevec<br>)+0)[1], ((pvl-&gt;directAnswer[gageSclHessEvec])+0)[2] = ((hevec<br>)+0)[2]), (((pvl-&gt;directAnswer[gageSclHessEvec])+3)[0] = (<br>(hevec)+3)[0], ((pvl-&gt;directAnswer[gageSclHessEvec])+3)[1]<br> = ((hevec)+3)[1], ((pvl-&gt;directAnswer[gageSclHessEvec])+3<br>)[2] = ((hevec)+3)[2]), (((pvl-&gt;directAnswer[gageSclHessEvec<br>])+6)[0] = ((hevec)+6)[0], ((pvl-&gt;directAnswer[gageSclHessEvec<br>])+6)[1] = ((hevec)+6)[1], ((pvl-&gt;directAnswer[gageSclHessEvec<br>])+6)[2] = ((hevec)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line"><span class='directive'>#if 1</span></td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessRidgeness)<span class='expansion'>(pvl-&gt;query[gageSclHessRidgeness/8] &amp; (1 &lt;&lt; (gageSclHessRidgeness<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">    <span class='keyword'>double</span> A, B, S;</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">    <span class='keyword'>if</span> (heval[1] &gt;0 || heval[2]&gt;0) {</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">      pvl-&gt;directAnswer[gageSclHessRidgeness][0] = 0;</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">    <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>AIR_ABS(heval[1])<span class='expansion'>((heval[1]) &gt; 0.0f ? (heval[1]) : -(heval[1]))</span></span>&lt;1e-10 || <span class='macro'>AIR_ABS(heval[2])<span class='expansion'>((heval[2]) &gt; 0.0f ? (heval[2]) : -(heval[2]))</span></span>&lt;1e-10) {</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">      pvl-&gt;directAnswer[gageSclHessRidgeness][0] = 0;</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">    <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">      <span class='keyword'>double</span> *ans;</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">      A = <span class='macro'>AIR_ABS(heval[1])<span class='expansion'>((heval[1]) &gt; 0.0f ? (heval[1]) : -(heval[1]))</span></span>/<span class='macro'>AIR_ABS(heval[2])<span class='expansion'>((heval[2]) &gt; 0.0f ? (heval[2]) : -(heval[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">      B = <span class='macro'>AIR_ABS(heval[0])<span class='expansion'>((heval[0]) &gt; 0.0f ? (heval[0]) : -(heval[0]))</span></span>/sqrt(<span class='macro'>AIR_ABS(heval[1]*heval[2])<span class='expansion'>((heval[1]*heval[2]) &gt; 0.0f ? (heval[1]*heval[2]) : -(heval<br>[1]*heval[2]))</span></span>);</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">      S = sqrt(heval[0]*heval[0] + heval[1]*heval[1] + heval[2]*heval[2]);</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">      ans = pvl-&gt;directAnswer[gageSclHessRidgeness];</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">      ans[0] = (1-exp(-A*A/(2*alpha*alpha))) *</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">        exp(-B*B/(2*beta*beta)) *</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">        (1-exp(-S*S/(2*_gamma*_gamma))) *</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">        exp(-2*cc*cc/(<span class='macro'>AIR_ABS(heval[1])<span class='expansion'>((heval[1]) &gt; 0.0f ? (heval[1]) : -(heval[1]))</span></span>*heval[2]*heval[2]));</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">  <span class='comment'>/* alternative implementation by GLK, based on directly following</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">     <span class='comment'>Frangi text.  Only significant difference from above is a</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">     <span class='comment'>discontinuity at heval[0] = -heval[1] */</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessRidgeness)<span class='expansion'>(pvl-&gt;query[gageSclHessRidgeness/8] &amp; (1 &lt;&lt; (gageSclHessRidgeness<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">    <span class='keyword'>double</span> ev[4], tmp;</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">    <span class='macro'>ELL_3V_COPY(ev+1, heval)<span class='expansion'>((ev+1)[0] = (heval)[0], (ev+1)[1] = (heval)[1], (ev+1)[2] = (<br>heval)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>AIR_ABS(ev[2])<span class='expansion'>((ev[2]) &gt; 0.0f ? (ev[2]) : -(ev[2]))</span></span> &gt; <span class='macro'>AIR_ABS(ev[3])<span class='expansion'>((ev[3]) &gt; 0.0f ? (ev[3]) : -(ev[3]))</span></span>) { <span class='macro'>ELL_SWAP2(ev[2], ev[3], tmp)<span class='expansion'>((tmp)=(ev[2]),(ev[2])=(ev[3]),(ev[3])=(tmp))</span></span>; }</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>AIR_ABS(ev[1])<span class='expansion'>((ev[1]) &gt; 0.0f ? (ev[1]) : -(ev[1]))</span></span> &gt; <span class='macro'>AIR_ABS(ev[2])<span class='expansion'>((ev[2]) &gt; 0.0f ? (ev[2]) : -(ev[2]))</span></span>) { <span class='macro'>ELL_SWAP2(ev[1], ev[2], tmp)<span class='expansion'>((tmp)=(ev[1]),(ev[1])=(ev[2]),(ev[2])=(tmp))</span></span>; }</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>AIR_ABS(ev[2])<span class='expansion'>((ev[2]) &gt; 0.0f ? (ev[2]) : -(ev[2]))</span></span> &gt; <span class='macro'>AIR_ABS(ev[3])<span class='expansion'>((ev[3]) &gt; 0.0f ? (ev[3]) : -(ev[3]))</span></span>) { <span class='macro'>ELL_SWAP2(ev[2], ev[3], tmp)<span class='expansion'>((tmp)=(ev[2]),(ev[2])=(ev[3]),(ev[3])=(tmp))</span></span>; }</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">    <span class='keyword'>if</span> (ev[2] &gt; 0 || ev[3] &gt; 0) {</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">      pvl-&gt;directAnswer[gageSclHessRidgeness][0] = 0;</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">      <span class='keyword'>double</span> a1, a2, a3, RB, RA, SS, fa, fb, fg, aa, bb, gg, frangi;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">      a1 = <span class='macro'>AIR_ABS(ev[1])<span class='expansion'>((ev[1]) &gt; 0.0f ? (ev[1]) : -(ev[1]))</span></span>;</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">      a2 = <span class='macro'>AIR_ABS(ev[2])<span class='expansion'>((ev[2]) &gt; 0.0f ? (ev[2]) : -(ev[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">      a3 = <span class='macro'>AIR_ABS(ev[3])<span class='expansion'>((ev[3]) &gt; 0.0f ? (ev[3]) : -(ev[3]))</span></span>;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">      RB = a1/sqrt(a2*a3);</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">      RA = a2/a3;</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">      SS = sqrt(a1*a1 + a2*a2 + a3*a3);</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">      aa = bb = 0.5;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">      gg = 1;</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">      fa = 1 - exp(-RA*RA/(2*aa*aa));</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">      fb = exp(-RB*RB/(2*bb*bb));</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">      fg = 1 - exp(-SS*SS/(2*gg*gg));</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">      frangi = fa*fb*fg;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">      <span class='keyword'>if</span> (!<span class='macro'>AIR_EXISTS(frangi)<span class='expansion'>(((int)(!((frangi) - (frangi)))))</span></span>) { frangi = 0.0; }</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">      pvl-&gt;directAnswer[gageSclHessRidgeness][0] = frangi;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessValleyness)<span class='expansion'>(pvl-&gt;query[gageSclHessValleyness/8] &amp; (1 &lt;&lt; (gageSclHessValleyness<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">    <span class='keyword'>double</span> A, B, S;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">    <span class='keyword'>if</span> (heval[0] &lt;0 || heval[1]&lt;0) {</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">      pvl-&gt;directAnswer[gageSclHessValleyness][0] = 0;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">    <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>AIR_ABS(heval[0])<span class='expansion'>((heval[0]) &gt; 0.0f ? (heval[0]) : -(heval[0]))</span></span>&lt;1e-10 || <span class='macro'>AIR_ABS(heval[1])<span class='expansion'>((heval[1]) &gt; 0.0f ? (heval[1]) : -(heval[1]))</span></span>&lt;1e-10) {</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">      pvl-&gt;directAnswer[gageSclHessValleyness][0] = 0;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">    <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">      <span class='keyword'>double</span> *ans;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">      A = <span class='macro'>AIR_ABS(heval[1])<span class='expansion'>((heval[1]) &gt; 0.0f ? (heval[1]) : -(heval[1]))</span></span>/<span class='macro'>AIR_ABS(heval[0])<span class='expansion'>((heval[0]) &gt; 0.0f ? (heval[0]) : -(heval[0]))</span></span>;</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">      B = <span class='macro'>AIR_ABS(heval[2])<span class='expansion'>((heval[2]) &gt; 0.0f ? (heval[2]) : -(heval[2]))</span></span>/sqrt(<span class='macro'>AIR_ABS(heval[1]*heval[0])<span class='expansion'>((heval[1]*heval[0]) &gt; 0.0f ? (heval[1]*heval[0]) : -(heval<br>[1]*heval[0]))</span></span>);</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">      S = sqrt(heval[0]*heval[0] + heval[1]*heval[1] + heval[2]*heval[2]);</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">      ans = pvl-&gt;directAnswer[gageSclHessValleyness];</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">      ans[0] = (1-exp(-A*A/(2*alpha*alpha))) *</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        exp(-B*B/(2*beta*beta)) *</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">        (1-exp(-S*S/(2*_gamma*_gamma))) *</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">        exp(-2*cc*cc/(<span class='macro'>AIR_ABS(heval[1])<span class='expansion'>((heval[1]) &gt; 0.0f ? (heval[1]) : -(heval[1]))</span></span>*heval[0]*heval[0]));</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessDotPeakness)<span class='expansion'>(pvl-&gt;query[gageSclHessDotPeakness/8] &amp; (1 &lt;&lt; (gageSclHessDotPeakness<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line"><span class='directive'>#define OSQT 0.57735026918962576451</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">    <span class='keyword'>double</span> neval[3], hlen, pness,</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">      peak[3] = {-OSQT, -OSQT, -OSQT};</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">    <span class='macro'>ELL_3V_NORM(neval, heval, hlen)<span class='expansion'>(hlen = (sqrt((((heval))[0]*((heval))[0] + ((heval))[1]*((heval<br>))[1] + ((heval))[2]*((heval))[2]))), ((neval)[0] = (1.0/hlen<br>)*(heval)[0], (neval)[1] = (1.0/hlen)*(heval)[1], (neval)[2] =<br> (1.0/hlen)*(heval)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">    <span class='keyword'>if</span> (!hlen) {</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">      pness = <span class="mrange">0</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:7ex">Value stored to 'pness' is never read</div></td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">      pness = <span class='macro'>ELL_3V_DOT(peak, neval)<span class='expansion'>((peak)[0]*(neval)[0] + (peak)[1]*(neval)[1] + (peak)[2]*(neval<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">      pness = <span class='macro'>AIR_AFFINE(-1, pness, 1, 0, 1)<span class='expansion'>( ((double)(1)-(0))*((double)(pness)-(-1)) / ((double)(1)-(-1<br>)) + (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">      pvl-&gt;directAnswer[gageSclHessDotPeakness][0] = pness;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line"><span class='directive'>#undef OSQT</span></td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclHessMode)<span class='expansion'>(pvl-&gt;query[gageSclHessMode/8] &amp; (1 &lt;&lt; (gageSclHessMode<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">    pvl-&gt;directAnswer[gageSclHessMode][0] = airMode3_d(heval);</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageScl2ndDD)<span class='expansion'>(pvl-&gt;query[gageScl2ndDD/8] &amp; (1 &lt;&lt; (gageScl2ndDD<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">    <span class='macro'>ELL_3MV_MUL(tmpVec, hess, norm)<span class='expansion'>((tmpVec)[0] = (hess)[0]*(norm)[0] + (hess)[1]*(norm)[1] + (hess<br>)[2]*(norm)[2], (tmpVec)[1] = (hess)[3]*(norm)[0] + (hess)[4]<br>*(norm)[1] + (hess)[5]*(norm)[2], (tmpVec)[2] = (hess)[6]*(norm<br>)[0] + (hess)[7]*(norm)[1] + (hess)[8]*(norm)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">    pvl-&gt;directAnswer[gageScl2ndDD][0] = <span class='macro'>ELL_3V_DOT(norm, tmpVec)<span class='expansion'>((norm)[0]*(tmpVec)[0] + (norm)[1]*(tmpVec)[1] + (norm)[2]*(tmpVec<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclGeomTens)<span class='expansion'>(pvl-&gt;query[gageSclGeomTens/8] &amp; (1 &lt;&lt; (gageSclGeomTens<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">    <span class='keyword'>if</span> (gmag &gt; ctx-&gt;parm.gradMagCurvMin) {</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">      <span class='comment'>/* parm.curvNormalSide applied here to determine the sense of the</span></td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">         <span class='comment'>normal when doing all curvature calculations */</span></td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">      <span class='macro'>ELL_3M_SCALE(sHess, -(ctx-&gt;parm.curvNormalSide)/gmag, hess)<span class='expansion'>((((sHess)+0)[0] = ((-(ctx-&gt;parm.curvNormalSide)/gmag))*((<br>hess)+0)[0], ((sHess)+0)[1] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+0)[1], ((sHess)+0)[2] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+0)[2]), (((sHess)+3)[0] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+3)[0], ((sHess)+3)[1] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+3)[1], ((sHess)+3)[2] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+3)[2]), (((sHess)+6)[0] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+6)[0], ((sHess)+6)[1] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+6)[1], ((sHess)+6)[2] = ((-(ctx-&gt;parm.curvNormalSide<br>)/gmag))*((hess)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">      <span class='comment'>/* gten = nPerp * sHess * nPerp */</span></td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">      <span class='macro'>ELL_3M_MUL(tmpMat, sHess, nPerp)<span class='expansion'>((tmpMat)[0] = (sHess)[0]*(nPerp)[0] + (sHess)[1]*(nPerp)[3] +<br> (sHess)[2]*(nPerp)[6], (tmpMat)[1] = (sHess)[0]*(nPerp)[1] +<br> (sHess)[1]*(nPerp)[4] + (sHess)[2]*(nPerp)[7], (tmpMat)[2] =<br> (sHess)[0]*(nPerp)[2] + (sHess)[1]*(nPerp)[5] + (sHess)[2]*(<br>nPerp)[8], (tmpMat)[3] = (sHess)[3]*(nPerp)[0] + (sHess)[4]*(<br>nPerp)[3] + (sHess)[5]*(nPerp)[6], (tmpMat)[4] = (sHess)[3]*(<br>nPerp)[1] + (sHess)[4]*(nPerp)[4] + (sHess)[5]*(nPerp)[7], (tmpMat<br>)[5] = (sHess)[3]*(nPerp)[2] + (sHess)[4]*(nPerp)[5] + (sHess<br>)[5]*(nPerp)[8], (tmpMat)[6] = (sHess)[6]*(nPerp)[0] + (sHess<br>)[7]*(nPerp)[3] + (sHess)[8]*(nPerp)[6], (tmpMat)[7] = (sHess<br>)[6]*(nPerp)[1] + (sHess)[7]*(nPerp)[4] + (sHess)[8]*(nPerp)[<br>7], (tmpMat)[8] = (sHess)[6]*(nPerp)[2] + (sHess)[7]*(nPerp)[<br>5] + (sHess)[8]*(nPerp)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">      <span class='macro'>ELL_3M_MUL(gten, nPerp, tmpMat)<span class='expansion'>((gten)[0] = (nPerp)[0]*(tmpMat)[0] + (nPerp)[1]*(tmpMat)[3] +<br> (nPerp)[2]*(tmpMat)[6], (gten)[1] = (nPerp)[0]*(tmpMat)[1] +<br> (nPerp)[1]*(tmpMat)[4] + (nPerp)[2]*(tmpMat)[7], (gten)[2] =<br> (nPerp)[0]*(tmpMat)[2] + (nPerp)[1]*(tmpMat)[5] + (nPerp)[2]<br>*(tmpMat)[8], (gten)[3] = (nPerp)[3]*(tmpMat)[0] + (nPerp)[4]<br>*(tmpMat)[3] + (nPerp)[5]*(tmpMat)[6], (gten)[4] = (nPerp)[3]<br>*(tmpMat)[1] + (nPerp)[4]*(tmpMat)[4] + (nPerp)[5]*(tmpMat)[7<br>], (gten)[5] = (nPerp)[3]*(tmpMat)[2] + (nPerp)[4]*(tmpMat)[5<br>] + (nPerp)[5]*(tmpMat)[8], (gten)[6] = (nPerp)[6]*(tmpMat)[0<br>] + (nPerp)[7]*(tmpMat)[3] + (nPerp)[8]*(tmpMat)[6], (gten)[7<br>] = (nPerp)[6]*(tmpMat)[1] + (nPerp)[7]*(tmpMat)[4] + (nPerp)<br>[8]*(tmpMat)[7], (gten)[8] = (nPerp)[6]*(tmpMat)[2] + (nPerp)<br>[7]*(tmpMat)[5] + (nPerp)[8]*(tmpMat)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">      <span class='keyword'>if</span> (ctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: gten: \n"</span>, me);</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">        ell_3m_print_d(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, gten);</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">        <span class='macro'>ELL_3MV_MUL(tmpVec, gten, norm)<span class='expansion'>((tmpVec)[0] = (gten)[0]*(norm)[0] + (gten)[1]*(norm)[1] + (gten<br>)[2]*(norm)[2], (tmpVec)[1] = (gten)[3]*(norm)[0] + (gten)[4]<br>*(norm)[1] + (gten)[5]*(norm)[2], (tmpVec)[2] = (gten)[6]*(norm<br>)[0] + (gten)[7]*(norm)[1] + (gten)[8]*(norm)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">        len = <span class='macro'>ELL_3V_LEN(tmpVec)<span class='expansion'>(sqrt((((tmpVec))[0]*((tmpVec))[0] + ((tmpVec))[1]*((tmpVec))<br>[1] + ((tmpVec))[2]*((tmpVec))[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: should be small: %30.15f\n"</span>, me, (<span class='keyword'>double</span>)len);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        ell_3v_perp_d(gp1, norm);</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">        <span class='macro'>ELL_3MV_MUL(tmpVec, gten, gp1)<span class='expansion'>((tmpVec)[0] = (gten)[0]*(gp1)[0] + (gten)[1]*(gp1)[1] + (gten<br>)[2]*(gp1)[2], (tmpVec)[1] = (gten)[3]*(gp1)[0] + (gten)[4]*(<br>gp1)[1] + (gten)[5]*(gp1)[2], (tmpVec)[2] = (gten)[6]*(gp1)[0<br>] + (gten)[7]*(gp1)[1] + (gten)[8]*(gp1)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">        len = <span class='macro'>ELL_3V_LEN(tmpVec)<span class='expansion'>(sqrt((((tmpVec))[0]*((tmpVec))[0] + ((tmpVec))[1]*((tmpVec))<br>[1] + ((tmpVec))[2]*((tmpVec))[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: should be bigger: %30.15f\n"</span>, me, (<span class='keyword'>double</span>)len);</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        <span class='macro'>ELL_3V_CROSS(gp2, gp1, norm)<span class='expansion'>((gp2)[0] = (gp1)[1]*(norm)[2] - (gp1)[2]*(norm)[1], (gp2)[1]<br> = (gp1)[2]*(norm)[0] - (gp1)[0]*(norm)[2], (gp2)[2] = (gp1)[<br>0]*(norm)[1] - (gp1)[1]*(norm)[0])</span></span>;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">        <span class='macro'>ELL_3MV_MUL(tmpVec, gten, gp2)<span class='expansion'>((tmpVec)[0] = (gten)[0]*(gp2)[0] + (gten)[1]*(gp2)[1] + (gten<br>)[2]*(gp2)[2], (tmpVec)[1] = (gten)[3]*(gp2)[0] + (gten)[4]*(<br>gp2)[1] + (gten)[5]*(gp2)[2], (tmpVec)[2] = (gten)[6]*(gp2)[0<br>] + (gten)[7]*(gp2)[1] + (gten)[8]*(gp2)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        len = <span class='macro'>ELL_3V_LEN(tmpVec)<span class='expansion'>(sqrt((((tmpVec))[0]*((tmpVec))[0] + ((tmpVec))[1]*((tmpVec))<br>[1] + ((tmpVec))[2]*((tmpVec))[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: should (also) be bigger: %30.15f\n"</span>,</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">                me, (<span class='keyword'>double</span>)len);</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">      <span class='macro'>ELL_3M_ZERO_SET(gten)<span class='expansion'>((((gten)+0)[0] = (0), ((gten)+0)[1] = (0), ((gten)+0)[2] = (<br>0)), (((gten)+3)[0] = (0), ((gten)+3)[1] = (0), ((gten)+3)[2]<br> = (0)), (((gten)+6)[0] = (0), ((gten)+6)[1] = (0), ((gten)+6<br>)[2] = (0)))</span></span>;</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclGeomTensTen)<span class='expansion'>(pvl-&gt;query[gageSclGeomTensTen/8] &amp; (1 &lt;&lt; (gageSclGeomTensTen<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">    pvl-&gt;directAnswer[gageSclGeomTensTen][0] = 1.0;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">    TEN_M2T(pvl-&gt;directAnswer[gageSclGeomTensTen],</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">            pvl-&gt;directAnswer[gageSclGeomTens]);</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">    TEN_T_SCALE(pvl-&gt;directAnswer[gageSclGeomTensTen], -1,</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                pvl-&gt;directAnswer[gageSclGeomTensTen]);</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclTotalCurv)<span class='expansion'>(pvl-&gt;query[gageSclTotalCurv/8] &amp; (1 &lt;&lt; (gageSclTotalCurv<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">    curv = pvl-&gt;directAnswer[gageSclTotalCurv][0] = <span class='macro'>ELL_3M_FROB(gten)<span class='expansion'>(sqrt((((gten)+0)[0]*((gten)+0)[0] + ((gten)+0)[1]*((gten)+0)<br>[1] + ((gten)+0)[2]*((gten)+0)[2]) + (((gten)+3)[0]*((gten)+3<br>)[0] + ((gten)+3)[1]*((gten)+3)[1] + ((gten)+3)[2]*((gten)+3)<br>[2]) + (((gten)+6)[0]*((gten)+6)[0] + ((gten)+6)[1]*((gten)+6<br>)[1] + ((gten)+6)[2]*((gten)+6)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclShapeTrace)<span class='expansion'>(pvl-&gt;query[gageSclShapeTrace/8] &amp; (1 &lt;&lt; (gageSclShapeTrace<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">    pvl-&gt;directAnswer[gageSclShapeTrace][0] = (curv</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">                                               ? <span class='macro'>ELL_3M_TRACE(gten)<span class='expansion'>((gten)[0] + (gten)[4] + (gten)[8])</span></span>/curv</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">                                               : 0);</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">  <span class='keyword'>if</span> ( (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclK1)<span class='expansion'>(pvl-&gt;query[gageSclK1/8] &amp; (1 &lt;&lt; (gageSclK1 % 8)<br>))</span></span>) ||</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">       (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclK2)<span class='expansion'>(pvl-&gt;query[gageSclK2/8] &amp; (1 &lt;&lt; (gageSclK2 % 8)<br>))</span></span>) ){</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">    <span class='keyword'>double</span> T, N, D;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">    T = <span class='macro'>ELL_3M_TRACE(gten)<span class='expansion'>((gten)[0] + (gten)[4] + (gten)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">    N = curv;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">    D = 2*N*N - T*T;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">      <span class='comment'>if (D &lt; -0.0000001) {</span></td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">      <span class='comment'>fprintf(stderr, "%s: %g %g\n", me, T, N);</span></td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">      <span class='comment'>fprintf(stderr, "%s: !!! D curv determinant % 22.10f &lt; 0.0\n", me, D);</span></td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">      <span class='comment'>fprintf(stderr, "%s: gten: \n", me);</span></td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">      <span class='comment'>ell_3m_print_d(stderr, gten);</span></td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">      <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">    D = <span class='macro'>AIR_MAX(D, 0)<span class='expansion'>((D) &gt; (0) ? (D) : (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">    D = sqrt(D);</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">    k1[0] = 0.5*(T + D);</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">    k2[0] = 0.5*(T - D);</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclMeanCurv)<span class='expansion'>(pvl-&gt;query[gageSclMeanCurv/8] &amp; (1 &lt;&lt; (gageSclMeanCurv<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">    pvl-&gt;directAnswer[gageSclMeanCurv][0] = (*k1 + *k2)/2;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclGaussCurv)<span class='expansion'>(pvl-&gt;query[gageSclGaussCurv/8] &amp; (1 &lt;&lt; (gageSclGaussCurv<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">    pvl-&gt;directAnswer[gageSclGaussCurv][0] = (*k1)*(*k2);</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query,  gageSclShapeIndex)<span class='expansion'>(pvl-&gt;query[gageSclShapeIndex/8] &amp; (1 &lt;&lt; (gageSclShapeIndex<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">    pvl-&gt;directAnswer[gageSclShapeIndex][0] =</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">      -(2/<span class='macro'>AIR_PI<span class='expansion'>3.14159265358979323846</span></span>)*atan2(*k1 + *k2, *k1 - *k2);</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclCurvDir1)<span class='expansion'>(pvl-&gt;query[gageSclCurvDir1/8] &amp; (1 &lt;&lt; (gageSclCurvDir1<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">    <span class='comment'>/* HEY: this only works when K1, K2, 0 are all well mutually distinct,</span></td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">       <span class='comment'>since these are the eigenvalues of the geometry tensor, and this</span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">       <span class='comment'>code assumes that the eigenspaces are all one-dimensional */</span></td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">    <span class='macro'>ELL_3M_COPY(tmpMat, gten)<span class='expansion'>((((tmpMat)+0)[0] = ((gten)+0)[0], ((tmpMat)+0)[1] = ((gten)+<br>0)[1], ((tmpMat)+0)[2] = ((gten)+0)[2]), (((tmpMat)+3)[0] = (<br>(gten)+3)[0], ((tmpMat)+3)[1] = ((gten)+3)[1], ((tmpMat)+3)[2<br>] = ((gten)+3)[2]), (((tmpMat)+6)[0] = ((gten)+6)[0], ((tmpMat<br>)+6)[1] = ((gten)+6)[1], ((tmpMat)+6)[2] = ((gten)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">    <span class='macro'>ELL_3M_DIAG_SET(tmpMat, gten[0] - *k1, gten[4]- *k1, gten[8] - *k1)<span class='expansion'>((tmpMat)[0] = (gten[0] - *k1), (tmpMat)[4] = (gten[4]- *k1),<br> (tmpMat)[8] = (gten[8] - *k1))</span></span>;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">    ell_3m_1d_nullspace_d(tmpVec, tmpMat);</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">    <span class='macro'>ELL_3V_COPY(pvl-&gt;directAnswer[gageSclCurvDir1], tmpVec)<span class='expansion'>((pvl-&gt;directAnswer[gageSclCurvDir1])[0] = (tmpVec)[0], (pvl<br>-&gt;directAnswer[gageSclCurvDir1])[1] = (tmpVec)[1], (pvl-&gt;<br>directAnswer[gageSclCurvDir1])[2] = (tmpVec)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclCurvDir2)<span class='expansion'>(pvl-&gt;query[gageSclCurvDir2/8] &amp; (1 &lt;&lt; (gageSclCurvDir2<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">    <span class='comment'>/* HEY: this only works when K1, K2, 0 are all well mutually distinct,</span></td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">       <span class='comment'>since these are the eigenvalues of the geometry tensor, and this</span></td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">       <span class='comment'>code assumes that the eigenspaces are all one-dimensional */</span></td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">    <span class='macro'>ELL_3M_COPY(tmpMat, gten)<span class='expansion'>((((tmpMat)+0)[0] = ((gten)+0)[0], ((tmpMat)+0)[1] = ((gten)+<br>0)[1], ((tmpMat)+0)[2] = ((gten)+0)[2]), (((tmpMat)+3)[0] = (<br>(gten)+3)[0], ((tmpMat)+3)[1] = ((gten)+3)[1], ((tmpMat)+3)[2<br>] = ((gten)+3)[2]), (((tmpMat)+6)[0] = ((gten)+6)[0], ((tmpMat<br>)+6)[1] = ((gten)+6)[1], ((tmpMat)+6)[2] = ((gten)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">    <span class='macro'>ELL_3M_DIAG_SET(tmpMat, gten[0] - *k2, gten[4] - *k2, gten[8] - *k2)<span class='expansion'>((tmpMat)[0] = (gten[0] - *k2), (tmpMat)[4] = (gten[4] - *k2)<br>, (tmpMat)[8] = (gten[8] - *k2))</span></span>;</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">    ell_3m_1d_nullspace_d(tmpVec, tmpMat);</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">    <span class='macro'>ELL_3V_COPY(pvl-&gt;directAnswer[gageSclCurvDir2], tmpVec)<span class='expansion'>((pvl-&gt;directAnswer[gageSclCurvDir2])[0] = (tmpVec)[0], (pvl<br>-&gt;directAnswer[gageSclCurvDir2])[1] = (tmpVec)[1], (pvl-&gt;<br>directAnswer[gageSclCurvDir2])[2] = (tmpVec)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclFlowlineCurv)<span class='expansion'>(pvl-&gt;query[gageSclFlowlineCurv/8] &amp; (1 &lt;&lt; (gageSclFlowlineCurv<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">    <span class='keyword'>if</span> (gmag &gt;= ctx-&gt;parm.gradMagCurvMin) {</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">      <span class='comment'>/* because of the gageSclGeomTens prerequisite, sHess, nPerp, and</span></td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">         <span class='comment'>nProj are all already set */</span></td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">      <span class='comment'>/* ncTen = nPerp * sHess * nProj */</span></td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">      <span class='macro'>ELL_3M_MUL(tmpMat, sHess, nProj)<span class='expansion'>((tmpMat)[0] = (sHess)[0]*(nProj)[0] + (sHess)[1]*(nProj)[3] +<br> (sHess)[2]*(nProj)[6], (tmpMat)[1] = (sHess)[0]*(nProj)[1] +<br> (sHess)[1]*(nProj)[4] + (sHess)[2]*(nProj)[7], (tmpMat)[2] =<br> (sHess)[0]*(nProj)[2] + (sHess)[1]*(nProj)[5] + (sHess)[2]*(<br>nProj)[8], (tmpMat)[3] = (sHess)[3]*(nProj)[0] + (sHess)[4]*(<br>nProj)[3] + (sHess)[5]*(nProj)[6], (tmpMat)[4] = (sHess)[3]*(<br>nProj)[1] + (sHess)[4]*(nProj)[4] + (sHess)[5]*(nProj)[7], (tmpMat<br>)[5] = (sHess)[3]*(nProj)[2] + (sHess)[4]*(nProj)[5] + (sHess<br>)[5]*(nProj)[8], (tmpMat)[6] = (sHess)[6]*(nProj)[0] + (sHess<br>)[7]*(nProj)[3] + (sHess)[8]*(nProj)[6], (tmpMat)[7] = (sHess<br>)[6]*(nProj)[1] + (sHess)[7]*(nProj)[4] + (sHess)[8]*(nProj)[<br>7], (tmpMat)[8] = (sHess)[6]*(nProj)[2] + (sHess)[7]*(nProj)[<br>5] + (sHess)[8]*(nProj)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">      <span class='macro'>ELL_3M_MUL(ncTen, nPerp, tmpMat)<span class='expansion'>((ncTen)[0] = (nPerp)[0]*(tmpMat)[0] + (nPerp)[1]*(tmpMat)[3]<br> + (nPerp)[2]*(tmpMat)[6], (ncTen)[1] = (nPerp)[0]*(tmpMat)[1<br>] + (nPerp)[1]*(tmpMat)[4] + (nPerp)[2]*(tmpMat)[7], (ncTen)[<br>2] = (nPerp)[0]*(tmpMat)[2] + (nPerp)[1]*(tmpMat)[5] + (nPerp<br>)[2]*(tmpMat)[8], (ncTen)[3] = (nPerp)[3]*(tmpMat)[0] + (nPerp<br>)[4]*(tmpMat)[3] + (nPerp)[5]*(tmpMat)[6], (ncTen)[4] = (nPerp<br>)[3]*(tmpMat)[1] + (nPerp)[4]*(tmpMat)[4] + (nPerp)[5]*(tmpMat<br>)[7], (ncTen)[5] = (nPerp)[3]*(tmpMat)[2] + (nPerp)[4]*(tmpMat<br>)[5] + (nPerp)[5]*(tmpMat)[8], (ncTen)[6] = (nPerp)[6]*(tmpMat<br>)[0] + (nPerp)[7]*(tmpMat)[3] + (nPerp)[8]*(tmpMat)[6], (ncTen<br>)[7] = (nPerp)[6]*(tmpMat)[1] + (nPerp)[7]*(tmpMat)[4] + (nPerp<br>)[8]*(tmpMat)[7], (ncTen)[8] = (nPerp)[6]*(tmpMat)[2] + (nPerp<br>)[7]*(tmpMat)[5] + (nPerp)[8]*(tmpMat)[8])</span></span>;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">      <span class='macro'>ELL_3M_ZERO_SET(ncTen)<span class='expansion'>((((ncTen)+0)[0] = (0), ((ncTen)+0)[1] = (0), ((ncTen)+0)[2] =<br> (0)), (((ncTen)+3)[0] = (0), ((ncTen)+3)[1] = (0), ((ncTen)+<br>3)[2] = (0)), (((ncTen)+6)[0] = (0), ((ncTen)+6)[1] = (0), ((<br>ncTen)+6)[2] = (0)))</span></span>;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">    <span class='comment'>/* there used to be a wrong extra sqrt() here */</span></td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">    pvl-&gt;directAnswer[gageSclFlowlineCurv][0] = <span class='macro'>ELL_3M_FROB(ncTen)<span class='expansion'>(sqrt((((ncTen)+0)[0]*((ncTen)+0)[0] + ((ncTen)+0)[1]*((ncTen<br>)+0)[1] + ((ncTen)+0)[2]*((ncTen)+0)[2]) + (((ncTen)+3)[0]*((<br>ncTen)+3)[0] + ((ncTen)+3)[1]*((ncTen)+3)[1] + ((ncTen)+3)[2]<br>*((ncTen)+3)[2]) + (((ncTen)+6)[0]*((ncTen)+6)[0] + ((ncTen)+<br>6)[1]*((ncTen)+6)[1] + ((ncTen)+6)[2]*((ncTen)+6)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>GAGE_QUERY_ITEM_TEST(pvl-&gt;query, gageSclMedian)<span class='expansion'>(pvl-&gt;query[gageSclMedian/8] &amp; (1 &lt;&lt; (gageSclMedian<br> % 8)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">    <span class='comment'>/* this item is currently a complete oddball in that it does not</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">       <span class='comment'>benefit from anything done in the "filter" stage, which is in</span></td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">       <span class='comment'>fact a waste of time if the query consists only  of this item */</span></td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">    fd = 2*ctx-&gt;radius;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">    <span class='keyword'>if</span> (fd &gt; <span class='macro'>FD_MEDIAN_MAX<span class='expansion'>16</span></span>) {</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: PANIC: current filter diameter = %d "</span></td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">              <span class='string_literal'>"&gt; FD_MEDIAN_MAX = %d\n"</span>, me, fd, <span class='macro'>FD_MEDIAN_MAX<span class='expansion'>16</span></span>);</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">      exit(1);</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">    fw = ctx-&gt;fw + fd*3*gageKernel00;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">    <span class='comment'>/* HEY: this needs some optimization help */</span></td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">    wghtSum = 0;</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">    nidx = 0;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">    <span class='keyword'>for</span> (xi=0; xi&lt;fd; xi++) {</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">      <span class='keyword'>for</span> (yi=0; yi&lt;fd; yi++) {</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        <span class='keyword'>for</span> (zi=0; zi&lt;fd; zi++) {</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">          iv3wght[0 + 2*nidx] = pvl-&gt;iv3[nidx];</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">          iv3wght[1 + 2*nidx] = fw[xi + 0*fd]*fw[yi + 1*fd]*fw[zi + 2*fd];</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">          wghtSum += iv3wght[1 + 2*nidx];</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">          nidx++;</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">    qsort(iv3wght, fd*fd*fd, 2*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>), nrrdValCompare[nrrdTypeDouble]);</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">    wght = 0;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">    <span class='keyword'>for</span> (nidx=0; nidx&lt;fd*fd*fd; nidx++) {</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">      wght += iv3wght[1 + 2*nidx];</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">      <span class='keyword'>if</span> (wght &gt; wghtSum/2) {</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">    pvl-&gt;directAnswer[gageSclMedian][0] = iv3wght[0 + 2*nidx];</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"><span class='directive'>#undef TEN_M2T</span></td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line"><span class='directive'>#undef TEN_T_SCALE</span></td></tr>
+</table></body></html>

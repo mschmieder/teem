@@ -1,0 +1,690 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/nrrd/formatPNG.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'row' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/nrrd/formatPNG.c -->
+
+<!-- FILENAME formatPNG.c -->
+
+<!-- FUNCTIONNAME _nrrdFormatPNG_write -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 8d28fb0e9a947b512f41c5bb44696b25 -->
+
+<!-- BUGLINE 573 -->
+
+<!-- BUGCOLUMN 3 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/nrrd/formatPNG.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 573, column 3</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'row' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "nrrd.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privateNrrd.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include &lt;teemPng.h&gt;</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#if <span class='macro'>TEEM_PNG<span class='expansion'>1</span></span></span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include &lt;png.h&gt;</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#define <span class='macro'>MAGIC<span class='expansion'>"\211PNG"</span></span> "\211PNG"</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">_nrrdFormatPNG_available(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"><span class='directive'>#if <span class='macro'>TEEM_PNG<span class='expansion'>1</span></span></span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">_nrrdFormatPNG_nameLooksLike(<span class='keyword'>const</span> <span class='keyword'>char</span> *filename) {</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">  <span class='keyword'>return</span> airEndsWith(filename, <span class='macro'>NRRD_EXT_PNG<span class='expansion'>".png"</span></span>);</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">_nrrdFormatPNG_fitsInto(<span class='keyword'>const</span> Nrrd *nrrd, <span class='keyword'>const</span> NrrdEncoding *encoding,</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">                        <span class='keyword'>int</span> useBiff) {</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdFormatPNG_fitsInto"</span>;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"><span class='directive'>#if !<span class='macro'>TEEM_PNG<span class='expansion'>1</span></span>  /* ------------------------------------------- */</span></td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">  <span class='macro'>AIR_UNUSED(nrrd)<span class='expansion'>(void)(nrrd)</span></span>;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">  <span class='macro'>AIR_UNUSED(encoding)<span class='expansion'>(void)(encoding)</span></span>;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">  biffMaybeAddf(useBiff, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">                <span class='string_literal'>"%s: %s format not available in this Teem build"</span>,</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">                me, nrrdFormatPNG-&gt;name);</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"><span class='directive'>#else  /* ------------------------------------------- */</span></td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">  <span class='keyword'>int</span> ret;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">  <span class='keyword'>if</span> (!( nrrd &amp;&amp; encoding )) {</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">    biffMaybeAddf(useBiff, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: got NULL nrrd (%p) or encoding (%p)"</span>,</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">                  me, <span class='macro'>AIR_CVOIDP(nrrd)<span class='expansion'>((const void *)(nrrd))</span></span>, <span class='macro'>AIR_CVOIDP(encoding)<span class='expansion'>((const void *)(encoding))</span></span>);</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">  <span class='keyword'>if</span> (!( nrrdTypeUChar == nrrd-&gt;type || nrrdTypeUShort == nrrd-&gt;type )) {</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">    biffMaybeAddf(useBiff, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">                  <span class='string_literal'>"%s: type must be %s or %s (not %s)"</span>, me,</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">                  airEnumStr(nrrdType, nrrdTypeUChar),</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">                  airEnumStr(nrrdType, nrrdTypeUShort),</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">                  airEnumStr(nrrdType, nrrd-&gt;type));</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">  <span class='comment'>/* else */</span></td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  <span class='comment'>/* encoding ignored- always gzip */</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">  <span class='keyword'>if</span> (2 == nrrd-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">    <span class='comment'>/* its a gray-scale image */</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">    ret = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  } <span class='keyword'>else</span> <span class='keyword'>if</span> (3 == nrrd-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">    <span class='keyword'>if</span> (!( 1 == nrrd-&gt;axis[0].size</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">           || 2 == nrrd-&gt;axis[0].size</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">           || 3 == nrrd-&gt;axis[0].size</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">           || 4 == nrrd-&gt;axis[0].size )) {</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">      <span class='keyword'>char</span> stmp[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">      biffMaybeAddf(useBiff, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">                    <span class='string_literal'>"%s: 1st axis size is %s, not 1, 2, 3, or 4"</span>, me,</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">                    airSprintSize_t(stmp, nrrd-&gt;axis[0].size));</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">      <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">    <span class='comment'>/* else */</span></td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">    ret = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">    biffMaybeAddf(useBiff, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>,</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">                  <span class='string_literal'>"%s: dimension is %d, not 2 or 3"</span>, me, nrrd-&gt;dim);</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">    <span class='keyword'>return</span> <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line"><span class='directive'>#endif   /* ------------------------------------------- */</span></td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">_nrrdFormatPNG_contentStartsLike(NrrdIoState *nio) {</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  <span class='keyword'>return</span> !strcmp(<span class='macro'>MAGIC<span class='expansion'>"\211PNG"</span></span>, nio-&gt;line);</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"><span class='directive'>#if <span class='macro'>TEEM_PNG<span class='expansion'>1</span></span></span></td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">_nrrdErrorHandlerPNG (png_structp png, png_const_charp message)</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdErrorHandlerPNG"</span>;</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">  <span class='comment'>/* add PNG error message to biff */</span></td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">  biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: PNG error: %s"</span>, me, message);</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">  <span class='comment'>/* longjmp back to the setjmp, return 1 */</span></td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  longjmp(<span class='macro'>png_jmpbuf(png)<span class='expansion'>(*png_set_longjmp_fn((png), longjmp, (sizeof (jmp_buf))))</span></span>, 1);</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">_nrrdWarningHandlerPNG (png_structp png, png_const_charp message)</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdWarningHandlerPNG"</span>;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">  <span class='macro'>AIR_UNUSED(png)<span class='expansion'>(void)(png)</span></span>;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">  <span class='comment'>/* add the png warning message to biff */</span></td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">  biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: PNG warning: %s"</span>, me, message);</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">  <span class='comment'>/* no longjump, execution continues */</span></td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line"><span class='comment'>/* we need to use the file I/O callbacks on windows</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">   <span class='comment'>to make sure we can mix VC6 libpng with VC7 Teem */</span></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line"><span class='directive'>#ifdef _WIN32</span></td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">_nrrdReadDataPNG (png_structp png, png_bytep data, png_size_t len)</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">  png_size_t read;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">  read = (png_size_t)fread(data, (png_size_t)1, len, (FILE*)png_get_io_ptr(png));</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">  <span class='keyword'>if</span> (read != len) png_error(png, <span class='string_literal'>"file read error"</span>);</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">_nrrdWriteDataPNG (png_structp png, png_bytep data, png_size_t len)</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  png_size_t written;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">  written = fwrite(data, 1, len, (FILE*)png_get_io_ptr(png));</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">  <span class='keyword'>if</span> (written != len) png_error(png, <span class='string_literal'>"file write error"</span>);</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">_nrrdFlushDataPNG (png_structp png)</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">  FILE *io_ptr = png_get_io_ptr(png);</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">  <span class='keyword'>if</span> (io_ptr != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) fflush(io_ptr);</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line"><span class='directive'>#endif /* _WIN32 */</span></td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line"><span class='directive'>#endif /* TEEM_PNG */</span></td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">_nrrdFormatPNG_read(FILE *file, Nrrd *nrrd, NrrdIoState *nio) {</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdFormatPNG_read"</span>;</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"><span class='directive'>#if <span class='macro'>TEEM_PNG<span class='expansion'>1</span></span></span></td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">  png_structp png;</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">  png_infop info;</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">  png_bytep *row;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">  png_uint_32 width, height, rowsize, hi;</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">  png_text* txt;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">  <span class='keyword'>int</span> depth, type, i, channels, numtxt, ret;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">  <span class='keyword'>int</span> ntype, ndim;</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  size_t nsize[3];</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line"><span class='directive'>#endif /* TEEM_PNG */</span></td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">  <span class='macro'>AIR_UNUSED(file)<span class='expansion'>(void)(file)</span></span>;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">  <span class='macro'>AIR_UNUSED(nrrd)<span class='expansion'>(void)(nrrd)</span></span>;</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">  <span class='keyword'>if</span> (!_nrrdFormatPNG_contentStartsLike(nio)) {</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: this doesn't look like a %s file"</span>, me,</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">             nrrdFormatPNG-&gt;name);</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line"><span class='directive'>#if <span class='macro'>TEEM_PNG<span class='expansion'>1</span></span></span></td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">  <span class='comment'>/* create png struct with the error handlers above */</span></td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">  png = png_create_read_struct(<span class='macro'>PNG_LIBPNG_VER_STRING<span class='expansion'>"1.6.29"</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">                               _nrrdErrorHandlerPNG,</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">                               _nrrdWarningHandlerPNG);</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">  <span class='keyword'>if</span> (png == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: failed to create PNG read struct"</span>, me);</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">  <span class='comment'>/* create image info struct */</span></td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">  info = png_create_info_struct(png);</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">  <span class='keyword'>if</span> (info == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">    png_destroy_read_struct(&amp;png, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: failed to create PNG image info struct"</span>, me);</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">  <span class='comment'>/* set up png style error handling */</span></td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">  <span class='keyword'>if</span> (setjmp(<span class='macro'>png_jmpbuf(png)<span class='expansion'>(*png_set_longjmp_fn((png), longjmp, (sizeof (jmp_buf))))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">    <span class='comment'>/* the error is reported inside the handler,</span></td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">       <span class='comment'>but we still need to clean up and return */</span></td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">    png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">  <span class='comment'>/* initialize png I/O */</span></td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line"><span class='directive'>#ifdef _WIN32</span></td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">  png_set_read_fn(png, (png_voidp)file, _nrrdReadDataPNG);</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">  png_init_io(png, file);</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">  <span class='comment'>/* if we are here, we have already read 6 bytes from the file */</span></td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">  png_set_sig_bytes(png, 6);</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">  <span class='comment'>/* png_read_info() returns all information from the file</span></td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">     <span class='comment'>before the first data chunk */</span></td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">  png_read_info(png, info);</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">  png_get_IHDR(png, info, &amp;width, &amp;height, &amp;depth, &amp;type,</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">               <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">  <span class='comment'>/* expand paletted colors into rgb triplets */</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">  <span class='keyword'>if</span> (type == <span class='macro'>PNG_COLOR_TYPE_PALETTE<span class='expansion'>(2 | 1)</span></span>)</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">    png_set_palette_to_rgb(png);</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">  <span class='comment'>/* expand grayscale images to 8 bits from 1, 2, or 4 bits */</span></td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">  <span class='keyword'>if</span> (type == <span class='macro'>PNG_COLOR_TYPE_GRAY<span class='expansion'>0</span></span> &amp;&amp; depth &lt; 8)</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"><span class='directive'>#if <span class='macro'>PNG_LIBPNG_VER_MINOR<span class='expansion'>6</span></span> &gt; 1</span></td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">    png_set_expand_gray_1_2_4_to_8(png);</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">    png_set_expand(png);</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">  <span class='comment'>/* expand paletted or rgb images with transparency to full alpha</span></td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">     <span class='comment'>channels so the data will be available as rgba quartets */</span></td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">  <span class='keyword'>if</span> (png_get_valid(png, info, <span class='macro'>PNG_INFO_tRNS<span class='expansion'>0x0010U</span></span>))</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">    png_set_tRNS_to_alpha(png);</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  <span class='comment'>/* fix endianness for 16 bit formats */</span></td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">  <span class='keyword'>if</span> (depth &gt; 8 &amp;&amp; airMyEndian() == airEndianLittle)</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">    png_set_swap(png);</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line"><span class='directive'>#if 0</span></td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">  <span class='comment'>/* HEY GLK asks why is this commented out? */</span></td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">  <span class='comment'>/* set up gamma correction */</span></td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">  <span class='comment'>/* NOTE: screen_gamma is platform dependent,</span></td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">     <span class='comment'>it can hardwired or set from a parameter/environment variable */</span></td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">  <span class='keyword'>if</span> (png_get_sRGB(png_ptr, info_ptr, &amp;intent)) {</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">    <span class='comment'>/* if the image has sRGB info,</span></td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">       <span class='comment'>pass in standard nrrd file gamma 1.0 */</span></td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">    png_set_gamma(png_ptr, screen_gamma, 1.0);</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">    <span class='keyword'>double</span> gamma;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">    <span class='comment'>/* set image gamma if present */</span></td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">    <span class='keyword'>if</span> (png_get_gAMA(png, info, &amp;gamma))</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">      png_set_gamma(png, screen_gamma, gamma);</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">    <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">      png_set_gamma(png, screen_gamma, 1.0);</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">  <span class='comment'>/* update reader */</span></td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">  png_read_update_info(png, info);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">  <span class='comment'>/* allocate memory for the image data */</span></td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  ntype = depth &gt; 8 ? nrrdTypeUShort : nrrdTypeUChar;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  <span class='keyword'>switch</span> (type) {</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">  <span class='keyword'>case</span> <span class='macro'>PNG_COLOR_TYPE_GRAY<span class='expansion'>0</span></span>:</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">    ndim = 2; nsize[0] = width; nsize[1] = height;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">    nsize[2] = 1;  <span class='comment'>/* to simplify code below */</span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">  <span class='keyword'>case</span> <span class='macro'>PNG_COLOR_TYPE_GRAY_ALPHA<span class='expansion'>(4)</span></span>:</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">    ndim = 3; nsize[0] = 2; nsize[1] = width; nsize[2] = height;</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">  <span class='keyword'>case</span> <span class='macro'>PNG_COLOR_TYPE_RGB<span class='expansion'>(2)</span></span>:</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">    ndim = 3; nsize[0] = 3; nsize[1] = width; nsize[2] = height;</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">  <span class='keyword'>case</span> <span class='macro'>PNG_COLOR_TYPE_RGB_ALPHA<span class='expansion'>(2 | 4)</span></span>:</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">    ndim = 3; nsize[0] = 4; nsize[1] = width; nsize[2] = height;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">  <span class='keyword'>case</span> <span class='macro'>PNG_COLOR_TYPE_PALETTE<span class='expansion'>(2 | 1)</span></span>:</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">    <span class='comment'>/* TODO: merge this with the outer switch, needs to be tested */</span></td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">    channels = png_get_channels(png, info);</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">    <span class='keyword'>if</span> (channels &lt; 2) {</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">      ndim = 2; nsize[0] = width; nsize[1] = height;</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">      ndim = 3; nsize[0] = channels; nsize[1] = width; nsize[2] = height;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">    png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: unknown png type: %d"</span>, me, type);</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">  <span class='keyword'>if</span> (nio-&gt;oldData</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">      &amp;&amp; (nio-&gt;oldDataSize</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">          == (size_t)(nrrdTypeSize[ntype]*nsize[0]*nsize[1]*nsize[2]))) {</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">    ret = nrrdWrap_nva(nrrd, nio-&gt;oldData, ntype, ndim, nsize);</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">    ret = nrrdMaybeAlloc_nva(nrrd, ntype, ndim, nsize);</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">  <span class='keyword'>if</span> (ret) {</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">    png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: failed to allocate nrrd"</span>, me);</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">  <span class='comment'>/* query row size */</span></td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">  rowsize = png_get_rowbytes(png, info);</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">  <span class='comment'>/* check byte size */</span></td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">  <span class='keyword'>if</span> (nrrdElementNumber(nrrd)*nrrdElementSize(nrrd) != height*rowsize) {</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">    png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: size mismatch"</span>, me);</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  <span class='comment'>/* set up row pointers */</span></td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">  row = (png_bytep*)malloc(<span class='keyword'>sizeof</span>(png_bytep)*height);</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">  <span class='keyword'>for</span> (hi=0; hi&lt;height; hi++) {</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">    row[hi] = &amp;((png_bytep)nrrd-&gt;data)[hi*rowsize];</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  <span class='comment'>/* read the entire image in one pass */</span></td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">  png_read_image(png, row);</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">  <span class='comment'>/* read all text fields from the text chunk */</span></td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">  numtxt = png_get_text(png, info, &amp;txt, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  <span class='keyword'>for</span> (i=0; i&lt;numtxt; i++) {</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">    <span class='keyword'>if</span> (!strcmp(txt[i].key, <span class='macro'>NRRD_PNG_FIELD_KEY<span class='expansion'>"NRRD"</span></span>)) {</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">      nio-&gt;pos = 0;</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">      <span class='comment'>/* Reading PNGs teaches Gordon that his scheme for parsing nrrd header</span></td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">         <span class='comment'>information is inappropriately specific to reading PNMs and NRRDs,</span></td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">         <span class='comment'>since in this case the text from which we parse a nrrd field</span></td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">         <span class='comment'>descriptor did NOT come from a line of text as read by</span></td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">         <span class='comment'>_nrrdOneLine */</span></td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">      nio-&gt;line = (<span class='keyword'>char</span> *)airFree(nio-&gt;line);</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">      nio-&gt;line = airStrdup(txt[i].text);</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">      ret = _nrrdReadNrrdParseField(nio, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">      <span class='keyword'>if</span> (ret) {</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span>* fs = airEnumStr(nrrdField, ret);</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>if</span> (nrrdField_comment == ret) {</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">          ret = 0;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">          <span class='keyword'>goto</span> plain;</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>if</span> (!_nrrdFieldValidInImage[ret]) {</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">          <span class='keyword'>if</span> (1 &lt;= nrrdStateVerboseIO) {</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">            fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"(%s: field \"%s\" (not allowed in PNG) "</span></td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">                    <span class='string_literal'>"--&gt; plain comment)\n"</span>, me, fs);</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">          ret = 0;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">          <span class='keyword'>goto</span> plain;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">        <span class='keyword'>if</span> (!nio-&gt;seen[ret]</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">            &amp;&amp; nrrdFieldInfoParse[ret](file, nrrd, nio, <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>)) {</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">          <span class='keyword'>if</span> (1 &lt;= nrrdStateVerboseIO) {</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">            fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"(%s: unparsable info \"%s\" for field \"%s\" "</span></td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                    <span class='string_literal'>"--&gt; plain comment)\n"</span>, me, nio-&gt;line + nio-&gt;pos, fs);</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">          ret = 0;</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">          <span class='keyword'>goto</span> plain;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        nio-&gt;seen[ret] = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">      plain:</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        <span class='keyword'>if</span> (!ret) {</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">          <span class='keyword'>if</span> (nrrdCommentAdd(nrrd, nio-&gt;line)) {</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">            png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">            biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't add comment"</span>, me);</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">            <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">    } <span class='keyword'>else</span> <span class='keyword'>if</span> (!strcmp(txt[i].key, <span class='macro'>NRRD_PNG_COMMENT_KEY<span class='expansion'>"NRRD#"</span></span>)) {</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">      <span class='keyword'>char</span> *p, *c;</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">      c = airStrtok(txt[i].text, <span class='string_literal'>"\n"</span>, &amp;p);</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">      <span class='keyword'>while</span> (c) {</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">        <span class='keyword'>if</span> (nrrdCommentAdd(nrrd, c)) {</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">          png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">          biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't add comment"</span>, me);</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        c = airStrtok(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='string_literal'>"\n"</span>, &amp;p);</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">      <span class='keyword'>if</span> (nrrdKeyValueAdd(nrrd, txt[i].key, txt[i].text)) {</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't add key/value pair"</span>, me);</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">  <span class='comment'>/* finish reading */</span></td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">  png_read_end(png, info);</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">  <span class='comment'>/* clean up */</span></td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">  row = (png_byte**)airFree(row);</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">  png_destroy_read_struct(&amp;png, &amp;info, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">  biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: Sorry, this nrrd not compiled with PNG enabled"</span>, me);</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">  <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">_nrrdFormatPNG_write(FILE *file, <span class='keyword'>const</span> Nrrd *nrrd, NrrdIoState *nio) {</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_nrrdFormatPNG_write"</span>;</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line"><span class='directive'>#if <span class='macro'>TEEM_PNG<span class='expansion'>1</span></span></span></td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">  <span class='keyword'>int</span> fi, depth, type, csize;</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> jj, numtxt, txtidx;</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">  png_structp png;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">  png_infop info;</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">  png_bytep *row;</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">  png_uint_32 width, height, rowsize, hi;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">  png_text *txt;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">  <span class='keyword'>char</span> *key, *value;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">  <span class='comment'>/* no need to check type and format, done in FitsInFormat */</span></td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">  <span class='comment'>/* create png struct with the error handlers above */</span></td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">  png = png_create_write_struct(<span class='macro'>PNG_LIBPNG_VER_STRING<span class='expansion'>"1.6.29"</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">                                _nrrdErrorHandlerPNG,</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">                                _nrrdWarningHandlerPNG);</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">  <span class='keyword'>if</span> (png == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: failed to create PNG write struct (compiled with "</span></td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">             <span class='string_literal'>"PNG_LIBPNG_VER_STRING="</span> <span class='macro'>PNG_LIBPNG_VER_STRING<span class='expansion'>"1.6.29"</span></span> <span class='string_literal'>")"</span>, me);</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">  <span class='comment'>/* create image info struct */</span></td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">  info = png_create_info_struct(png);</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">  <span class='keyword'>if</span> (info == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">    png_destroy_write_struct(&amp;png, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: failed to create PNG image info struct"</span>, me);</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">  <span class='comment'>/* set up error png style error handling */</span></td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">  <span class='keyword'>if</span> (setjmp(<span class='macro'>png_jmpbuf(png)<span class='expansion'>(*png_set_longjmp_fn((png), longjmp, (sizeof (jmp_buf))))</span></span>))</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">  {</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">    <span class='comment'>/* the error is reported inside the error handler,</span></td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">       <span class='comment'>but we still need to clean up an return with an error */</span></td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">    png_destroy_write_struct(&amp;png, &amp;info);</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">  <span class='comment'>/* initialize png I/O */</span></td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line"><span class='directive'>#ifdef _WIN32</span></td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">  png_set_write_fn(png, file, _nrrdWriteDataPNG, _nrrdFlushDataPNG);</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">  png_init_io(png, file);</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">  <span class='comment'>/* calculate depth, width, height, and row size */</span></td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">  depth = nrrd-&gt;type == nrrdTypeUChar ? 8 : 16;</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">  <span class='keyword'>switch</span> (nrrd-&gt;dim) {</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">    <span class='keyword'>char</span> stmp[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">    <span class='keyword'>case</span> 2: <span class='comment'>/* g only */</span></td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">    width = nrrd-&gt;axis[0].size;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">    height = nrrd-&gt;axis[1].size;</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">    type = <span class='macro'>PNG_COLOR_TYPE_GRAY<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">    rowsize = width*nrrdElementSize(nrrd);</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">    <span class='keyword'>case</span> 3: <span class='comment'>/* g, ga, rgb, rgba */</span></td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">    width = nrrd-&gt;axis[1].size;</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">    height = nrrd-&gt;axis[2].size;</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">    rowsize = width*nrrd-&gt;axis[0].size*nrrdElementSize(nrrd);</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">    <span class='keyword'>switch</span> (nrrd-&gt;axis[0].size) {</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">      <span class='keyword'>case</span> 1:</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">      type = <span class='macro'>PNG_COLOR_TYPE_GRAY<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">      <span class='keyword'>case</span> 2:</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">      type = <span class='macro'>PNG_COLOR_TYPE_GRAY_ALPHA<span class='expansion'>(4)</span></span>;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">      <span class='keyword'>case</span> 3:</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">      type = <span class='macro'>PNG_COLOR_TYPE_RGB<span class='expansion'>(2)</span></span>;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">      <span class='keyword'>case</span> 4:</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">      type = <span class='macro'>PNG_COLOR_TYPE_RGB_ALPHA<span class='expansion'>(2 | 4)</span></span>;</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">      <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">      png_destroy_write_struct(&amp;png, &amp;info);</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">      biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: nrrd-&gt;axis[0].size (%s) not compatible with PNG"</span>, me,</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">               airSprintSize_t(stmp, nrrd-&gt;axis[0].size));</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">      <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">    <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">    png_destroy_write_struct(&amp;png, &amp;info);</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">    biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: dimension (%d) not compatible with PNG"</span>,</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">             me, nrrd-&gt;dim);</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">  <span class='comment'>/* set image header info */</span></td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">  png_set_IHDR(png, info, width, height, depth, type,</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">               <span class='macro'>PNG_INTERLACE_NONE<span class='expansion'>0</span></span>, <span class='macro'>PNG_COMPRESSION_TYPE_BASE<span class='expansion'>0</span></span>,</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">               <span class='macro'>PNG_FILTER_TYPE_BASE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">  <span class='comment'>/* calculate numtxt and allocate txt[] array */</span></td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">  numtxt = 0;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">  <span class='keyword'>for</span> (fi=nrrdField_unknown+1; fi&lt;nrrdField_last; fi++) {</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">    <span class='keyword'>if</span> (_nrrdFieldValidInImage[fi] &amp;&amp; _nrrdFieldInteresting(nrrd, nio, fi)) {</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">      numtxt++;</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">  <span class='keyword'>for</span> (jj=0; jj&lt;nrrdKeyValueSize(nrrd); jj++) {</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">    nrrdKeyValueIndex(nrrd, &amp;key, &amp;value, jj);</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">    <span class='comment'>/* HEY: why is the NULL check needed?? */</span></td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">    <span class='keyword'>if</span> (<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> != key &amp;&amp; <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> != value) {</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">      numtxt++;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">    free(key);</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">    free(value);</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">    key = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">    value = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">  <span class='keyword'>if</span> (nrrd-&gt;cmtArr-&gt;len &gt; 0) {</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">    <span class='comment'>/* all comments are put into single text field */</span></td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">    numtxt += 1;</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">  <span class='keyword'>if</span> (0 == numtxt) {</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">    txt = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">    txt = <span class='macro'>AIR_CAST(png_text *, calloc(numtxt, <span class='keyword'>sizeof</span>(png_text)))<span class='expansion'>((png_text *)(calloc(numtxt, sizeof(png_text))))</span></span>;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">    <span class='comment'>/* add nrrd fields to the text chunk */</span></td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">    csize = 0;</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">    txtidx = 0;</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">    <span class='keyword'>for</span> (fi=nrrdField_unknown+1; fi&lt;nrrdField_last; fi++) {</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">      <span class='keyword'>if</span> (_nrrdFieldValidInImage[fi] &amp;&amp; _nrrdFieldInteresting(nrrd, nio, fi)) {</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">        txt[txtidx].key = airStrdup(<span class='macro'>NRRD_PNG_FIELD_KEY<span class='expansion'>"NRRD"</span></span>);</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        txt[txtidx].compression = <span class='macro'>PNG_TEXT_COMPRESSION_NONE<span class='expansion'>-1</span></span>;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        _nrrdSprintFieldInfo(&amp;(txt[txtidx].text), <span class='string_literal'>""</span>, nrrd, nio, fi,</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">                             (3 == nrrd-&gt;dim &amp;&amp; 1 == nrrd-&gt;axis[0].size));</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">        txtidx++;</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">    <span class='comment'>/* add nrrd key/value pairs to the chunk */</span></td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">    <span class='keyword'>for</span> (jj=0; jj&lt;nrrdKeyValueSize(nrrd); jj++) {</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">      nrrdKeyValueIndex(nrrd, &amp;key, &amp;value, jj);</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">      <span class='keyword'>if</span> (<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> != key &amp;&amp; <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> != value) {</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">        txt[txtidx].key = key;</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        txt[txtidx].text = value;</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">        txt[txtidx].compression = <span class='macro'>PNG_TEXT_COMPRESSION_NONE<span class='expansion'>-1</span></span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        txtidx++;</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">    <span class='comment'>/* add nrrd comments as a single text field */</span></td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">    <span class='keyword'>if</span> (nrrd-&gt;cmtArr-&gt;len &gt; 0) {</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">      txt[txtidx].key = airStrdup(<span class='macro'>NRRD_PNG_COMMENT_KEY<span class='expansion'>"NRRD#"</span></span>);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">      txt[txtidx].compression = <span class='macro'>PNG_TEXT_COMPRESSION_NONE<span class='expansion'>-1</span></span>;</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">      <span class='keyword'>for</span> (jj=0; jj&lt;nrrd-&gt;cmtArr-&gt;len; jj++) {</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">        csize += airStrlen(nrrd-&gt;cmt[jj]) + 1;</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">      txt[txtidx].text = (png_charp)malloc(csize + 1);</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">      txt[txtidx].text[0] = 0;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">      <span class='keyword'>for</span> (jj=0; jj&lt;nrrd-&gt;cmtArr-&gt;len; jj++) {</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">        <span class='macro'>strcat(txt[txtidx].text, nrrd-&gt;cmt[jj])<span class='expansion'>__builtin___strcat_chk (txt[txtidx].text, nrrd-&gt;cmt[jj], __builtin_object_size<br> (txt[txtidx].text, 2 &gt; 1 ? 1 : 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">        <span class='macro'>strcat(txt[txtidx].text, <span class='string_literal'>"\n"</span>)<span class='expansion'>__builtin___strcat_chk (txt[txtidx].text, "\n", __builtin_object_size<br> (txt[txtidx].text, 2 &gt; 1 ? 1 : 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">      txtidx++;</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">    png_set_text(png, info, txt, numtxt);</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">  <span class='comment'>/* write header */</span></td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">  png_write_info(png, info);</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">  <span class='comment'>/* fix endianness for 16 bit formats */</span></td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">  <span class='keyword'>if</span> (depth &gt; 8 &amp;&amp; airMyEndian() == airEndianLittle) {</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">    png_set_swap(png);</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">  <span class='comment'>/* set up row pointers */</span></td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">  row = (png_bytep*)malloc(<span class='keyword'>sizeof</span>(png_bytep)*height);</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">  <span class='keyword'>for</span> (hi=0; hi&lt;height; hi++) {</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">    row[hi] = &amp;((png_bytep)nrrd-&gt;data)[hi*rowsize];</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">  png_set_rows(png, info, row);</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">  <span class='comment'>/* write the entire image in one pass */</span></td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">  png_write_image(png, row);</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  <span class='comment'>/* finish writing */</span></td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">  png_write_end(png, info);</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">  <span class='comment'>/* clean up */</span></td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">  <span class='keyword'>if</span> (txt) {</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">    <span class='keyword'>for</span> (jj=0; jj&lt;numtxt; jj++) {</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">      txt[jj].key = (<span class='keyword'>char</span> *)airFree(txt[jj].key);</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">      txt[jj].text = (<span class='keyword'>char</span> *)airFree(txt[jj].text);</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">    free(txt);</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">  row = <span class="mrange">(png_byte**)airFree(row)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:3ex">Value stored to 'row' is never read</div></td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">  png_destroy_write_struct(&amp;png, &amp;info);</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">  <span class='macro'>AIR_UNUSED(file)<span class='expansion'>(void)(file)</span></span>;</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">  <span class='macro'>AIR_UNUSED(nrrd)<span class='expansion'>(void)(nrrd)</span></span>;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">  <span class='macro'>AIR_UNUSED(nio)<span class='expansion'>(void)(nio)</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">  biffAddf(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: Sorry, this nrrd not compiled with PNG enabled"</span>, me);</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">  <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line"><span class='keyword'>const</span> NrrdFormat</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">_nrrdFormatPNG = {</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">  <span class='string_literal'>"PNG"</span>,</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">  <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>,   <span class='comment'>/* isImage */</span></td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">  <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>,   <span class='comment'>/* readable */</span></td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">  <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>,  <span class='comment'>/* usesDIO */</span></td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">  _nrrdFormatPNG_available,</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">  _nrrdFormatPNG_nameLooksLike,</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">  _nrrdFormatPNG_fitsInto,</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">  _nrrdFormatPNG_contentStartsLike,</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">  _nrrdFormatPNG_read,</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">  _nrrdFormatPNG_write</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line"><span class='keyword'>const</span> NrrdFormat *<span class='keyword'>const</span></td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">nrrdFormatPNG = &amp;_nrrdFormatPNG;</td></tr>
+</table></body></html>

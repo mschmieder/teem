@@ -1,0 +1,550 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/limn/polyfilter.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Call to 'malloc' has an allocation size of 0 bytes -->
+
+<!-- BUGTYPE Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131) -->
+
+<!-- BUGCATEGORY Unix API -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/limn/polyfilter.c -->
+
+<!-- FILENAME polyfilter.c -->
+
+<!-- FUNCTIONNAME limnPolyDataSmoothHC -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 53be14514445dca09980395000c5389d -->
+
+<!-- BUGLINE 434 -->
+
+<!-- BUGCOLUMN 22 -->
+
+<!-- BUGPATHLENGTH 16 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/limn/polyfilter.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 434, column 22</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Call to 'malloc' has an allocation size of 0 bytes</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>Copyright (C) 2011  Thomas Schultz</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "limn.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">limnPolyDataSpiralTubeWrap(limnPolyData *pldOut, <span class='keyword'>const</span> limnPolyData *pldIn,</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">                           <span class='keyword'>unsigned</span> <span class='keyword'>int</span> infoBitFlag, Nrrd *nvertmap,</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line">                           <span class='keyword'>unsigned</span> <span class='keyword'>int</span> tubeFacet, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> endFacet,</td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">                           <span class='keyword'>double</span> radius) {</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"limnPolyDataSpiralTubeWrap"</span>;</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">  <span class='keyword'>double</span> *cost, *sint;</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> tubeVertNum = 0, tubeIndxNum = 0, primIdx, pi, *vertmap;</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> inVertTotalIdx = 0, outVertTotalIdx = 0, outIndxIdx = 0;</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">  <span class='keyword'>int</span> color;</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">  <span class='keyword'>if</span> (!( pldOut &amp;&amp; pldIn )) {</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">  <span class='keyword'>if</span> ((1 &lt;&lt; limnPrimitiveLineStrip) != limnPolyDataPrimitiveTypes(pldIn)) {</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: sorry, can only handle %s primitives"</span>, me,</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">             airEnumStr(limnPrimitive, limnPrimitiveLineStrip));</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">  <span class='keyword'>for</span> (primIdx=0; primIdx&lt;pldIn-&gt;primNum; primIdx++) {</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> tvni, tini;</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">    <span class='keyword'>if</span> (endFacet) {</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">      tvni = tubeFacet*(2*endFacet + pldIn-&gt;icnt[primIdx]) + 1;</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">      tini = 2*tubeFacet*(2*endFacet + pldIn-&gt;icnt[primIdx] + 1) -2;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">      tvni = tubeFacet*(2 + pldIn-&gt;icnt[primIdx]);</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">      tini = 2*tubeFacet*(1 + pldIn-&gt;icnt[primIdx]);</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">    tubeVertNum += tvni;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">    tubeIndxNum += tini;</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">  <span class='keyword'>if</span> (limnPolyDataAlloc(pldOut,</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">                        <span class='comment'>/* sorry have to have normals, even if they weren't</span></td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">                           <span class='comment'>asked for, because currently they're used as part</span></td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">                           <span class='comment'>of vertex position calc */</span></td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">                        (infoBitFlag | (1 &lt;&lt; limnPolyDataInfoNorm)),</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">                        tubeVertNum, tubeIndxNum, pldIn-&gt;primNum)) {</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: trouble allocating output"</span>, me);</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">  <span class='keyword'>if</span> (nvertmap) {</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    <span class='keyword'>if</span> (nrrdMaybeAlloc_va(nvertmap, nrrdTypeUInt, 1,</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">                          <span class='macro'>AIR_CAST(size_t, tubeVertNum)<span class='expansion'>((size_t)(tubeVertNum))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">      biffMovef(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble allocating vert map"</span>, me);</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">    vertmap = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span> *, nvertmap-&gt;data)<span class='expansion'>((unsigned int *)(nvertmap-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">    vertmap = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">  color = ((infoBitFlag &amp; (1 &lt;&lt; limnPolyDataInfoRGBA))</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">           &amp;&amp; (limnPolyDataInfoBitFlag(pldIn) &amp; (1 &lt;&lt; limnPolyDataInfoRGBA)));</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">  cost = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, calloc(tubeFacet, <span class='keyword'>sizeof</span>(<span class='keyword'>double</span>)))<span class='expansion'>((double *)(calloc(tubeFacet, sizeof(double))))</span></span>;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">  sint = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, calloc(tubeFacet, <span class='keyword'>sizeof</span>(<span class='keyword'>double</span>)))<span class='expansion'>((double *)(calloc(tubeFacet, sizeof(double))))</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  airMopAdd(mop, cost, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">  airMopAdd(mop, sint, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">  <span class='keyword'>if</span> (!(cost &amp;&amp; sint)) {</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate lookup tables"</span>, me);</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">  <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">    <span class='keyword'>double</span> angle;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    angle = <span class='macro'>AIR_AFFINE(0, pi, tubeFacet, 0, 2*AIR_PI)<span class='expansion'>( ((double)(2*3.14159265358979323846)-(0))*((double)(pi)-(0))<br> / ((double)(tubeFacet)-(0)) + (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">    cost[pi] = cos(angle);</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">    sint[pi] = sin(angle);</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">  <span class='keyword'>for</span> (primIdx=0; primIdx&lt;pldIn-&gt;primNum; primIdx++) {</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> inVertIdx;</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">    pldOut-&gt;type[primIdx] = limnPrimitiveTriangleStrip;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">    <span class='keyword'>if</span> (endFacet) {</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">      pldOut-&gt;icnt[primIdx] =</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">        2*tubeFacet*(2*endFacet + pldIn-&gt;icnt[primIdx] + 1) - 2;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">      pldOut-&gt;icnt[primIdx] =</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">        2*tubeFacet*(1 + pldIn-&gt;icnt[primIdx]);</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    <span class='keyword'>for</span> (inVertIdx=0;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">         inVertIdx&lt;pldIn-&gt;icnt[primIdx];</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">         inVertIdx++) {</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> forwIdx, backIdx, tubeEndIdx;</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">      <span class='keyword'>double</span> tang[3], tmp, scl, step, perp[3], pimp[3];</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">      <span class='comment'>/* inVrt = pldIn-&gt;vert + pldIn-&gt;indx[inVertTotalIdx]; */</span></td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">      <span class='keyword'>if</span> (0 == inVertIdx) {</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">        forwIdx = inVertTotalIdx+1;</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">        backIdx = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">        scl = 1;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">      } <span class='keyword'>else</span> <span class='keyword'>if</span> (pldIn-&gt;icnt[primIdx]-1 == inVertIdx) {</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">        forwIdx = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">        backIdx = inVertTotalIdx-1;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">        scl = 1;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">        forwIdx = inVertTotalIdx+1;</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        backIdx = inVertTotalIdx-1;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">        scl = 0.5;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">      <span class='keyword'>if</span> (1 == pldIn-&gt;icnt[primIdx]) {</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        <span class='macro'>ELL_3V_SET(tang, 0, 0, 1)<span class='expansion'>((tang)[0] = (0), (tang)[1] = (0), (tang)[2] = (1))</span></span>; <span class='comment'>/* completely arbitrary, as it must be */</span></td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">        step = 0;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        <span class='macro'>ELL_3V_SUB(tang,<span class='expansion'>((tang)[0] = (pldIn-&gt;xyzw + 4*forwIdx)[0] - (pldIn-&gt;xyzw<br> + 4*backIdx)[0], (tang)[1] = (pldIn-&gt;xyzw + 4*forwIdx)[1]<br> - (pldIn-&gt;xyzw + 4*backIdx)[1], (tang)[2] = (pldIn-&gt;xyzw<br> + 4*forwIdx)[2] - (pldIn-&gt;xyzw + 4*backIdx)[2])</span></span></td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                   <span class='macro'>pldIn-&gt;xyzw + 4*forwIdx,<span class='expansion'>((tang)[0] = (pldIn-&gt;xyzw + 4*forwIdx)[0] - (pldIn-&gt;xyzw<br> + 4*backIdx)[0], (tang)[1] = (pldIn-&gt;xyzw + 4*forwIdx)[1]<br> - (pldIn-&gt;xyzw + 4*backIdx)[1], (tang)[2] = (pldIn-&gt;xyzw<br> + 4*forwIdx)[2] - (pldIn-&gt;xyzw + 4*backIdx)[2])</span></span></td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">                   <span class='macro'>pldIn-&gt;xyzw + 4*backIdx)<span class='expansion'>((tang)[0] = (pldIn-&gt;xyzw + 4*forwIdx)[0] - (pldIn-&gt;xyzw<br> + 4*backIdx)[0], (tang)[1] = (pldIn-&gt;xyzw + 4*forwIdx)[1]<br> - (pldIn-&gt;xyzw + 4*backIdx)[1], (tang)[2] = (pldIn-&gt;xyzw<br> + 4*forwIdx)[2] - (pldIn-&gt;xyzw + 4*backIdx)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">        <span class='macro'>ELL_3V_NORM(tang, tang, step)<span class='expansion'>(step = (sqrt((((tang))[0]*((tang))[0] + ((tang))[1]*((tang))<br>[1] + ((tang))[2]*((tang))[2]))), ((tang)[0] = (1.0/step)*(tang<br>)[0], (tang)[1] = (1.0/step)*(tang)[1], (tang)[2] = (1.0/step<br>)*(tang)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">        step *= scl;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">      <span class='keyword'>if</span> (0 == inVertIdx || 1 == pldIn-&gt;icnt[primIdx]) {</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">        ell_3v_perp_d(perp, tang);</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">        <span class='comment'>/* transport last perp forwards */</span></td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">        <span class='keyword'>double</span> dot;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">        dot = <span class='macro'>ELL_3V_DOT(perp, tang)<span class='expansion'>((perp)[0]*(tang)[0] + (perp)[1]*(tang)[1] + (perp)[2]*(tang)<br>[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">        <span class='macro'>ELL_3V_SCALE_ADD2(perp, 1.0, perp, -dot, tang)<span class='expansion'>((perp)[0] = (1.0)*(perp)[0] + (-dot)*(tang)[0], (perp)[1] = (<br>1.0)*(perp)[1] + (-dot)*(tang)[1], (perp)[2] = (1.0)*(perp)[2<br>] + (-dot)*(tang)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">      <span class='macro'>ELL_3V_NORM(perp, perp, tmp)<span class='expansion'>(tmp = (sqrt((((perp))[0]*((perp))[0] + ((perp))[1]*((perp))[<br>1] + ((perp))[2]*((perp))[2]))), ((perp)[0] = (1.0/tmp)*(perp<br>)[0], (perp)[1] = (1.0/tmp)*(perp)[1], (perp)[2] = (1.0/tmp)*<br>(perp)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">      <span class='macro'>ELL_3V_CROSS(pimp, perp, tang)<span class='expansion'>((pimp)[0] = (perp)[1]*(tang)[2] - (perp)[2]*(tang)[1], (pimp<br>)[1] = (perp)[2]*(tang)[0] - (perp)[0]*(tang)[2], (pimp)[2] =<br> (perp)[0]*(tang)[1] - (perp)[1]*(tang)[0])</span></span>;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">      <span class='comment'>/* (perp, pimp, tang) is a left-handed frame, on purpose */</span></td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">      <span class='comment'>/*  limnVrt *outVrt; */</span></td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">      <span class='comment'>/* -------------------------------------- BEGIN initial endcap */</span></td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">      <span class='keyword'>if</span> (0 == inVertIdx) {</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>int</span> startIdx, ei;</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">        startIdx = outVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">        <span class='keyword'>if</span> (endFacet) {</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">          <span class='keyword'>for</span> (ei=0; ei&lt;endFacet; ei++) {</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">            <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">              <span class='keyword'>double</span> costh, sinth, cosph, sinph, phi, theta;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">              phi = (<span class='macro'>AIR_AFFINE(0, ei, endFacet, 0, AIR_PI/2)<span class='expansion'>( ((double)(3.14159265358979323846/2)-(0))*((double)(ei)-(0))<br> / ((double)(endFacet)-(0)) + (0))</span></span></td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">                     + <span class='macro'>AIR_AFFINE(0, pi, tubeFacet,<span class='expansion'>( ((double)(3.14159265358979323846/2)-(0))*((double)(pi)-(0))<br> / ((double)(tubeFacet)-(0)) + (0))</span></span></td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                                  <span class='macro'>0, AIR_PI/2)<span class='expansion'>( ((double)(3.14159265358979323846/2)-(0))*((double)(pi)-(0))<br> / ((double)(tubeFacet)-(0)) + (0))</span></span>/endFacet);</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">              theta = <span class='macro'>AIR_AFFINE(0, pi, tubeFacet, 0.0, 2*AIR_PI)<span class='expansion'>( ((double)(2*3.14159265358979323846)-(0.0))*((double)(pi)-(0<br>)) / ((double)(tubeFacet)-(0)) + (0.0))</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">              cosph = cos(phi);</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">              sinph = sin(phi);</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">              costh = cos(theta);</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">              sinth = sin(theta);</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">              <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;norm + 3*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span></td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                                   <span class='macro'>-cosph, tang,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span></td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                                   <span class='macro'>costh*sinph, perp,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                                   <span class='macro'>sinth*sinph, pimp)<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">              <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;xyzw + 4*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (-step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2)*(tang)[<br>2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">                                   <span class='macro'>1, pldIn-&gt;xyzw + 4*inVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (-step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2)*(tang)[<br>2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">                                   <span class='macro'>-step/2, tang,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (-step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2)*(tang)[<br>2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">                                   <span class='macro'>radius,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (-step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2)*(tang)[<br>2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">                                   <span class='macro'>pldOut-&gt;norm + 3*outVertTotalIdx)<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (-step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2)*(tang)[<br>2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">              (pldOut-&gt;xyzw + 4*outVertTotalIdx)[3] = 1.0;</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">              <span class='keyword'>if</span> (vertmap) {</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">                vertmap[outVertTotalIdx] = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">              }</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">              <span class='keyword'>if</span> (color) {</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">                <span class='macro'>ELL_4V_COPY(pldOut-&gt;rgba + 4*outVertTotalIdx,<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span></td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">                            <span class='macro'>pldIn-&gt;rgba + 4*inVertTotalIdx)<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">              }</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">              outVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">          <span class='keyword'>for</span> (pi=1; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">            pldOut-&gt;indx[outIndxIdx++] = startIdx;</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">            pldOut-&gt;indx[outIndxIdx++] = startIdx + pi;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">          <span class='keyword'>for</span> (ei=0; ei&lt;endFacet; ei++) {</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">            <span class='comment'>/* at the highest ei we're actually linking with the first</span></td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">               <span class='comment'>row of vertices at the start of the tube */</span></td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">            <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">              pldOut-&gt;indx[outIndxIdx++] = (startIdx + pi</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">                                            + (ei + 0)*tubeFacet);</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">              pldOut-&gt;indx[outIndxIdx++] = (startIdx + pi</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">                                            + (ei + 1)*tubeFacet);</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">          <span class='comment'>/* no endcap, open tube */</span></td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">          <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">            <span class='keyword'>double</span> costh, sinth, theta;</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">            theta = <span class='macro'>AIR_AFFINE(0, pi, tubeFacet, 0.0, 2*AIR_PI)<span class='expansion'>( ((double)(2*3.14159265358979323846)-(0.0))*((double)(pi)-(0<br>)) / ((double)(tubeFacet)-(0)) + (0.0))</span></span>;</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">            costh = cos(theta);</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">            sinth = sin(theta);</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">            <span class='macro'>ELL_3V_SCALE_ADD2_TT(pldOut-&gt;norm + 3*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((costh)*<br>(perp)[0] + (sinth)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((costh)*(perp)[1] + (sinth)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((costh)*(perp)[2<br>] + (sinth)*(pimp)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">                                 <span class='macro'>costh, perp,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((costh)*<br>(perp)[0] + (sinth)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((costh)*(perp)[1] + (sinth)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((costh)*(perp)[2<br>] + (sinth)*(pimp)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">                                 <span class='macro'>sinth, pimp)<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((costh)*<br>(perp)[0] + (sinth)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((costh)*(perp)[1] + (sinth)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((costh)*(perp)[2<br>] + (sinth)*(pimp)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">            <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;xyzw + 4*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2 + step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (-step/2 + step/(2<br>*tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2 + step/(<br>2*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">                                 <span class='macro'>1, pldIn-&gt;xyzw + 4*inVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2 + step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (-step/2 + step/(2<br>*tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2 + step/(<br>2*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">                                 <span class='macro'>-step/2 + step/(2*tubeFacet), tang,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2 + step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (-step/2 + step/(2<br>*tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2 + step/(<br>2*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">                                 <span class='macro'>radius, pldOut-&gt;norm + 3*outVertTotalIdx)<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (-step/2 + step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (-step/2 + step/(2<br>*tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (-step/2 + step/(<br>2*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">            (pldOut-&gt;xyzw + 4*outVertTotalIdx)[3] = 1.0;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">            <span class='keyword'>if</span> (vertmap) {</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">              vertmap[outVertTotalIdx] = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">            <span class='keyword'>if</span> (color) {</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">              <span class='macro'>ELL_4V_COPY(pldOut-&gt;rgba + 4*outVertTotalIdx,<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span></td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">                          <span class='macro'>pldIn-&gt;rgba + 4*inVertTotalIdx)<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">            outVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">          <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">            pldOut-&gt;indx[outIndxIdx++] = (startIdx + pi + 0*tubeFacet);</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">            pldOut-&gt;indx[outIndxIdx++] = (startIdx + pi + 1*tubeFacet);</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">      } <span class='comment'>/* if (0 == inVertIdx) */</span></td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">      <span class='comment'>/* -------------------------------------- END initial endcap */</span></td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">      <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">        <span class='keyword'>double</span> shift, cosa, sina;</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">        shift = <span class='macro'>AIR_AFFINE(-0.5, pi, tubeFacet-0.5, -step/2, step/2)<span class='expansion'>( ((double)(step/2)-(-step/2))*((double)(pi)-(-0.5)) / ((double<br>)(tubeFacet-0.5)-(-0.5)) + (-step/2))</span></span>;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">        cosa = cost[pi];</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">        sina = sint[pi];</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">        <span class='comment'>/* outVrt = pldOut-&gt;vert + outVertTotalIdx; */</span></td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">        <span class='macro'>ELL_3V_SCALE_ADD2_TT(pldOut-&gt;norm + 3*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((cosa)*(<br>perp)[0] + (sina)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((cosa)*(perp)[1] + (sina)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((cosa)*(perp)[2]<br> + (sina)*(pimp)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">                             <span class='macro'>cosa, perp, sina, pimp)<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((cosa)*(<br>perp)[0] + (sina)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((cosa)*(perp)[1] + (sina)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((cosa)*(perp)[2]<br> + (sina)*(pimp)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">        <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;xyzw + 4*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (radius)*(pldOut-&gt;norm +<br> 3*outVertTotalIdx)[0] + (shift)*(tang)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[1] + (shift<br>)*(tang)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float<br>)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (radius)*(pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] + (shift)*(tang)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">                             <span class='macro'>1, pldIn-&gt;xyzw + 4*inVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (radius)*(pldOut-&gt;norm +<br> 3*outVertTotalIdx)[0] + (shift)*(tang)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[1] + (shift<br>)*(tang)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float<br>)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (radius)*(pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] + (shift)*(tang)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">                             <span class='macro'>radius,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (radius)*(pldOut-&gt;norm +<br> 3*outVertTotalIdx)[0] + (shift)*(tang)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[1] + (shift<br>)*(tang)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float<br>)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (radius)*(pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] + (shift)*(tang)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">                             <span class='macro'>pldOut-&gt;norm + 3*outVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (radius)*(pldOut-&gt;norm +<br> 3*outVertTotalIdx)[0] + (shift)*(tang)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[1] + (shift<br>)*(tang)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float<br>)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (radius)*(pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] + (shift)*(tang)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">                             <span class='macro'>shift, tang)<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (radius)*(pldOut-&gt;norm +<br> 3*outVertTotalIdx)[0] + (shift)*(tang)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[1] + (shift<br>)*(tang)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float<br>)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (radius)*(pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] + (shift)*(tang)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">        (pldOut-&gt;xyzw + 4*outVertTotalIdx)[3] = 1.0;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">        pldOut-&gt;indx[outIndxIdx++] = outVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">        pldOut-&gt;indx[outIndxIdx++] = outVertTotalIdx + tubeFacet;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">        <span class='keyword'>if</span> (vertmap) {</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">          vertmap[outVertTotalIdx] = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">        <span class='keyword'>if</span> (color) {</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">          <span class='macro'>ELL_4V_COPY(pldOut-&gt;rgba + 4*outVertTotalIdx,<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span></td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">                      <span class='macro'>pldIn-&gt;rgba + 4*inVertTotalIdx)<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">        outVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">      tubeEndIdx = outVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">      <span class='comment'>/* -------------------------------------- BEGIN final endcap */</span></td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">      <span class='keyword'>if</span> (inVertIdx == pldIn-&gt;icnt[primIdx]-1) {</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ei;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">        <span class='keyword'>if</span> (endFacet) {</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">          <span class='keyword'>for</span> (ei=0; ei&lt;endFacet; ei++) {</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">            <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">              <span class='keyword'>double</span> costh, sinth, cosph, sinph, phi, theta;</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">              phi = (<span class='macro'>AIR_AFFINE(0, ei, endFacet, AIR_PI/2, AIR_PI)<span class='expansion'>( ((double)(3.14159265358979323846)-(3.14159265358979323846/2<br>))*((double)(ei)-(0)) / ((double)(endFacet)-(0)) + (3.14159265358979323846<br>/2))</span></span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                     + <span class='macro'>AIR_AFFINE(0, pi, tubeFacet,<span class='expansion'>( ((double)(3.14159265358979323846/2)-(0))*((double)(pi)-(0))<br> / ((double)(tubeFacet)-(0)) + (0))</span></span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">                                  <span class='macro'>0, AIR_PI/2)<span class='expansion'>( ((double)(3.14159265358979323846/2)-(0))*((double)(pi)-(0))<br> / ((double)(tubeFacet)-(0)) + (0))</span></span>/endFacet);</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">              theta = <span class='macro'>AIR_AFFINE(0, pi, tubeFacet, 0.0, 2*AIR_PI)<span class='expansion'>( ((double)(2*3.14159265358979323846)-(0.0))*((double)(pi)-(0<br>)) / ((double)(tubeFacet)-(0)) + (0.0))</span></span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">              cosph = cos(phi);</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">              sinph = sin(phi);</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">              costh = cos(theta);</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">              sinth = sin(theta);</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">              <span class='comment'>/* outVrt = pldOut-&gt;vert + outVertTotalIdx; */</span></td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">              <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;norm + 3*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span></td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                                   <span class='macro'>-cosph, tang,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span></td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">                                   <span class='macro'>costh*sinph, perp,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span></td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">                                   <span class='macro'>sinth*sinph, pimp)<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((-cosph)<br>*(tang)[0] + (costh*sinph)*(perp)[0] + (sinth*sinph)*(pimp)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((-cosph<br>)*(tang)[1] + (costh*sinph)*(perp)[1] + (sinth*sinph)*(pimp)[<br>1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((-cosph<br>)*(tang)[2] + (costh*sinph)*(perp)[2] + (sinth*sinph)*(pimp)[<br>2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">              <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;xyzw + 4*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">                                   <span class='macro'>1, pldIn-&gt;xyzw + 4*inVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">                                   <span class='macro'>step/2, tang,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">                                   <span class='macro'>radius,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">                                   <span class='macro'>pldOut-&gt;norm + 3*outVertTotalIdx)<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">              (pldOut-&gt;xyzw + 4*outVertTotalIdx)[3] = 1.0;</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">              <span class='keyword'>if</span> (vertmap) {</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">                vertmap[outVertTotalIdx] = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">              }</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">              <span class='keyword'>if</span> (color) {</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">                <span class='macro'>ELL_4V_COPY(pldOut-&gt;rgba + 4*outVertTotalIdx,<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span></td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">                            <span class='macro'>pldIn-&gt;rgba + 4*inVertTotalIdx)<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">              }</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">              outVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">          <span class='comment'>/* outVrt = pldOut-&gt;vert + outVertTotalIdx; */</span></td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">          <span class='macro'>ELL_3V_COPY_TT(pldOut-&gt;norm + 3*outVertTotalIdx, <span class='keyword'>float</span>, tang)<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((tang)[0<br>])), (pldOut-&gt;norm + 3*outVertTotalIdx)[1] = ((float)((tang<br>)[1])), (pldOut-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((<br>tang)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">          <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;xyzw + 4*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">                               <span class='macro'>1, pldIn-&gt;xyzw + 4*inVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">                               <span class='macro'>step/2, tang,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">                               <span class='macro'>radius,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">                               <span class='macro'>pldOut-&gt;norm + 3*outVertTotalIdx)<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2)*(tang)[0] + (radius<br>)*(pldOut-&gt;norm + 3*outVertTotalIdx)[0])), (pldOut-&gt;xyzw<br> + 4*outVertTotalIdx)[1] = ((float)((1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx<br>)[1] + (step/2)*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2)*(tang)[2<br>] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">          (pldOut-&gt;xyzw + 4*outVertTotalIdx)[3] = 1.0;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">          <span class='keyword'>if</span> (vertmap) {</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">            vertmap[outVertTotalIdx] = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">          outVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">          <span class='keyword'>for</span> (ei=0; ei&lt;endFacet-1; ei++) {</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">            <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">              pldOut-&gt;indx[outIndxIdx++] = (tubeEndIdx + pi</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">                                            + (ei + 0)*tubeFacet);</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">              pldOut-&gt;indx[outIndxIdx++] = (tubeEndIdx + pi</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">                                            + (ei + 1)*tubeFacet);</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">          <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">            pldOut-&gt;indx[outIndxIdx++] = (tubeEndIdx + pi</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">                                          + (endFacet - 1)*tubeFacet);</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">            pldOut-&gt;indx[outIndxIdx++] = (tubeEndIdx</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">                                          + (endFacet - 0)*tubeFacet);</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">          <span class='comment'>/* no endcap, open tube */</span></td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">          <span class='keyword'>for</span> (pi=0; pi&lt;tubeFacet; pi++) {</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">            <span class='keyword'>double</span> costh, sinth, theta;</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">            theta = <span class='macro'>AIR_AFFINE(0, pi, tubeFacet, 0.0, 2*AIR_PI)<span class='expansion'>( ((double)(2*3.14159265358979323846)-(0.0))*((double)(pi)-(0<br>)) / ((double)(tubeFacet)-(0)) + (0.0))</span></span>;</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">            costh = cos(theta);</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">            sinth = sin(theta);</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">            <span class='macro'>ELL_3V_SCALE_ADD2_TT(pldOut-&gt;norm + 3*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((costh)*<br>(perp)[0] + (sinth)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((costh)*(perp)[1] + (sinth)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((costh)*(perp)[2<br>] + (sinth)*(pimp)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">                                 <span class='macro'>costh, perp,<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((costh)*<br>(perp)[0] + (sinth)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((costh)*(perp)[1] + (sinth)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((costh)*(perp)[2<br>] + (sinth)*(pimp)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">                                 <span class='macro'>sinth, pimp)<span class='expansion'>((pldOut-&gt;norm + 3*outVertTotalIdx)[0] = ((float)((costh)*<br>(perp)[0] + (sinth)*(pimp)[0])), (pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1] = ((float)((costh)*(perp)[1] + (sinth)*(pimp)[1])), (pldOut<br>-&gt;norm + 3*outVertTotalIdx)[2] = ((float)((costh)*(perp)[2<br>] + (sinth)*(pimp)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">            <span class='macro'>ELL_3V_SCALE_ADD3_TT(pldOut-&gt;xyzw + 4*outVertTotalIdx, <span class='keyword'>float</span>,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2 - step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (step/2 - step/(2*<br>tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2 - step/(2<br>*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">                                 <span class='macro'>1, pldIn-&gt;xyzw + 4*inVertTotalIdx,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2 - step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (step/2 - step/(2*<br>tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2 - step/(2<br>*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">                                 <span class='macro'>step/2 - step/(2*tubeFacet), tang,<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2 - step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (step/2 - step/(2*<br>tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2 - step/(2<br>*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">                                 <span class='macro'>radius, pldOut-&gt;norm + 3*outVertTotalIdx)<span class='expansion'>((pldOut-&gt;xyzw + 4*outVertTotalIdx)[0] = ((float)((1)*(pldIn<br>-&gt;xyzw + 4*inVertTotalIdx)[0] + (step/2 - step/(2*tubeFacet<br>))*(tang)[0] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx)<br>[0])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[1] = ((float)((1<br>)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[1] + (step/2 - step/(2*<br>tubeFacet))*(tang)[1] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[1])), (pldOut-&gt;xyzw + 4*outVertTotalIdx)[2] = ((float)((<br>1)*(pldIn-&gt;xyzw + 4*inVertTotalIdx)[2] + (step/2 - step/(2<br>*tubeFacet))*(tang)[2] + (radius)*(pldOut-&gt;norm + 3*outVertTotalIdx<br>)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">            (pldOut-&gt;xyzw + 4*outVertTotalIdx)[3] = 1.0;</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">            <span class='keyword'>if</span> (vertmap) {</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">              vertmap[outVertTotalIdx] = inVertTotalIdx;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">            <span class='keyword'>if</span> (color) {</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">              <span class='macro'>ELL_4V_COPY(pldOut-&gt;rgba + 4*outVertTotalIdx,<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span></td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">                          <span class='macro'>pldIn-&gt;rgba + 4*inVertTotalIdx)<span class='expansion'>((pldOut-&gt;rgba + 4*outVertTotalIdx)[0] = (pldIn-&gt;rgba +<br> 4*inVertTotalIdx)[0], (pldOut-&gt;rgba + 4*outVertTotalIdx)[<br>1] = (pldIn-&gt;rgba + 4*inVertTotalIdx)[1], (pldOut-&gt;rgba<br> + 4*outVertTotalIdx)[2] = (pldIn-&gt;rgba + 4*inVertTotalIdx<br>)[2], (pldOut-&gt;rgba + 4*outVertTotalIdx)[3] = (pldIn-&gt;rgba<br> + 4*inVertTotalIdx)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">            outVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">      } <span class='comment'>/* if (inVertIdx == pldIn-&gt;icnt[primIdx]-1) */</span></td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">      <span class='comment'>/* -------------------------------------- END final endcap */</span></td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">      inVertTotalIdx++;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line"><span class='comment'>/* Straightforward implementation of Laplacian+HC mesh smoothing, as</span></td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line"> <span class='comment'>* described by Vollmer et al., Improved Laplacian Smoothing of Noisy</span></td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line"> <span class='comment'>* Surface Meshes, Eurographics/CGF 18(3), 1999</span></td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line"> <span class='comment'>*</span></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line"> <span class='comment'>* pld is the polydata you want smoothed</span></td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line"> <span class='comment'>* neighbors / idx is from limnPolyDataNeighborArrayComp</span></td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line"> <span class='comment'>* alpha / beta are parameters of the smoothing (try a=0,b=0.5)</span></td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line"> <span class='comment'>* iter is the number of iterations you want to run (try iter=10)</span></td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line"> <span class='comment'>*</span></td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line"> <span class='comment'>* Returns -1 and leaves a message on biff upon error.</span></td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line"> <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">limnPolyDataSmoothHC(limnPolyData *pld, <span class='keyword'>int</span> *neighbors, <span class='keyword'>int</span> *idx,</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">                     <span class='keyword'>double</span> alpha, <span class='keyword'>double</span> beta, <span class='keyword'>int</span> iter) {</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"limnPolyDataSmoothHC"</span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">  <span class='keyword'>float</span> *orig, *in, *out, *b;</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> v;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">  <span class='keyword'>int</span> i, nb;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">  mop=airMopNew();</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">  <span class='keyword'>if</span> (<span class="mrange">pld==<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span> || <span class="mrange">neighbors==<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span> || <span class="mrange">idx==<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'pld' is not equal to null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:20ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'neighbors' is not equal to null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:39ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'idx' is not equal to null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> -1;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">  <span class='keyword'>if</span> (alpha&lt;0 || alpha&gt;1 || beta&lt;0 || beta&gt;1) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: alpha/beta outside parameter range [0,1]"</span>, me);</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> -1;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">  orig = in = pld-&gt;xyzw;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">  out = (<span class='keyword'>float</span>*) malloc(<span class='keyword'>sizeof</span>(<span class='keyword'>float</span>)*4*pld-&gt;xyzwNum);</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">  <span class='keyword'>if</span> (<span class="mrange">out==<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'out' is not equal to null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate output buffer"</span>, me);</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> -1;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">  airMopAdd(mop, out, airFree, airMopOnError);</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">  b = (<span class='keyword'>float</span>*) malloc(<span class='keyword'>sizeof</span>(<span class='keyword'>float</span>)*4*pld-&gt;xyzwNum);</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">  <span class='keyword'>if</span> (<span class="mrange">b==<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:7ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'b' is not equal to null</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">    biffAddf(<span class='macro'>LIMN<span class='expansion'>limnBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate buffer b"</span>, me);</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> -1;</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">  airMopAdd(mop, b, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">  <span class='keyword'>for</span> (i=0; <span class="mrange">i&lt;iter</span>; i++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Assuming 'i' is &lt; 'iter'</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">    <span class='comment'>/* Laplacian smoothing / compute bs */</span></td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">    <span class='keyword'>for</span> (v=0; v&lt;pld-&gt;xyzwNum; v++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 420</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">      <span class='keyword'>int</span> p=4*v;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">      <span class='keyword'>if</span> (idx[v]==idx[v+1]) {</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        <span class='macro'>ELL_4V_COPY(out+p, in+p)<span class='expansion'>((out+p)[0] = (in+p)[0], (out+p)[1] = (in+p)[1], (out+p)[2] =<br> (in+p)[2], (out+p)[3] = (in+p)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        <span class='macro'>ELL_4V_SET(out+p,0,0,0,0)<span class='expansion'>((out+p)[0] = (0), (out+p)[1] = (0), (out+p)[2] = (0), (out+p<br>)[3] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">        <span class='keyword'>for</span> (nb=idx[v]; nb&lt;idx[v+1]; nb++) {</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">          <span class='macro'>ELL_4V_INCR(out+p, in+4*neighbors[nb])<span class='expansion'>((out+p)[0] += (in+4*neighbors[nb])[0], (out+p)[1] += (in+4*neighbors<br>[nb])[1], (out+p)[2] += (in+4*neighbors[nb])[2], (out+p)[3] +=<br> (in+4*neighbors[nb])[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">        <span class='macro'>ELL_4V_SCALE_TT(out+p, <span class='keyword'>float</span>, 1.0/(idx[v+1]-idx[v]), out+p)<span class='expansion'>((out+p)[0] = ((float)((out+p)[0]*(1.0/(idx[v+1]-idx[v])))), (<br>out+p)[1] = ((float)((out+p)[1]*(1.0/(idx[v+1]-idx[v])))), (out<br>+p)[2] = ((float)((out+p)[2]*(1.0/(idx[v+1]-idx[v])))), (out+<br>p)[3] = ((float)((out+p)[3]*(1.0/(idx[v+1]-idx[v])))))</span></span>;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">      <span class='macro'>ELL_4V_SET_TT(b+p, <span class='keyword'>float</span>, out[p]-(alpha*orig[p]+(1-alpha)*in[p]),<span class='expansion'>((b+p)[0] = ((float)((out[p]-(alpha*orig[p]+(1-alpha)*in[p]))<br>)), (b+p)[1] = ((float)((out[p+1]-(alpha*orig[p+1]+(1-alpha)*<br>in[p+1])))), (b+p)[2] = ((float)((out[p+2]-(alpha*orig[p+2]+(<br>1-alpha)*in[p+2])))), (b+p)[3] = ((float)((out[p+3]-(alpha*orig<br>[p+3]+(1-alpha)*in[p+3])))))</span></span></td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">                    <span class='macro'>out[p+1]-(alpha*orig[p+1]+(1-alpha)*in[p+1]),<span class='expansion'>((b+p)[0] = ((float)((out[p]-(alpha*orig[p]+(1-alpha)*in[p]))<br>)), (b+p)[1] = ((float)((out[p+1]-(alpha*orig[p+1]+(1-alpha)*<br>in[p+1])))), (b+p)[2] = ((float)((out[p+2]-(alpha*orig[p+2]+(<br>1-alpha)*in[p+2])))), (b+p)[3] = ((float)((out[p+3]-(alpha*orig<br>[p+3]+(1-alpha)*in[p+3])))))</span></span></td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                    <span class='macro'>out[p+2]-(alpha*orig[p+2]+(1-alpha)*in[p+2]),<span class='expansion'>((b+p)[0] = ((float)((out[p]-(alpha*orig[p]+(1-alpha)*in[p]))<br>)), (b+p)[1] = ((float)((out[p+1]-(alpha*orig[p+1]+(1-alpha)*<br>in[p+1])))), (b+p)[2] = ((float)((out[p+2]-(alpha*orig[p+2]+(<br>1-alpha)*in[p+2])))), (b+p)[3] = ((float)((out[p+3]-(alpha*orig<br>[p+3]+(1-alpha)*in[p+3])))))</span></span></td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">                    <span class='macro'>out[p+3]-(alpha*orig[p+3]+(1-alpha)*in[p+3]))<span class='expansion'>((b+p)[0] = ((float)((out[p]-(alpha*orig[p]+(1-alpha)*in[p]))<br>)), (b+p)[1] = ((float)((out[p+1]-(alpha*orig[p+1]+(1-alpha)*<br>in[p+1])))), (b+p)[2] = ((float)((out[p+2]-(alpha*orig[p+2]+(<br>1-alpha)*in[p+2])))), (b+p)[3] = ((float)((out[p+3]-(alpha*orig<br>[p+3]+(1-alpha)*in[p+3])))))</span></span>;</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">    <span class='comment'>/* HC correction step */</span></td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">    <span class='keyword'>for</span> (v=0; v&lt;pld-&gt;xyzwNum; v++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 432</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">      <span class='keyword'>int</span> p=4*v;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">      <span class='keyword'>if</span> (idx[v]&lt;idx[v+1]) {</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">        <span class='keyword'>float</span> avgb[4]={0,0,0,0};</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">        <span class='keyword'>for</span> (nb=idx[v]; nb&lt;idx[v+1]; nb++) {</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">          <span class='macro'>ELL_4V_INCR(avgb, b+4*neighbors[nb])<span class='expansion'>((avgb)[0] += (b+4*neighbors[nb])[0], (avgb)[1] += (b+4*neighbors<br>[nb])[1], (avgb)[2] += (b+4*neighbors[nb])[2], (avgb)[3] += (<br>b+4*neighbors[nb])[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">        <span class='macro'>ELL_4V_SCALE_TT(avgb, <span class='keyword'>float</span>, 1.0/(idx[v+1]-idx[v]), avgb)<span class='expansion'>((avgb)[0] = ((float)((avgb)[0]*(1.0/(idx[v+1]-idx[v])))), (avgb<br>)[1] = ((float)((avgb)[1]*(1.0/(idx[v+1]-idx[v])))), (avgb)[2<br>] = ((float)((avgb)[2]*(1.0/(idx[v+1]-idx[v])))), (avgb)[3] =<br> ((float)((avgb)[3]*(1.0/(idx[v+1]-idx[v])))))</span></span>;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">        <span class='macro'>ELL_4V_LERP_TT(avgb, <span class='keyword'>float</span>, beta, b+p, avgb)<span class='expansion'>((avgb)[0] = ((float)((((beta))*(((avgb)[0]) - ((b+p)[0])) + (<br>(b+p)[0])))), (avgb)[1] = ((float)((((beta))*(((avgb)[1]) - (<br>(b+p)[1])) + ((b+p)[1])))), (avgb)[2] = ((float)((((beta))*((<br>(avgb)[2]) - ((b+p)[2])) + ((b+p)[2])))), (avgb)[3] = ((float<br>)((((beta))*(((avgb)[3]) - ((b+p)[3])) + ((b+p)[3])))))</span></span>;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">        <span class='macro'>ELL_4V_SUB(out+p,out+p,avgb)<span class='expansion'>((out+p)[0] = (out+p)[0] - (avgb)[0], (out+p)[1] = (out+p)[1]<br> - (avgb)[1], (out+p)[2] = (out+p)[2] - (avgb)[2], (out+p)[3]<br> = (out+p)[3] - (avgb)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">    <span class='keyword'>if</span> (i==0 &amp;&amp; <span class="mrange">iter&gt;1</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Assuming 'iter' is &gt; 1</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">      in = out;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">      out = (<span class='keyword'>float</span>*) malloc(<span class="mrange"><span class='keyword'>sizeof</span>(<span class='keyword'>float</span>)*4*pld-&gt;xyzwNum</span>);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:22ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Call to 'malloc' has an allocation size of 0 bytes</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">    } <span class='keyword'>else</span> { <span class='comment'>/* swap */</span></td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">      <span class='keyword'>float</span> *tmp = in; in = out; out = tmp;</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">  <span class='keyword'>if</span> (iter&gt;1)</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">    airFree(out);</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">  airFree(pld-&gt;xyzw);</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">  pld-&gt;xyzw = in;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">}</td></tr>
+</table></body></html>

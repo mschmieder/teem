@@ -1,0 +1,1105 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/seek/extract.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Potential leak of memory pointed to by 'bag' -->
+
+<!-- BUGTYPE Memory leak -->
+
+<!-- BUGCATEGORY Memory Error -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/seek/extract.c -->
+
+<!-- FILENAME extract.c -->
+
+<!-- FUNCTIONNAME surfaceExtract -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 9ba5f88e7f6eb0f651bb57c9c4671525 -->
+
+<!-- BUGLINE 903 -->
+
+<!-- BUGCOLUMN 5 -->
+
+<!-- BUGPATHLENGTH 13 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/seek/extract.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 903, column 5</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'bag'</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "seek.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "privateSeek.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='keyword'>static</span> baggage *</td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">baggageNew(seekContext *sctx) {</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">  baggage *bag;</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sx;</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  bag = <span class='macro'>AIR_CALLOC(1, baggage)<span class='expansion'>(baggage*)(calloc((1), sizeof(baggage)))</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'AIR_CALLOC':
+</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">  <span class='comment'>/* this is basically the mapping from the 12 edges on each voxel to</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">     <span class='comment'>the 5 unique edges for each sample on the slab, based on the lay-out</span></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">     <span class='comment'>defined in the beginning of tables.c */</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">  <span class='comment'>/*                     X      Y */</span></td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">  bag-&gt;evti[ 0] = 0 + 5*(0 + sx*0);</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">  bag-&gt;evti[ 1] = 1 + 5*(0 + sx*0);</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">  bag-&gt;evti[ 2] = 1 + 5*(1 + sx*0);</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">  bag-&gt;evti[ 3] = 0 + 5*(0 + sx*1);</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">  bag-&gt;evti[ 4] = 2 + 5*(0 + sx*0);</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">  bag-&gt;evti[ 5] = 2 + 5*(1 + sx*0);</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">  bag-&gt;evti[ 6] = 2 + 5*(0 + sx*1);</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">  bag-&gt;evti[ 7] = 2 + 5*(1 + sx*1);</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">  bag-&gt;evti[ 8] = 3 + 5*(0 + sx*0);</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">  bag-&gt;evti[ 9] = 4 + 5*(0 + sx*0);</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">  bag-&gt;evti[10] = 4 + 5*(1 + sx*0);</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">  bag-&gt;evti[11] = 3 + 5*(0 + sx*1);</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">  <span class='keyword'>switch</span> (sctx-&gt;type) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Control jumps to 'case seekTypeRidgeSurface:'  at line 53</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">  <span class='keyword'>case</span> seekTypeRidgeSurface:</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">  <span class='keyword'>case</span> seekTypeRidgeSurfaceOP:</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">  <span class='keyword'>case</span> seekTypeRidgeSurfaceT:</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">    bag-&gt;esIdx = 2;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">    bag-&gt;modeSign = -1;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td> Execution continues on line 84</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">  <span class='keyword'>case</span> seekTypeValleySurface:</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  <span class='keyword'>case</span> seekTypeValleySurfaceOP:</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">  <span class='keyword'>case</span> seekTypeValleySurfaceT:</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">    bag-&gt;esIdx = 0;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">    bag-&gt;modeSign = +1;</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">  <span class='keyword'>case</span> seekTypeMaximalSurface:</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">    bag-&gt;esIdx = 0;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">    bag-&gt;modeSign = -1;</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">  <span class='keyword'>case</span> seekTypeMinimalSurface:</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">    bag-&gt;esIdx = 2;</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    bag-&gt;modeSign = +1;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">    <span class='comment'>/* biffAddf(SEEK, "%s: feature type %s not handled", me,</span></td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">       <span class='comment'>airEnumStr(seekType, sctx-&gt;type));</span></td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">       <span class='comment'>return 1;</span></td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">    <span class='comment'>/* without biff, we get as nasty as possible */</span></td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">    bag-&gt;esIdx = <span class='macro'>UINT_MAX<span class='expansion'>(2147483647 *2U +1U)</span></span>;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">    bag-&gt;modeSign = 0;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">  <span class='keyword'>if</span> (seekTypeIsocontour == sctx-&gt;type) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">    <span class='keyword'>if</span> (sctx-&gt;ninscl) {</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">      bag-&gt;scllup = nrrdDLookup[sctx-&gt;ninscl-&gt;type];</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">      bag-&gt;scldata = sctx-&gt;ninscl-&gt;data;</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">      bag-&gt;scllup = nrrdDLookup[sctx-&gt;nsclDerived-&gt;type];</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">      bag-&gt;scldata = sctx-&gt;nsclDerived-&gt;data;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">    bag-&gt;scllup = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    bag-&gt;scldata = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  bag-&gt;xyzwArr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">  bag-&gt;normArr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">  bag-&gt;indxArr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">  <span class='keyword'>return</span> bag;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line"><span class='keyword'>static</span> baggage *</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">baggageNix(baggage *bag) {</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">  <span class='keyword'>if</span> (bag) {</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">    airArrayNix(bag-&gt;normArr);</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">    airArrayNix(bag-&gt;xyzwArr);</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    airArrayNix(bag-&gt;indxArr);</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">    airFree(bag);</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">outputInit(seekContext *sctx, baggage *bag, limnPolyData *lpld) {</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"outputInit"</span>;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> estVertNum, estFaceNum, minI, maxI, valI, *spanHist;</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">  airPtrPtrUnion appu;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">  <span class='keyword'>int</span> E;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  <span class='keyword'>if</span> (seekTypeIsocontour == sctx-&gt;type</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">      &amp;&amp; <span class='macro'>AIR_IN_OP(sctx-&gt;range-&gt;min, sctx-&gt;isovalue, sctx-&gt;range-&gt;max)<span class='expansion'>((sctx-&gt;range-&gt;min) &lt; (sctx-&gt;isovalue) &amp;&amp;<br> (sctx-&gt;isovalue) &lt; (sctx-&gt;range-&gt;max))</span></span>) {</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> estVoxNum=0;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">    <span class='comment'>/* estimate number of voxels, faces, and vertices involved */</span></td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">    spanHist = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>*, sctx-&gt;nspanHist-&gt;data)<span class='expansion'>((unsigned int*)(sctx-&gt;nspanHist-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">    valI = airIndex(sctx-&gt;range-&gt;min, sctx-&gt;isovalue, sctx-&gt;range-&gt;max,</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">                    sctx-&gt;spanSize);</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">    <span class='keyword'>for</span> (minI=0; minI&lt;=valI; minI++) {</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">      <span class='keyword'>for</span> (maxI=valI; maxI&lt;sctx-&gt;spanSize; maxI++) {</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        estVoxNum += spanHist[minI + sctx-&gt;spanSize*maxI];</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">    estVertNum = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, estVoxNum*(sctx-&gt;vertsPerVoxel))<span class='expansion'>((unsigned int)(estVoxNum*(sctx-&gt;vertsPerVoxel)))</span></span>;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">    estFaceNum = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, estVoxNum*(sctx-&gt;facesPerVoxel))<span class='expansion'>((unsigned int)(estVoxNum*(sctx-&gt;facesPerVoxel)))</span></span>;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">    <span class='keyword'>if</span> (sctx-&gt;verbose) {</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: estimated vox --&gt; vert, face: %u --&gt; %u, %u\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">              estVoxNum, estVertNum, estFaceNum);</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">    estVertNum = 0;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">    estFaceNum = 0;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">  <span class='comment'>/* need something non-zero so that pre-allocations below aren't no-ops */</span></td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">  estVertNum = <span class='macro'>AIR_MAX(1, estVertNum)<span class='expansion'>((1) &gt; (estVertNum) ? (1) : (estVertNum))</span></span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">  estFaceNum = <span class='macro'>AIR_MAX(1, estFaceNum)<span class='expansion'>((1) &gt; (estFaceNum) ? (1) : (estFaceNum))</span></span>;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">  <span class='comment'>/* initialize limnPolyData with estimated # faces and vertices */</span></td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">  <span class='comment'>/* we will manage the innards of the limnPolyData entirely ourselves */</span></td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">  <span class='keyword'>if</span> (limnPolyDataAlloc(lpld, 0, 0, 0, 0)) {</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: trouble emptying given polydata"</span>, me);</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">  bag-&gt;xyzwArr = airArrayNew((appu.f = &amp;(lpld-&gt;xyzw), appu.v),</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                             &amp;(lpld-&gt;xyzwNum),</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">                             4*<span class='keyword'>sizeof</span>(<span class='keyword'>float</span>), sctx-&gt;pldArrIncr);</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;normalsFind) {</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">    bag-&gt;normArr = airArrayNew((appu.f = &amp;(lpld-&gt;norm), appu.v),</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                               &amp;(lpld-&gt;normNum),</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                               3*<span class='keyword'>sizeof</span>(<span class='keyword'>float</span>), sctx-&gt;pldArrIncr);</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">    bag-&gt;normArr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">  bag-&gt;indxArr = airArrayNew((appu.ui = &amp;(lpld-&gt;indx), appu.v),</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">                             &amp;(lpld-&gt;indxNum),</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                             <span class='keyword'>sizeof</span>(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>), sctx-&gt;pldArrIncr);</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">  lpld-&gt;primNum = 1;  <span class='comment'>/* for now, its just triangle soup */</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">  lpld-&gt;type = <span class='macro'>AIR_CALLOC(lpld-&gt;primNum, <span class='keyword'>unsigned</span> <span class='keyword'>char</span>)<span class='expansion'>(unsigned char*)(calloc((lpld-&gt;primNum), sizeof(unsigned char<br>)))</span></span>;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">  lpld-&gt;icnt = <span class='macro'>AIR_CALLOC(lpld-&gt;primNum, <span class='keyword'>unsigned</span> <span class='keyword'>int</span>)<span class='expansion'>(unsigned int*)(calloc((lpld-&gt;primNum), sizeof(unsigned int<br>)))</span></span>;</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">  lpld-&gt;type[0] = limnPrimitiveTriangles;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">  lpld-&gt;icnt[0] = 0;  <span class='comment'>/* incremented below */</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  E = 0;</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">  airArrayLenPreSet(bag-&gt;xyzwArr, estVertNum);</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">  E |= !(bag-&gt;xyzwArr-&gt;data);</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;normalsFind) {</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">    airArrayLenPreSet(bag-&gt;normArr, estVertNum);</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">    E |= !(bag-&gt;normArr-&gt;data);</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">  airArrayLenPreSet(bag-&gt;indxArr, 3*estFaceNum);</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">  E |= !(bag-&gt;indxArr-&gt;data);</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">  <span class='keyword'>if</span> (E) {</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: couldn't pre-allocate contour geometry (%p %p %p)"</span>, me,</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">             bag-&gt;xyzwArr-&gt;data,</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">             (sctx-&gt;normalsFind ? bag-&gt;normArr-&gt;data : <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>),</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">             bag-&gt;indxArr-&gt;data);</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">  <span class='comment'>/* initialize output summary info */</span></td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">  sctx-&gt;voxNum = 0;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">  sctx-&gt;vertNum = 0;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">  sctx-&gt;faceNum = 0;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>double</span></td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">sclGet(seekContext *sctx, baggage *bag,</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">       <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xi, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> yi, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> zi) {</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">  zi = <span class='macro'>AIR_MIN(sctx-&gt;sz-1, zi)<span class='expansion'>((sctx-&gt;sz-1) &lt; (zi) ? (sctx-&gt;sz-1) : (zi))</span></span>;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">  <span class='keyword'>return</span> bag-&gt;scllup(bag-&gt;scldata, xi + sctx-&gt;sx*(yi + sctx-&gt;sy*zi));</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">_seekIdxProbe(seekContext *sctx, baggage *bag,</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">              <span class='keyword'>double</span> xi, <span class='keyword'>double</span> yi, <span class='keyword'>double</span> zi) {</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">  <span class='keyword'>double</span> idxOut[4], idxIn[4];</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">  <span class='macro'>AIR_UNUSED(bag)<span class='expansion'>(void)(bag)</span></span>;</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">  <span class='macro'>ELL_4V_SET(idxOut, xi, yi, zi, 1)<span class='expansion'>((idxOut)[0] = (xi), (idxOut)[1] = (yi), (idxOut)[2] = (zi), (<br>idxOut)[3] = (1))</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">  <span class='macro'>ELL_4MV_MUL(idxIn, sctx-&gt;txfIdx, idxOut)<span class='expansion'>((idxIn)[0]=(sctx-&gt;txfIdx)[ 0]*(idxOut)[0]+(sctx-&gt;txfIdx<br>)[ 1]*(idxOut)[1]+(sctx-&gt;txfIdx)[ 2]*(idxOut)[2]+(sctx-&gt;<br>txfIdx)[ 3]*(idxOut)[3], (idxIn)[1]=(sctx-&gt;txfIdx)[ 4]*(idxOut<br>)[0]+(sctx-&gt;txfIdx)[ 5]*(idxOut)[1]+(sctx-&gt;txfIdx)[ 6]*<br>(idxOut)[2]+(sctx-&gt;txfIdx)[ 7]*(idxOut)[3], (idxIn)[2]=(sctx<br>-&gt;txfIdx)[ 8]*(idxOut)[0]+(sctx-&gt;txfIdx)[ 9]*(idxOut)[1<br>]+(sctx-&gt;txfIdx)[10]*(idxOut)[2]+(sctx-&gt;txfIdx)[11]*(idxOut<br>)[3], (idxIn)[3]=(sctx-&gt;txfIdx)[12]*(idxOut)[0]+(sctx-&gt;<br>txfIdx)[13]*(idxOut)[1]+(sctx-&gt;txfIdx)[14]*(idxOut)[2]+(sctx<br>-&gt;txfIdx)[15]*(idxOut)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">  <span class='macro'>ELL_4V_HOMOG(idxIn, idxIn)<span class='expansion'>((idxIn)[0] = (idxIn)[0]/(idxIn)[3], (idxIn)[1] = (idxIn)[1]/<br>(idxIn)[3], (idxIn)[2] = (idxIn)[2]/(idxIn)[3], (idxIn)[3] = 1.0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">  gageProbe(sctx-&gt;gctx, idxIn[0], idxIn[1], idxIn[2]);</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line"><span class='comment'>** this is one of the few things that has to operate on more than one</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line"><span class='comment'>** zi plane at once, and it is honestly probably the primary motivation</span></td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line"><span class='comment'>** for putting zi into the baggage.</span></td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line"><span class='comment'>** NOTE: this is doing some bounds (on the positive x, y, z edges of the</span></td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"><span class='comment'>** volume) that probably should be done closer to the caller</span></td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">evecFlipProbe(seekContext *sctx, baggage *bag,</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">              <span class='keyword'>signed</span> <span class='keyword'>char</span> *flip,  <span class='comment'>/* OUTPUT HERE */</span></td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">              <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xi, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> yi, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ziOff,</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">              <span class='keyword'>unsigned</span> <span class='keyword'>int</span> dx, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> dy, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> dz) {</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"evecFlipProbe"</span>;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sx, sy, sz;</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  <span class='keyword'>double</span> u, du, dot, wantDot, minDu, mode;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">  <span class='keyword'>double</span> current[3], next[3], posNext[3], posA[3], posB[3], evecA[3], evecB[3];</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sy)<span class='expansion'>((unsigned int)(sctx-&gt;sy))</span></span>;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">  sz = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sz)<span class='expansion'>((unsigned int)(sctx-&gt;sz))</span></span>;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">  <span class='keyword'>if</span> (!(xi + dx &lt; sx</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">        &amp;&amp; yi + dy &lt; sy</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">        &amp;&amp; bag-&gt;zi + ziOff + dz &lt; sz)) {</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">    <span class='comment'>/* the edge we're being asked about is outside the volume */</span></td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">    *flip = 0;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">  <span class='comment'>/* Note: Strength checking is no longer performed here.</span></td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">   <span class='comment'>* TS 2009-08-18 */</span></td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">  <span class='comment'>/* this edge is in bounds */</span></td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">  <span class='macro'>ELL_3V_SET(posA, xi, yi, bag-&gt;zi+ziOff)<span class='expansion'>((posA)[0] = (xi), (posA)[1] = (yi), (posA)[2] = (bag-&gt;zi+<br>ziOff))</span></span>;</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">  <span class='macro'>ELL_3V_SET(posB, xi+dx, yi+dy, bag-&gt;zi+ziOff+dz)<span class='expansion'>((posB)[0] = (xi+dx), (posB)[1] = (yi+dy), (posB)[2] = (bag-&gt;<br>zi+ziOff+dz))</span></span>;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">  <span class='macro'>ELL_3V_COPY(evecA, sctx-&gt;evec<span class='expansion'>((evecA)[0] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*(ziOff + 2<br>*(xi + sx*yi))))[0], (evecA)[1] = (sctx-&gt;evec + 3*(bag-&gt;<br>esIdx + 3*(ziOff + 2*(xi + sx*yi))))[1], (evecA)[2] = (sctx-&gt;<br>evec + 3*(bag-&gt;esIdx + 3*(ziOff + 2*(xi + sx*yi))))[2])</span></span></td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">              <span class='macro'>+ 3*(bag-&gt;esIdx + 3*(ziOff    + 2*(xi    + sx*yi))))<span class='expansion'>((evecA)[0] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*(ziOff + 2<br>*(xi + sx*yi))))[0], (evecA)[1] = (sctx-&gt;evec + 3*(bag-&gt;<br>esIdx + 3*(ziOff + 2*(xi + sx*yi))))[1], (evecA)[2] = (sctx-&gt;<br>evec + 3*(bag-&gt;esIdx + 3*(ziOff + 2*(xi + sx*yi))))[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  <span class='macro'>ELL_3V_COPY(evecB, sctx-&gt;evec<span class='expansion'>((evecB)[0] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*(ziOff+dz<br> + 2*(xi+dx + sx*(yi+dy)))))[0], (evecB)[1] = (sctx-&gt;evec +<br> 3*(bag-&gt;esIdx + 3*(ziOff+dz + 2*(xi+dx + sx*(yi+dy)))))[1<br>], (evecB)[2] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*(ziOff+<br>dz + 2*(xi+dx + sx*(yi+dy)))))[2])</span></span></td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">              <span class='macro'>+ 3*(bag-&gt;esIdx + 3*(ziOff+dz + 2*(xi+dx + sx*(yi+dy)))))<span class='expansion'>((evecB)[0] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*(ziOff+dz<br> + 2*(xi+dx + sx*(yi+dy)))))[0], (evecB)[1] = (sctx-&gt;evec +<br> 3*(bag-&gt;esIdx + 3*(ziOff+dz + 2*(xi+dx + sx*(yi+dy)))))[1<br>], (evecB)[2] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*(ziOff+<br>dz + 2*(xi+dx + sx*(yi+dy)))))[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line"><span class='directive'>#define SETNEXT(uu)                                       \</span></td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">  <span class='directive'><span class='macro'>ELL_3V_SCALE_ADD2(posNext, 1.0-(uu), posA, (uu), posB)<span class='expansion'>((posNext)[0] = (1.0-(uu))*(posA)[0] + ((uu))*(posB)[0], (posNext<br>)[1] = (1.0-(uu))*(posA)[1] + ((uu))*(posB)[1], (posNext)[2] =<br> (1.0-(uu))*(posA)[2] + ((uu))*(posB)[2])</span></span>;       \</span></td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">  <span class='directive'>_seekIdxProbe(sctx, bag, posNext[0], posNext[1], posNext[2]); \</span></td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">  <span class='directive'><span class='macro'>ELL_3V_COPY(next, sctx-&gt;evecAns + 3*bag-&gt;esIdx)<span class='expansion'>((next)[0] = (sctx-&gt;evecAns + 3*bag-&gt;esIdx)[0], (next)[<br>1] = (sctx-&gt;evecAns + 3*bag-&gt;esIdx)[1], (next)[2] = (sctx<br>-&gt;evecAns + 3*bag-&gt;esIdx)[2])</span></span>;              \</span></td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">  <span class='directive'>if (<span class='macro'>ELL_3V_DOT(current, next)<span class='expansion'>((current)[0]*(next)[0] + (current)[1]*(next)[1] + (current)[<br>2]*(next)[2])</span></span> &lt; 0) {                          \</span></td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">    <span class='directive'><span class='macro'>ELL_3V_SCALE(next, -1, next)<span class='expansion'>((next)[0] = (-1)*(next)[0], (next)[1] = (-1)*(next)[1], (next<br>)[2] = (-1)*(next)[2])</span></span>;                               \</span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">  <span class='directive'>}                                                             \</span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">  <span class='directive'>dot = <span class='macro'>ELL_3V_DOT(current, next)<span class='expansion'>((current)[0]*(next)[0] + (current)[1]*(next)[1] + (current)[<br>2]*(next)[2])</span></span>;                              \</span></td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">  <span class='directive'>mode = bag-&gt;modeSign*airMode3_d(sctx-&gt;evalAns);</span></td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">  <span class='macro'>ELL_3V_COPY(current, evecA)<span class='expansion'>((current)[0] = (evecA)[0], (current)[1] = (evecA)[1], (current<br>)[2] = (evecA)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">  u = 0;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">  du = 0.49999;</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">  wantDot = 0.9; <span class='comment'>/* between cos(pi/6) and cos(pi/8) */</span></td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">  minDu = 0.0002;</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">  <span class='keyword'>while</span> (u + du &lt; 1.0) {</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">    SETNEXT(u+du);</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">    <span class='comment'>/* Note: This was set to -0.8 in the original code. Again, I found</span></td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">     <span class='comment'>* that increasing it could eliminate spurious holes in the</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">     <span class='comment'>* mesh. TS 2009-08-18 */</span></td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">    <span class='keyword'>if</span> (mode &lt; -0.99) {</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">      <span class='comment'>/* sorry, eigenvalue mode got too close to 2nd order isotropy */</span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">      *flip = 0;</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">    <span class='keyword'>while</span> (dot &lt; wantDot) {</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">      <span class='comment'>/* angle between current and next is too big; reduce step */</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">      du /= 2;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">      <span class='keyword'>if</span> (du &lt; minDu) {</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: evector wild @ u=%g: du=%g &lt; minDu=%g; "</span></td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">                <span class='string_literal'>"dot=%g; mode = %g; "</span></td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">                <span class='string_literal'>"(xi,yi,zi)=(%u,%u,%u+%u); (dx,dy,dz)=(%u,%u,%u) "</span>,</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">                me, u, du, minDu,</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">                dot, mode,</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">                xi, yi, bag-&gt;zi, ziOff, dx, dy, dz);</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        *flip = 0;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">      SETNEXT(u+du);</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">      <span class='keyword'>if</span> (mode &lt; -0.99) {</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        <span class='comment'>/* sorry, eigenvalue mode got too close to 2nd order isotropy */</span></td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        *flip = 0;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">    <span class='comment'>/* current and next have a small angle between them */</span></td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">    <span class='macro'>ELL_3V_COPY(current, next)<span class='expansion'>((current)[0] = (next)[0], (current)[1] = (next)[1], (current<br>)[2] = (next)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">    u += du;</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">  <span class='comment'>/* last fake iteration, to check endpoint explicitly */</span></td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">  u = 1.0;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">  SETNEXT(u);</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  <span class='keyword'>if</span> (dot &lt; wantDot) {</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: confused at end of edge"</span>, me);</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  <span class='macro'>ELL_3V_COPY(current, next)<span class='expansion'>((current)[0] = (next)[0], (current)[1] = (next)[1], (current<br>)[2] = (next)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"><span class='directive'>#undef SETNEXT</span></td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">  <span class='comment'>/* we have now tracked the eigenvector along the edge */</span></td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">  dot = <span class='macro'>ELL_3V_DOT(current, evecB)<span class='expansion'>((current)[0]*(evecB)[0] + (current)[1]*(evecB)[1] + (current<br>)[2]*(evecB)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  *flip = (dot &gt; 0</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">           ? +1</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">           : -1);</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line"><span class='comment'>** !!! this has to be done as a separate second pass because of how</span></td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line"><span class='comment'>** !!! the flip quantities correspond to the edges between voxels</span></td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"><span class='comment'>** For efficiency, evecFlipProbe is only executed on request (by</span></td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line"><span class='comment'>** setting sctx-&gt;treated: 0x01 requests all edges of this voxel, 0x02</span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"><span class='comment'>** states that unique edge 3 was treated, 0x04 for unique edge 4) TS</span></td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">evecFlipShuffleProbe(seekContext *sctx, baggage *bag) {</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"evecFlipShuffleProbe"</span>;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xi, yi, sx, sy, si;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">  <span class='keyword'>signed</span> <span class='keyword'>char</span> flipA, flipB, flipC;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sy)<span class='expansion'>((unsigned int)(sctx-&gt;sy))</span></span>;</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">  <span class='comment'>/* NOTE: these have to go all the way to sy-1 and sx-1, instead of</span></td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">     <span class='comment'>sy-2 and sx-2 (like shuffleProbe() below) because of the need to</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">     <span class='comment'>set the flips on the edges at the positive X and Y volume</span></td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">     <span class='comment'>boundary.  The necessary bounds checking happens in</span></td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">     <span class='comment'>evecFlipProbe(): messy, I know */</span></td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">  <span class='keyword'>for</span> (yi=0; yi&lt;sy; yi++) {</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">    <span class='keyword'>for</span> (xi=0; xi&lt;sx; xi++) {</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">      si = xi + sx*yi;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">      <span class='comment'>/* ================================================= */</span></td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x02) { <span class='comment'>/* has been treated, just copy result */</span></td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">        sctx-&gt;flip[0 + 5*si] = sctx-&gt;flip[3 + 5*si];</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">      } <span class='keyword'>else</span> <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x01 ||</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                 (yi!=0 &amp;&amp; sctx-&gt;treated[xi+sx*(yi-1)]&amp;0x01)) {</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        <span class='comment'>/* need to treat this */</span></td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        <span class='keyword'>if</span> (evecFlipProbe(sctx, bag,    &amp;flipA, xi, yi, 0, 1, 0, 0)) {</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">          biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: problem at (xi,yi) = (%u,%u), zi=0"</span>, me, xi, yi);</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        sctx-&gt;flip[0 + 5*si] = flipA;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x04) { <span class='comment'>/* has been treated, just copy */</span></td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        sctx-&gt;flip[1 + 5*si] = sctx-&gt;flip[4 + 5*si];</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">      } <span class='keyword'>else</span> <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x01 ||</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">                 (xi!=0 &amp;&amp; sctx-&gt;treated[xi-1+sx*yi]&amp;0x01)) {</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        <span class='keyword'>if</span> (evecFlipProbe(sctx, bag, &amp;flipB, xi, yi, 0, 0, 1, 0)) {</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">          biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: problem at (xi,yi) = (%u,%u), zi=0"</span>, me, xi, yi);</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        sctx-&gt;flip[1 + 5*si] = flipB;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x01 || (xi!=0 &amp;&amp; sctx-&gt;treated[xi-1+sx*yi]&amp;0x01) ||</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">          (yi!=0 &amp;&amp; sctx-&gt;treated[xi+sx*(yi-1)]&amp;0x01) ||</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">          (xi!=0 &amp;&amp; yi!=0 &amp;&amp; sctx-&gt;treated[xi-1+sx*(yi-1)]&amp;0x01)) {</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">        <span class='keyword'>if</span> (evecFlipProbe(sctx, bag,    &amp;flipA, xi, yi, 0, 0, 0, 1)) {</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">          biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: problem at (xi,yi,zi) = (%u,%u,%u)"</span>, me,</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">                   xi, yi, bag-&gt;zi);</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        sctx-&gt;flip[2 + 5*si] = flipA;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x01 ||</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">          (yi!=0 &amp;&amp; sctx-&gt;treated[xi+sx*(yi-1)]&amp;0x01)) {</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='keyword'>if</span> (evecFlipProbe(sctx, bag, &amp;flipB, xi, yi, 1, 1, 0, 0)) {</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">          biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: problem at (xi,yi,zi) = (%u,%u,%u)"</span>, me,</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">                   xi, yi, bag-&gt;zi);</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">        sctx-&gt;flip[3 + 5*si] = flipB;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        sctx-&gt;treated[si]|=0x02;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">      } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        sctx-&gt;treated[si]&amp;=0xFD;</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;treated[si]&amp;0x01 ||</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">          (xi!=0 &amp;&amp; sctx-&gt;treated[xi-1+sx*yi]&amp;0x01)) {</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">        <span class='keyword'>if</span> (evecFlipProbe(sctx, bag, &amp;flipC, xi, yi, 1, 0, 1, 0)) {</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">          biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: problem at (xi,yi,zi) = (%u,%u,%u)"</span>, me,</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                   xi, yi, bag-&gt;zi);</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">        sctx-&gt;flip[4 + 5*si] = flipC;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        sctx-&gt;treated[si]|=0x04;</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">      } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        sctx-&gt;treated[si]&amp;=0xFB;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">      <span class='comment'>/* ================================================= */</span></td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">shuffleProbe(seekContext *sctx, baggage *bag) {</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"shuffleProbe"</span>;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xi, yi, sx, sy, si, spi;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sy)<span class='expansion'>((unsigned int)(sctx-&gt;sy))</span></span>;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">  <span class='keyword'>if</span> (!sctx-&gt;strengthUse) { <span class='comment'>/* just request all edges */</span></td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">    <span class='macro'>memset(sctx-&gt;treated, 0x01, <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>)*sctx-&gt;sx*sctx-&gt;sy)<span class='expansion'>__builtin___memset_chk (sctx-&gt;treated, 0x01, sizeof(char)*<br>sctx-&gt;sx*sctx-&gt;sy, __builtin_object_size (sctx-&gt;treated<br>, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">    <span class='keyword'>if</span> (!bag-&gt;zi) {</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">      <span class='comment'>/* clear full treated array */</span></td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">      <span class='macro'>memset(sctx-&gt;treated, 0, <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>)*sctx-&gt;sx*sctx-&gt;sy)<span class='expansion'>__builtin___memset_chk (sctx-&gt;treated, 0, sizeof(char)*sctx<br>-&gt;sx*sctx-&gt;sy, __builtin_object_size (sctx-&gt;treated,<br> 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">      <span class='comment'>/* only clear requests for edge orientation */</span></td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">      <span class='keyword'>for</span> (yi=0; yi&lt;sy; yi++) {</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">        <span class='keyword'>for</span> (xi=0; xi&lt;sx; xi++) {</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">          sctx-&gt;treated[xi+sx*yi] &amp;= 0xFE;</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">  <span class='keyword'>for</span> (yi=0; yi&lt;sy; yi++) {</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">    <span class='keyword'>for</span> (xi=0; xi&lt;sx; xi++) {</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">      si = xi + sx*yi;</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">      spi = (xi+1) + (sx+2)*(yi+1);</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">      <span class='comment'>/* ================================================= */</span></td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">      <span class='keyword'>if</span> (!bag-&gt;zi) {</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">        <span class='comment'>/* ----------------- set/probe bottom of initial slab */</span></td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">        sctx-&gt;vidx[0 + 5*si] = -1;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">        sctx-&gt;vidx[1 + 5*si] = -1;</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">        <span class='keyword'>if</span> (sctx-&gt;gctx) { <span class='comment'>/* HEY: need this check, what's the right way? */</span></td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">          _seekIdxProbe(sctx, bag, xi, yi, 0);</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">        <span class='keyword'>if</span> (sctx-&gt;strengthUse) {</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">          sctx-&gt;stng[0 + 2*si] = sctx-&gt;strengthSign*sctx-&gt;stngAns[0];</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">          <span class='keyword'>if</span> (!si) {</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">            sctx-&gt;strengthSeenMax = sctx-&gt;stng[0 + 2*si];</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">          sctx-&gt;strengthSeenMax = <span class='macro'>AIR_MAX(sctx-&gt;strengthSeenMax,<span class='expansion'>((sctx-&gt;strengthSeenMax) &gt; (sctx-&gt;stng[0 + 2*si]) ? (<br>sctx-&gt;strengthSeenMax) : (sctx-&gt;stng[0 + 2*si]))</span></span></td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">                                          <span class='macro'>sctx-&gt;stng[0 + 2*si])<span class='expansion'>((sctx-&gt;strengthSeenMax) &gt; (sctx-&gt;stng[0 + 2*si]) ? (<br>sctx-&gt;strengthSeenMax) : (sctx-&gt;stng[0 + 2*si]))</span></span>;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        <span class='keyword'>switch</span> (sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">        <span class='keyword'>case</span> seekTypeIsocontour:</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">          sctx-&gt;sclv[0 + 4*spi] = (sclGet(sctx, bag, xi, yi, 0)</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                                   - sctx-&gt;isovalue);</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">          sctx-&gt;sclv[1 + 4*spi] = (sclGet(sctx, bag, xi, yi, 0)</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">                                   - sctx-&gt;isovalue);</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">          sctx-&gt;sclv[2 + 4*spi] = (sclGet(sctx, bag, xi, yi, 1)</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">                                   - sctx-&gt;isovalue);</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">        <span class='keyword'>case</span> seekTypeRidgeSurface:</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">        <span class='keyword'>case</span> seekTypeValleySurface:</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">        <span class='keyword'>case</span> seekTypeMaximalSurface:</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">        <span class='keyword'>case</span> seekTypeMinimalSurface:</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">        <span class='keyword'>case</span> seekTypeRidgeSurfaceOP:</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">        <span class='keyword'>case</span> seekTypeValleySurfaceOP:</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">          <span class='macro'>ELL_3V_COPY(sctx-&gt;grad + 3*(0 + 2*si), sctx-&gt;gradAns)<span class='expansion'>((sctx-&gt;grad + 3*(0 + 2*si))[0] = (sctx-&gt;gradAns)[0], (<br>sctx-&gt;grad + 3*(0 + 2*si))[1] = (sctx-&gt;gradAns)[1], (sctx<br>-&gt;grad + 3*(0 + 2*si))[2] = (sctx-&gt;gradAns)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">          <span class='macro'>ELL_3V_COPY(sctx-&gt;eval + 3*(0 + 2*si), sctx-&gt;evalAns)<span class='expansion'>((sctx-&gt;eval + 3*(0 + 2*si))[0] = (sctx-&gt;evalAns)[0], (<br>sctx-&gt;eval + 3*(0 + 2*si))[1] = (sctx-&gt;evalAns)[1], (sctx<br>-&gt;eval + 3*(0 + 2*si))[2] = (sctx-&gt;evalAns)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">          <span class='macro'>ELL_3M_COPY(sctx-&gt;evec + 9*(0 + 2*si), sctx-&gt;evecAns)<span class='expansion'>((((sctx-&gt;evec + 9*(0 + 2*si))+0)[0] = ((sctx-&gt;evecAns)<br>+0)[0], ((sctx-&gt;evec + 9*(0 + 2*si))+0)[1] = ((sctx-&gt;evecAns<br>)+0)[1], ((sctx-&gt;evec + 9*(0 + 2*si))+0)[2] = ((sctx-&gt;evecAns<br>)+0)[2]), (((sctx-&gt;evec + 9*(0 + 2*si))+3)[0] = ((sctx-&gt;<br>evecAns)+3)[0], ((sctx-&gt;evec + 9*(0 + 2*si))+3)[1] = ((sctx<br>-&gt;evecAns)+3)[1], ((sctx-&gt;evec + 9*(0 + 2*si))+3)[2] = (<br>(sctx-&gt;evecAns)+3)[2]), (((sctx-&gt;evec + 9*(0 + 2*si))+6<br>)[0] = ((sctx-&gt;evecAns)+6)[0], ((sctx-&gt;evec + 9*(0 + 2*<br>si))+6)[1] = ((sctx-&gt;evecAns)+6)[1], ((sctx-&gt;evec + 9*(<br>0 + 2*si))+6)[2] = ((sctx-&gt;evecAns)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='comment'>/* ------------------- shuffle to bottom from top of slab */</span></td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        sctx-&gt;vidx[0 + 5*si] = sctx-&gt;vidx[3 + 5*si];</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">        sctx-&gt;vidx[1 + 5*si] = sctx-&gt;vidx[4 + 5*si];</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>if</span> (sctx-&gt;strengthUse) {</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">          sctx-&gt;stng[0 + 2*si] = sctx-&gt;stng[1 + 2*si];</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">        <span class='keyword'>switch</span> (sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">        <span class='keyword'>case</span> seekTypeIsocontour:</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">          sctx-&gt;sclv[0 + 4*spi] = sctx-&gt;sclv[1 + 4*spi];</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">          sctx-&gt;sclv[1 + 4*spi] = sctx-&gt;sclv[2 + 4*spi];</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">          sctx-&gt;sclv[2 + 4*spi] = sctx-&gt;sclv[3 + 4*spi];</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">        <span class='keyword'>case</span> seekTypeRidgeSurface:</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>case</span> seekTypeValleySurface:</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">        <span class='keyword'>case</span> seekTypeMaximalSurface:</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">        <span class='keyword'>case</span> seekTypeMinimalSurface:</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        <span class='keyword'>case</span> seekTypeRidgeSurfaceOP:</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">        <span class='keyword'>case</span> seekTypeValleySurfaceOP:</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">          <span class='macro'>ELL_3V_COPY(sctx-&gt;grad + 3*(0 + 2*si), sctx-&gt;grad + 3*(1 + 2*si))<span class='expansion'>((sctx-&gt;grad + 3*(0 + 2*si))[0] = (sctx-&gt;grad + 3*(1 + 2<br>*si))[0], (sctx-&gt;grad + 3*(0 + 2*si))[1] = (sctx-&gt;grad +<br> 3*(1 + 2*si))[1], (sctx-&gt;grad + 3*(0 + 2*si))[2] = (sctx-&gt;<br>grad + 3*(1 + 2*si))[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">          <span class='macro'>ELL_3V_COPY(sctx-&gt;eval + 3*(0 + 2*si), sctx-&gt;eval + 3*(1 + 2*si))<span class='expansion'>((sctx-&gt;eval + 3*(0 + 2*si))[0] = (sctx-&gt;eval + 3*(1 + 2<br>*si))[0], (sctx-&gt;eval + 3*(0 + 2*si))[1] = (sctx-&gt;eval +<br> 3*(1 + 2*si))[1], (sctx-&gt;eval + 3*(0 + 2*si))[2] = (sctx-&gt;<br>eval + 3*(1 + 2*si))[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">          <span class='macro'>ELL_3M_COPY(sctx-&gt;evec + 9*(0 + 2*si), sctx-&gt;evec + 9*(1 + 2*si))<span class='expansion'>((((sctx-&gt;evec + 9*(0 + 2*si))+0)[0] = ((sctx-&gt;evec + 9<br>*(1 + 2*si))+0)[0], ((sctx-&gt;evec + 9*(0 + 2*si))+0)[1] = (<br>(sctx-&gt;evec + 9*(1 + 2*si))+0)[1], ((sctx-&gt;evec + 9*(0 +<br> 2*si))+0)[2] = ((sctx-&gt;evec + 9*(1 + 2*si))+0)[2]), (((sctx<br>-&gt;evec + 9*(0 + 2*si))+3)[0] = ((sctx-&gt;evec + 9*(1 + 2*<br>si))+3)[0], ((sctx-&gt;evec + 9*(0 + 2*si))+3)[1] = ((sctx-&gt;<br>evec + 9*(1 + 2*si))+3)[1], ((sctx-&gt;evec + 9*(0 + 2*si))+3<br>)[2] = ((sctx-&gt;evec + 9*(1 + 2*si))+3)[2]), (((sctx-&gt;evec<br> + 9*(0 + 2*si))+6)[0] = ((sctx-&gt;evec + 9*(1 + 2*si))+6)[0<br>], ((sctx-&gt;evec + 9*(0 + 2*si))+6)[1] = ((sctx-&gt;evec + 9<br>*(1 + 2*si))+6)[1], ((sctx-&gt;evec + 9*(0 + 2*si))+6)[2] = (<br>(sctx-&gt;evec + 9*(1 + 2*si))+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">          <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">      <span class='comment'>/* ----------------------- set/probe top of slab */</span></td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">      sctx-&gt;vidx[2 + 5*si] = -1;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">      sctx-&gt;vidx[3 + 5*si] = -1;</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">      sctx-&gt;vidx[4 + 5*si] = -1;</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;gctx) { <span class='comment'>/* HEY: need this check, what's the right way? */</span></td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">        _seekIdxProbe(sctx, bag, xi, yi, bag-&gt;zi+1);</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">      <span class='keyword'>if</span> (sctx-&gt;strengthUse) {</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">        sctx-&gt;stng[1 + 2*si] = sctx-&gt;strengthSign*sctx-&gt;stngAns[0];</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        sctx-&gt;strengthSeenMax = <span class='macro'>AIR_MAX(sctx-&gt;strengthSeenMax,<span class='expansion'>((sctx-&gt;strengthSeenMax) &gt; (sctx-&gt;stng[1 + 2*si]) ? (<br>sctx-&gt;strengthSeenMax) : (sctx-&gt;stng[1 + 2*si]))</span></span></td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">                                        <span class='macro'>sctx-&gt;stng[1 + 2*si])<span class='expansion'>((sctx-&gt;strengthSeenMax) &gt; (sctx-&gt;stng[1 + 2*si]) ? (<br>sctx-&gt;strengthSeenMax) : (sctx-&gt;stng[1 + 2*si]))</span></span>;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        <span class='keyword'>if</span> (sctx-&gt;stng[0+2*si]&gt;sctx-&gt;strength ||</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">            sctx-&gt;stng[1+2*si]&gt;sctx-&gt;strength) {</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">          <span class='comment'>/* mark up to four voxels as needed */</span></td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">          sctx-&gt;treated[si] |= 0x01;</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">          <span class='keyword'>if</span> (xi!=0) sctx-&gt;treated[xi-1+sx*yi] |= 0x01;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">          <span class='keyword'>if</span> (yi!=0) sctx-&gt;treated[xi+sx*(yi-1)] |= 0x01;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">          <span class='keyword'>if</span> (xi!=0 &amp;&amp; yi!=0) sctx-&gt;treated[xi-1+sx*(yi-1)] |= 0x01;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">      <span class='keyword'>switch</span> (sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">      <span class='keyword'>case</span> seekTypeIsocontour:</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        sctx-&gt;sclv[3 + 4*spi] = (sclGet(sctx, bag, xi, yi, bag-&gt;zi+2)</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                                 - sctx-&gt;isovalue);</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">      <span class='keyword'>case</span> seekTypeRidgeSurface:</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">      <span class='keyword'>case</span> seekTypeValleySurface:</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">      <span class='keyword'>case</span> seekTypeMaximalSurface:</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">      <span class='keyword'>case</span> seekTypeMinimalSurface:</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">      <span class='keyword'>case</span> seekTypeRidgeSurfaceOP:</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">      <span class='keyword'>case</span> seekTypeValleySurfaceOP:</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">        <span class='macro'>ELL_3V_COPY(sctx-&gt;grad + 3*(1 + 2*si), sctx-&gt;gradAns)<span class='expansion'>((sctx-&gt;grad + 3*(1 + 2*si))[0] = (sctx-&gt;gradAns)[0], (<br>sctx-&gt;grad + 3*(1 + 2*si))[1] = (sctx-&gt;gradAns)[1], (sctx<br>-&gt;grad + 3*(1 + 2*si))[2] = (sctx-&gt;gradAns)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">        <span class='macro'>ELL_3V_COPY(sctx-&gt;eval + 3*(1 + 2*si), sctx-&gt;evalAns)<span class='expansion'>((sctx-&gt;eval + 3*(1 + 2*si))[0] = (sctx-&gt;evalAns)[0], (<br>sctx-&gt;eval + 3*(1 + 2*si))[1] = (sctx-&gt;evalAns)[1], (sctx<br>-&gt;eval + 3*(1 + 2*si))[2] = (sctx-&gt;evalAns)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">        <span class='macro'>ELL_3M_COPY(sctx-&gt;evec + 9*(1 + 2*si), sctx-&gt;evecAns)<span class='expansion'>((((sctx-&gt;evec + 9*(1 + 2*si))+0)[0] = ((sctx-&gt;evecAns)<br>+0)[0], ((sctx-&gt;evec + 9*(1 + 2*si))+0)[1] = ((sctx-&gt;evecAns<br>)+0)[1], ((sctx-&gt;evec + 9*(1 + 2*si))+0)[2] = ((sctx-&gt;evecAns<br>)+0)[2]), (((sctx-&gt;evec + 9*(1 + 2*si))+3)[0] = ((sctx-&gt;<br>evecAns)+3)[0], ((sctx-&gt;evec + 9*(1 + 2*si))+3)[1] = ((sctx<br>-&gt;evecAns)+3)[1], ((sctx-&gt;evec + 9*(1 + 2*si))+3)[2] = (<br>(sctx-&gt;evecAns)+3)[2]), (((sctx-&gt;evec + 9*(1 + 2*si))+6<br>)[0] = ((sctx-&gt;evecAns)+6)[0], ((sctx-&gt;evec + 9*(1 + 2*<br>si))+6)[1] = ((sctx-&gt;evecAns)+6)[1], ((sctx-&gt;evec + 9*(<br>1 + 2*si))+6)[2] = ((sctx-&gt;evecAns)+6)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">      <span class='comment'>/* ================================================= */</span></td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">    <span class='comment'>/* copy ends of this scanline left/right to margin */</span></td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">    <span class='keyword'>if</span> (seekTypeIsocontour == sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">      <span class='macro'>ELL_4V_COPY(sctx-&gt;sclv + 4*(0    + (sx+2)*(yi+1)),<span class='expansion'>((sctx-&gt;sclv + 4*(0 + (sx+2)*(yi+1)))[0] = (sctx-&gt;sclv +<br> 4*(1 + (sx+2)*(yi+1)))[0], (sctx-&gt;sclv + 4*(0 + (sx+2)*(yi<br>+1)))[1] = (sctx-&gt;sclv + 4*(1 + (sx+2)*(yi+1)))[1], (sctx-&gt;<br>sclv + 4*(0 + (sx+2)*(yi+1)))[2] = (sctx-&gt;sclv + 4*(1 + (sx<br>+2)*(yi+1)))[2], (sctx-&gt;sclv + 4*(0 + (sx+2)*(yi+1)))[3] =<br> (sctx-&gt;sclv + 4*(1 + (sx+2)*(yi+1)))[3])</span></span></td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">                  <span class='macro'>sctx-&gt;sclv + 4*(1    + (sx+2)*(yi+1)))<span class='expansion'>((sctx-&gt;sclv + 4*(0 + (sx+2)*(yi+1)))[0] = (sctx-&gt;sclv +<br> 4*(1 + (sx+2)*(yi+1)))[0], (sctx-&gt;sclv + 4*(0 + (sx+2)*(yi<br>+1)))[1] = (sctx-&gt;sclv + 4*(1 + (sx+2)*(yi+1)))[1], (sctx-&gt;<br>sclv + 4*(0 + (sx+2)*(yi+1)))[2] = (sctx-&gt;sclv + 4*(1 + (sx<br>+2)*(yi+1)))[2], (sctx-&gt;sclv + 4*(0 + (sx+2)*(yi+1)))[3] =<br> (sctx-&gt;sclv + 4*(1 + (sx+2)*(yi+1)))[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">      <span class='macro'>ELL_4V_COPY(sctx-&gt;sclv + 4*(sx+1 + (sx+2)*(yi+1)),<span class='expansion'>((sctx-&gt;sclv + 4*(sx+1 + (sx+2)*(yi+1)))[0] = (sctx-&gt;sclv<br> + 4*(sx + (sx+2)*(yi+1)))[0], (sctx-&gt;sclv + 4*(sx+1 + (sx<br>+2)*(yi+1)))[1] = (sctx-&gt;sclv + 4*(sx + (sx+2)*(yi+1)))[1]<br>, (sctx-&gt;sclv + 4*(sx+1 + (sx+2)*(yi+1)))[2] = (sctx-&gt;sclv<br> + 4*(sx + (sx+2)*(yi+1)))[2], (sctx-&gt;sclv + 4*(sx+1 + (sx<br>+2)*(yi+1)))[3] = (sctx-&gt;sclv + 4*(sx + (sx+2)*(yi+1)))[3]<br>)</span></span></td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                  <span class='macro'>sctx-&gt;sclv + 4*(sx   + (sx+2)*(yi+1)))<span class='expansion'>((sctx-&gt;sclv + 4*(sx+1 + (sx+2)*(yi+1)))[0] = (sctx-&gt;sclv<br> + 4*(sx + (sx+2)*(yi+1)))[0], (sctx-&gt;sclv + 4*(sx+1 + (sx<br>+2)*(yi+1)))[1] = (sctx-&gt;sclv + 4*(sx + (sx+2)*(yi+1)))[1]<br>, (sctx-&gt;sclv + 4*(sx+1 + (sx+2)*(yi+1)))[2] = (sctx-&gt;sclv<br> + 4*(sx + (sx+2)*(yi+1)))[2], (sctx-&gt;sclv + 4*(sx+1 + (sx<br>+2)*(yi+1)))[3] = (sctx-&gt;sclv + 4*(sx + (sx+2)*(yi+1)))[3]<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">  <span class='comment'>/* copy top and bottom scanline up/down to margin */</span></td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">  <span class='keyword'>if</span> (seekTypeIsocontour == sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">    <span class='keyword'>for</span> (xi=0; xi&lt;sx+2; xi++) {</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">      <span class='macro'>ELL_4V_COPY(sctx-&gt;sclv + 4*(xi + (sx+2)*0),<span class='expansion'>((sctx-&gt;sclv + 4*(xi + (sx+2)*0))[0] = (sctx-&gt;sclv + 4*<br>(xi + (sx+2)*1))[0], (sctx-&gt;sclv + 4*(xi + (sx+2)*0))[1] =<br> (sctx-&gt;sclv + 4*(xi + (sx+2)*1))[1], (sctx-&gt;sclv + 4*(<br>xi + (sx+2)*0))[2] = (sctx-&gt;sclv + 4*(xi + (sx+2)*1))[2], (<br>sctx-&gt;sclv + 4*(xi + (sx+2)*0))[3] = (sctx-&gt;sclv + 4*(xi<br> + (sx+2)*1))[3])</span></span></td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">                  <span class='macro'>sctx-&gt;sclv + 4*(xi + (sx+2)*1))<span class='expansion'>((sctx-&gt;sclv + 4*(xi + (sx+2)*0))[0] = (sctx-&gt;sclv + 4*<br>(xi + (sx+2)*1))[0], (sctx-&gt;sclv + 4*(xi + (sx+2)*0))[1] =<br> (sctx-&gt;sclv + 4*(xi + (sx+2)*1))[1], (sctx-&gt;sclv + 4*(<br>xi + (sx+2)*0))[2] = (sctx-&gt;sclv + 4*(xi + (sx+2)*1))[2], (<br>sctx-&gt;sclv + 4*(xi + (sx+2)*0))[3] = (sctx-&gt;sclv + 4*(xi<br> + (sx+2)*1))[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">      <span class='macro'>ELL_4V_COPY(sctx-&gt;sclv + 4*(xi + (sx+2)*(sy+1)),<span class='expansion'>((sctx-&gt;sclv + 4*(xi + (sx+2)*(sy+1)))[0] = (sctx-&gt;sclv<br> + 4*(xi + (sx+2)*sy))[0], (sctx-&gt;sclv + 4*(xi + (sx+2)*(sy<br>+1)))[1] = (sctx-&gt;sclv + 4*(xi + (sx+2)*sy))[1], (sctx-&gt;<br>sclv + 4*(xi + (sx+2)*(sy+1)))[2] = (sctx-&gt;sclv + 4*(xi + (<br>sx+2)*sy))[2], (sctx-&gt;sclv + 4*(xi + (sx+2)*(sy+1)))[3] = (<br>sctx-&gt;sclv + 4*(xi + (sx+2)*sy))[3])</span></span></td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">                  <span class='macro'>sctx-&gt;sclv + 4*(xi + (sx+2)*sy))<span class='expansion'>((sctx-&gt;sclv + 4*(xi + (sx+2)*(sy+1)))[0] = (sctx-&gt;sclv<br> + 4*(xi + (sx+2)*sy))[0], (sctx-&gt;sclv + 4*(xi + (sx+2)*(sy<br>+1)))[1] = (sctx-&gt;sclv + 4*(xi + (sx+2)*sy))[1], (sctx-&gt;<br>sclv + 4*(xi + (sx+2)*(sy+1)))[2] = (sctx-&gt;sclv + 4*(xi + (<br>sx+2)*sy))[2], (sctx-&gt;sclv + 4*(xi + (sx+2)*(sy+1)))[3] = (<br>sctx-&gt;sclv + 4*(xi + (sx+2)*sy))[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">  <span class='comment'>/* this is done as a separate pass because it looks at values between</span></td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">     <span class='comment'>voxels (so its indexing is not trivial to fold into loops above) */</span></td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  <span class='keyword'>if</span> (seekTypeRidgeSurface == sctx-&gt;type</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">      || seekTypeValleySurface == sctx-&gt;type</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">      || seekTypeMaximalSurface == sctx-&gt;type</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">      || seekTypeMinimalSurface == sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">    <span class='keyword'>if</span> (evecFlipShuffleProbe(sctx, bag)) {</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">      biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: trouble at zi=%u\n"</span>, me, bag-&gt;zi);</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line"><span class='directive'>#define VAL(xx, yy, zz)  (val[4*( (xx) + (yy)*(sx+2) + spi) + (zz+1)])</span></td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">voxelGrads(<span class='keyword'>double</span> vgrad[8][3], <span class='keyword'>double</span> *val, <span class='keyword'>int</span> sx, <span class='keyword'>int</span> spi) {</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[0],<span class='expansion'>((vgrad[0])[0] = (VAL( 1, 0, 0) - VAL(-1, 0, 0)), (vgrad[0])[<br>1] = (VAL( 0, 1, 0) - VAL( 0, -1, 0)), (vgrad[0])[2] = (VAL( 0<br>, 0, 1) - VAL( 0, 0, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">             <span class='macro'>VAL( 1,  0,  0) - VAL(-1,  0,  0),<span class='expansion'>((vgrad[0])[0] = (VAL( 1, 0, 0) - VAL(-1, 0, 0)), (vgrad[0])[<br>1] = (VAL( 0, 1, 0) - VAL( 0, -1, 0)), (vgrad[0])[2] = (VAL( 0<br>, 0, 1) - VAL( 0, 0, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">             <span class='macro'>VAL( 0,  1,  0) - VAL( 0, -1,  0),<span class='expansion'>((vgrad[0])[0] = (VAL( 1, 0, 0) - VAL(-1, 0, 0)), (vgrad[0])[<br>1] = (VAL( 0, 1, 0) - VAL( 0, -1, 0)), (vgrad[0])[2] = (VAL( 0<br>, 0, 1) - VAL( 0, 0, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">             <span class='macro'>VAL( 0,  0,  1) - VAL( 0,  0, -1))<span class='expansion'>((vgrad[0])[0] = (VAL( 1, 0, 0) - VAL(-1, 0, 0)), (vgrad[0])[<br>1] = (VAL( 0, 1, 0) - VAL( 0, -1, 0)), (vgrad[0])[2] = (VAL( 0<br>, 0, 1) - VAL( 0, 0, -1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[1],<span class='expansion'>((vgrad[1])[0] = (VAL( 2, 0, 0) - VAL( 0, 0, 0)), (vgrad[1])[<br>1] = (VAL( 1, 1, 0) - VAL( 1, -1, 0)), (vgrad[1])[2] = (VAL( 1<br>, 0, 1) - VAL( 1, 0, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">             <span class='macro'>VAL( 2,  0,  0) - VAL( 0,  0,  0),<span class='expansion'>((vgrad[1])[0] = (VAL( 2, 0, 0) - VAL( 0, 0, 0)), (vgrad[1])[<br>1] = (VAL( 1, 1, 0) - VAL( 1, -1, 0)), (vgrad[1])[2] = (VAL( 1<br>, 0, 1) - VAL( 1, 0, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">             <span class='macro'>VAL( 1,  1,  0) - VAL( 1, -1,  0),<span class='expansion'>((vgrad[1])[0] = (VAL( 2, 0, 0) - VAL( 0, 0, 0)), (vgrad[1])[<br>1] = (VAL( 1, 1, 0) - VAL( 1, -1, 0)), (vgrad[1])[2] = (VAL( 1<br>, 0, 1) - VAL( 1, 0, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">             <span class='macro'>VAL( 1,  0,  1) - VAL( 1,  0, -1))<span class='expansion'>((vgrad[1])[0] = (VAL( 2, 0, 0) - VAL( 0, 0, 0)), (vgrad[1])[<br>1] = (VAL( 1, 1, 0) - VAL( 1, -1, 0)), (vgrad[1])[2] = (VAL( 1<br>, 0, 1) - VAL( 1, 0, -1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[2],<span class='expansion'>((vgrad[2])[0] = (VAL( 1, 1, 0) - VAL(-1, 1, 0)), (vgrad[2])[<br>1] = (VAL( 0, 2, 0) - VAL( 0, 0, 0)), (vgrad[2])[2] = (VAL( 0<br>, 1, 1) - VAL( 0, 1, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">             <span class='macro'>VAL( 1,  1,  0) - VAL(-1,  1,  0),<span class='expansion'>((vgrad[2])[0] = (VAL( 1, 1, 0) - VAL(-1, 1, 0)), (vgrad[2])[<br>1] = (VAL( 0, 2, 0) - VAL( 0, 0, 0)), (vgrad[2])[2] = (VAL( 0<br>, 1, 1) - VAL( 0, 1, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">             <span class='macro'>VAL( 0,  2,  0) - VAL( 0,  0,  0),<span class='expansion'>((vgrad[2])[0] = (VAL( 1, 1, 0) - VAL(-1, 1, 0)), (vgrad[2])[<br>1] = (VAL( 0, 2, 0) - VAL( 0, 0, 0)), (vgrad[2])[2] = (VAL( 0<br>, 1, 1) - VAL( 0, 1, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">             <span class='macro'>VAL( 0,  1,  1) - VAL( 0,  1, -1))<span class='expansion'>((vgrad[2])[0] = (VAL( 1, 1, 0) - VAL(-1, 1, 0)), (vgrad[2])[<br>1] = (VAL( 0, 2, 0) - VAL( 0, 0, 0)), (vgrad[2])[2] = (VAL( 0<br>, 1, 1) - VAL( 0, 1, -1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[3],<span class='expansion'>((vgrad[3])[0] = (VAL( 2, 1, 0) - VAL( 0, 1, 0)), (vgrad[3])[<br>1] = (VAL( 1, 2, 0) - VAL( 1, 0, 0)), (vgrad[3])[2] = (VAL( 1<br>, 1, 1) - VAL( 1, 1, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">             <span class='macro'>VAL( 2,  1,  0) - VAL( 0,  1,  0),<span class='expansion'>((vgrad[3])[0] = (VAL( 2, 1, 0) - VAL( 0, 1, 0)), (vgrad[3])[<br>1] = (VAL( 1, 2, 0) - VAL( 1, 0, 0)), (vgrad[3])[2] = (VAL( 1<br>, 1, 1) - VAL( 1, 1, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">             <span class='macro'>VAL( 1,  2,  0) - VAL( 1,  0,  0),<span class='expansion'>((vgrad[3])[0] = (VAL( 2, 1, 0) - VAL( 0, 1, 0)), (vgrad[3])[<br>1] = (VAL( 1, 2, 0) - VAL( 1, 0, 0)), (vgrad[3])[2] = (VAL( 1<br>, 1, 1) - VAL( 1, 1, -1)))</span></span></td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">             <span class='macro'>VAL( 1,  1,  1) - VAL( 1,  1, -1))<span class='expansion'>((vgrad[3])[0] = (VAL( 2, 1, 0) - VAL( 0, 1, 0)), (vgrad[3])[<br>1] = (VAL( 1, 2, 0) - VAL( 1, 0, 0)), (vgrad[3])[2] = (VAL( 1<br>, 1, 1) - VAL( 1, 1, -1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[4],<span class='expansion'>((vgrad[4])[0] = (VAL( 1, 0, 1) - VAL(-1, 0, 1)), (vgrad[4])[<br>1] = (VAL( 0, 1, 1) - VAL( 0, -1, 1)), (vgrad[4])[2] = (VAL( 0<br>, 0, 2) - VAL( 0, 0, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">             <span class='macro'>VAL( 1,  0,  1) - VAL(-1,  0,  1),<span class='expansion'>((vgrad[4])[0] = (VAL( 1, 0, 1) - VAL(-1, 0, 1)), (vgrad[4])[<br>1] = (VAL( 0, 1, 1) - VAL( 0, -1, 1)), (vgrad[4])[2] = (VAL( 0<br>, 0, 2) - VAL( 0, 0, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">             <span class='macro'>VAL( 0,  1,  1) - VAL( 0, -1,  1),<span class='expansion'>((vgrad[4])[0] = (VAL( 1, 0, 1) - VAL(-1, 0, 1)), (vgrad[4])[<br>1] = (VAL( 0, 1, 1) - VAL( 0, -1, 1)), (vgrad[4])[2] = (VAL( 0<br>, 0, 2) - VAL( 0, 0, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">             <span class='macro'>VAL( 0,  0,  2) - VAL( 0,  0,  0))<span class='expansion'>((vgrad[4])[0] = (VAL( 1, 0, 1) - VAL(-1, 0, 1)), (vgrad[4])[<br>1] = (VAL( 0, 1, 1) - VAL( 0, -1, 1)), (vgrad[4])[2] = (VAL( 0<br>, 0, 2) - VAL( 0, 0, 0)))</span></span>;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[5],<span class='expansion'>((vgrad[5])[0] = (VAL( 2, 0, 1) - VAL( 0, 0, 1)), (vgrad[5])[<br>1] = (VAL( 1, 1, 1) - VAL( 1, -1, 1)), (vgrad[5])[2] = (VAL( 1<br>, 0, 2) - VAL( 1, 0, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">             <span class='macro'>VAL( 2,  0,  1) - VAL( 0,  0,  1),<span class='expansion'>((vgrad[5])[0] = (VAL( 2, 0, 1) - VAL( 0, 0, 1)), (vgrad[5])[<br>1] = (VAL( 1, 1, 1) - VAL( 1, -1, 1)), (vgrad[5])[2] = (VAL( 1<br>, 0, 2) - VAL( 1, 0, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">             <span class='macro'>VAL( 1,  1,  1) - VAL( 1, -1,  1),<span class='expansion'>((vgrad[5])[0] = (VAL( 2, 0, 1) - VAL( 0, 0, 1)), (vgrad[5])[<br>1] = (VAL( 1, 1, 1) - VAL( 1, -1, 1)), (vgrad[5])[2] = (VAL( 1<br>, 0, 2) - VAL( 1, 0, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">             <span class='macro'>VAL( 1,  0,  2) - VAL( 1,  0,  0))<span class='expansion'>((vgrad[5])[0] = (VAL( 2, 0, 1) - VAL( 0, 0, 1)), (vgrad[5])[<br>1] = (VAL( 1, 1, 1) - VAL( 1, -1, 1)), (vgrad[5])[2] = (VAL( 1<br>, 0, 2) - VAL( 1, 0, 0)))</span></span>;</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[6],<span class='expansion'>((vgrad[6])[0] = (VAL( 1, 1, 1) - VAL(-1, 1, 1)), (vgrad[6])[<br>1] = (VAL( 0, 2, 1) - VAL( 0, 0, 1)), (vgrad[6])[2] = (VAL( 0<br>, 1, 2) - VAL( 0, 1, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">             <span class='macro'>VAL( 1,  1,  1) - VAL(-1,  1,  1),<span class='expansion'>((vgrad[6])[0] = (VAL( 1, 1, 1) - VAL(-1, 1, 1)), (vgrad[6])[<br>1] = (VAL( 0, 2, 1) - VAL( 0, 0, 1)), (vgrad[6])[2] = (VAL( 0<br>, 1, 2) - VAL( 0, 1, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">             <span class='macro'>VAL( 0,  2,  1) - VAL( 0,  0,  1),<span class='expansion'>((vgrad[6])[0] = (VAL( 1, 1, 1) - VAL(-1, 1, 1)), (vgrad[6])[<br>1] = (VAL( 0, 2, 1) - VAL( 0, 0, 1)), (vgrad[6])[2] = (VAL( 0<br>, 1, 2) - VAL( 0, 1, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">             <span class='macro'>VAL( 0,  1,  2) - VAL( 0,  1,  0))<span class='expansion'>((vgrad[6])[0] = (VAL( 1, 1, 1) - VAL(-1, 1, 1)), (vgrad[6])[<br>1] = (VAL( 0, 2, 1) - VAL( 0, 0, 1)), (vgrad[6])[2] = (VAL( 0<br>, 1, 2) - VAL( 0, 1, 0)))</span></span>;</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">  <span class='macro'>ELL_3V_SET(vgrad[7],<span class='expansion'>((vgrad[7])[0] = (VAL( 2, 1, 1) - VAL( 0, 1, 1)), (vgrad[7])[<br>1] = (VAL( 1, 2, 1) - VAL( 1, 0, 1)), (vgrad[7])[2] = (VAL( 1<br>, 1, 2) - VAL( 1, 1, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">             <span class='macro'>VAL( 2,  1,  1) - VAL( 0,  1,  1),<span class='expansion'>((vgrad[7])[0] = (VAL( 2, 1, 1) - VAL( 0, 1, 1)), (vgrad[7])[<br>1] = (VAL( 1, 2, 1) - VAL( 1, 0, 1)), (vgrad[7])[2] = (VAL( 1<br>, 1, 2) - VAL( 1, 1, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">             <span class='macro'>VAL( 1,  2,  1) - VAL( 1,  0,  1),<span class='expansion'>((vgrad[7])[0] = (VAL( 2, 1, 1) - VAL( 0, 1, 1)), (vgrad[7])[<br>1] = (VAL( 1, 2, 1) - VAL( 1, 0, 1)), (vgrad[7])[2] = (VAL( 1<br>, 1, 2) - VAL( 1, 1, 0)))</span></span></td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">             <span class='macro'>VAL( 1,  1,  2) - VAL( 1,  1,  0))<span class='expansion'>((vgrad[7])[0] = (VAL( 2, 1, 1) - VAL( 0, 1, 1)), (vgrad[7])[<br>1] = (VAL( 1, 2, 1) - VAL( 1, 0, 1)), (vgrad[7])[2] = (VAL( 1<br>, 1, 2) - VAL( 1, 1, 0)))</span></span>;</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line"><span class='directive'>#undef VAL</span></td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">vvalIsoSet(seekContext *sctx, baggage *bag, <span class='keyword'>double</span> vval[8],</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">           <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xi, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> yi) {</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sx, si, spi, vi;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">  <span class='macro'>AIR_UNUSED(bag)<span class='expansion'>(void)(bag)</span></span>;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">  si = xi + sx*yi;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">  spi = (xi+1) + (sx+2)*(yi+1);</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">  <span class='comment'>/* learn voxel values */</span></td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">  <span class='comment'>/*                      X   Y                 Z */</span></td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">  vval[0] = sctx-&gt;sclv[4*(0 + 0*(sx+2) + spi) + 1];</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">  vval[1] = sctx-&gt;sclv[4*(1 + 0*(sx+2) + spi) + 1];</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">  vval[2] = sctx-&gt;sclv[4*(0 + 1*(sx+2) + spi) + 1];</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">  vval[3] = sctx-&gt;sclv[4*(1 + 1*(sx+2) + spi) + 1];</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">  vval[4] = sctx-&gt;sclv[4*(0 + 0*(sx+2) + spi) + 2];</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">  vval[5] = sctx-&gt;sclv[4*(1 + 0*(sx+2) + spi) + 2];</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">  vval[6] = sctx-&gt;sclv[4*(0 + 1*(sx+2) + spi) + 2];</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">  vval[7] = sctx-&gt;sclv[4*(1 + 1*(sx+2) + spi) + 2];</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;strengthUse) {</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">    <span class='keyword'>double</span> s, w, ssum, wsum;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">    <span class='comment'>/*                 Z      X   Y   */</span></td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">    ssum = wsum = 0;</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line"><span class='directive'>#define ACCUM(vi) w = <span class='macro'>AIR_ABS(1.0/vval[vi])<span class='expansion'>((1.0/vval[vi]) &gt; 0.0f ? (1.0/vval[vi]) : -(1.0/vval[vi]))</span></span>; ssum += w*s; wsum += w</span></td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">    s = sctx-&gt;stng[0 + 2*(0 + 0*sx + si)]; ACCUM(0);</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">    s = sctx-&gt;stng[0 + 2*(1 + 0*sx + si)]; ACCUM(1);</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">    s = sctx-&gt;stng[0 + 2*(0 + 1*sx + si)]; ACCUM(2);</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">    s = sctx-&gt;stng[0 + 2*(1 + 1*sx + si)]; ACCUM(3);</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">    s = sctx-&gt;stng[1 + 2*(0 + 0*sx + si)]; ACCUM(4);</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">    s = sctx-&gt;stng[1 + 2*(1 + 0*sx + si)]; ACCUM(5);</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">    s = sctx-&gt;stng[1 + 2*(0 + 1*sx + si)]; ACCUM(6);</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">    s = sctx-&gt;stng[1 + 2*(1 + 1*sx + si)]; ACCUM(7);</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line"><span class='directive'>#undef ACCUM</span></td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">    <span class='keyword'>if</span> (ssum/wsum &lt; sctx-&gt;strength) {</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">      <span class='keyword'>for</span> (vi=0; vi&lt;8; vi++) {</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">        vval[vi] = 0;</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">vvalSurfSet(seekContext *sctx, baggage *bag, <span class='keyword'>double</span> vval[8],</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">            <span class='keyword'>unsigned</span> <span class='keyword'>int</span> xi, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> yi) {</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">  <span class='comment'>/* static const char me[]="vvalSurfSet"; */</span></td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">  <span class='keyword'>double</span> evec[8][3], grad[8][3], stng[8], maxStrength=0;</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">  <span class='keyword'>signed</span> <span class='keyword'>char</span> flip[12]={0,0,0,0,0,0,0,0,0,0,0,0}, flipProd;</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sx, si, vi, ei, vrti[8];</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">  si = xi + sx*yi;</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">  vrti[0] = 0 + 2*(xi + 0 + sx*(yi + 0));</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">  vrti[1] = 0 + 2*(xi + 1 + sx*(yi + 0));</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">  vrti[2] = 0 + 2*(xi + 0 + sx*(yi + 1));</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">  vrti[3] = 0 + 2*(xi + 1 + sx*(yi + 1));</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">  vrti[4] = 1 + 2*(xi + 0 + sx*(yi + 0));</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">  vrti[5] = 1 + 2*(xi + 1 + sx*(yi + 0));</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">  vrti[6] = 1 + 2*(xi + 0 + sx*(yi + 1));</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">  vrti[7] = 1 + 2*(xi + 1 + sx*(yi + 1));</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">  <span class='comment'>/* Our strategy is to create all triangles of which at least some</span></td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">   <span class='comment'>* part meets the strength criterion, and to trim them in a</span></td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">   <span class='comment'>* post-process.  This avoids ragged boundaries */</span></td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">  <span class='keyword'>for</span> (vi=0; vi&lt;8; vi++) {</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">    <span class='macro'>ELL_3V_COPY(grad[vi], sctx-&gt;grad + 3*vrti[vi])<span class='expansion'>((grad[vi])[0] = (sctx-&gt;grad + 3*vrti[vi])[0], (grad[vi])[<br>1] = (sctx-&gt;grad + 3*vrti[vi])[1], (grad[vi])[2] = (sctx-&gt;<br>grad + 3*vrti[vi])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">    <span class='macro'>ELL_3V_COPY(evec[vi], sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*vrti[vi]))<span class='expansion'>((evec[vi])[0] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3*vrti[vi<br>]))[0], (evec[vi])[1] = (sctx-&gt;evec + 3*(bag-&gt;esIdx + 3<br>*vrti[vi]))[1], (evec[vi])[2] = (sctx-&gt;evec + 3*(bag-&gt;esIdx<br> + 3*vrti[vi]))[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">    <span class='keyword'>if</span> (sctx-&gt;strengthUse) {</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">      stng[vi] = sctx-&gt;stng[vrti[vi]];</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">      <span class='keyword'>if</span> (!vi) {</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">        maxStrength = stng[vi];</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">        maxStrength = <span class='macro'>AIR_MAX(maxStrength, stng[vi])<span class='expansion'>((maxStrength) &gt; (stng[vi]) ? (maxStrength) : (stng[vi]))</span></span>;</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">  flipProd = 1;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;type!=seekTypeRidgeSurfaceOP &amp;&amp;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">      sctx-&gt;type!=seekTypeValleySurfaceOP) {</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">    <span class='keyword'>for</span> (ei=0; ei&lt;12; ei++) {</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">      flip[ei] = sctx-&gt;flip[bag-&gt;evti[ei] + 5*si];</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">      flipProd *= flip[ei];</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">  <span class='keyword'>if</span> ((sctx-&gt;strengthUse &amp;&amp; maxStrength &lt; sctx-&gt;strength)</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">      || !flipProd) {</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">    <span class='comment'>/* either the corners this voxel don't meet strength,</span></td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">       <span class='comment'>or something else is funky */</span></td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">    <span class='keyword'>for</span> (vi=0; vi&lt;8; vi++) {</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">      vval[vi] = 0;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">    <span class='keyword'>if</span> (sctx-&gt;type==seekTypeRidgeSurfaceOP ||</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">        sctx-&gt;type==seekTypeValleySurfaceOP) {</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">      <span class='comment'>/* find orientation based on outer product rule */</span></td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">      <span class='keyword'>double</span> outer[9];</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">      <span class='keyword'>double</span> outerevals[3],outerevecs[9];</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">      <span class='macro'>ELL_3MV_OUTER(outer,evec[0],evec[0])<span class='expansion'>((((outer)+0)[0] = ((evec[0])[0])*((evec[0]))[0], ((outer)+0)<br>[1] = ((evec[0])[0])*((evec[0]))[1], ((outer)+0)[2] = ((evec[<br>0])[0])*((evec[0]))[2]), (((outer)+3)[0] = ((evec[0])[1])*((evec<br>[0]))[0], ((outer)+3)[1] = ((evec[0])[1])*((evec[0]))[1], ((outer<br>)+3)[2] = ((evec[0])[1])*((evec[0]))[2]), (((outer)+6)[0] = (<br>(evec[0])[2])*((evec[0]))[0], ((outer)+6)[1] = ((evec[0])[2])<br>*((evec[0]))[1], ((outer)+6)[2] = ((evec[0])[2])*((evec[0]))[<br>2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">      <span class='keyword'>for</span> (vi=1; vi&lt;8; ++vi) {</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">        <span class='macro'>ELL_3MV_OUTER_INCR(outer,evec[vi],evec[vi])<span class='expansion'>((((outer)+0)[0] += ((evec[vi])[0])*((evec[vi]))[0], ((outer)<br>+0)[1] += ((evec[vi])[0])*((evec[vi]))[1], ((outer)+0)[2] += (<br>(evec[vi])[0])*((evec[vi]))[2]), (((outer)+3)[0] += ((evec[vi<br>])[1])*((evec[vi]))[0], ((outer)+3)[1] += ((evec[vi])[1])*((evec<br>[vi]))[1], ((outer)+3)[2] += ((evec[vi])[1])*((evec[vi]))[2])<br>, (((outer)+6)[0] += ((evec[vi])[2])*((evec[vi]))[0], ((outer<br>)+6)[1] += ((evec[vi])[2])*((evec[vi]))[1], ((outer)+6)[2] +=<br> ((evec[vi])[2])*((evec[vi]))[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">      ell_3m_eigensolve_d(outerevals, outerevecs, outer, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">      <span class='keyword'>for</span> (vi=0; vi&lt;8; ++vi) {</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>ELL_3V_DOT(evec[vi],outerevecs)<span class='expansion'>((evec[vi])[0]*(outerevecs)[0] + (evec[vi])[1]*(outerevecs)[1<br>] + (evec[vi])[2]*(outerevecs)[2])</span></span>&lt;0)</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">          <span class='macro'>ELL_3V_SCALE(evec[vi], -1.0, evec[vi])<span class='expansion'>((evec[vi])[0] = (-1.0)*(evec[vi])[0], (evec[vi])[1] = (-1.0)<br>*(evec[vi])[1], (evec[vi])[2] = (-1.0)*(evec[vi])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[1], flip[0],                  evec[1])<span class='expansion'>((evec[1])[0] = (flip[0])*(evec[1])[0], (evec[1])[1] = (flip[<br>0])*(evec[1])[1], (evec[1])[2] = (flip[0])*(evec[1])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[2], flip[1],                  evec[2])<span class='expansion'>((evec[2])[0] = (flip[1])*(evec[2])[0], (evec[2])[1] = (flip[<br>1])*(evec[2])[1], (evec[2])[2] = (flip[1])*(evec[2])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[3], flip[0]*flip[2],          evec[3])<span class='expansion'>((evec[3])[0] = (flip[0]*flip[2])*(evec[3])[0], (evec[3])[1] =<br> (flip[0]*flip[2])*(evec[3])[1], (evec[3])[2] = (flip[0]*flip<br>[2])*(evec[3])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[4], flip[4],                  evec[4])<span class='expansion'>((evec[4])[0] = (flip[4])*(evec[4])[0], (evec[4])[1] = (flip[<br>4])*(evec[4])[1], (evec[4])[2] = (flip[4])*(evec[4])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[5], flip[4]*flip[8],          evec[5])<span class='expansion'>((evec[5])[0] = (flip[4]*flip[8])*(evec[5])[0], (evec[5])[1] =<br> (flip[4]*flip[8])*(evec[5])[1], (evec[5])[2] = (flip[4]*flip<br>[8])*(evec[5])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[6], flip[4]*flip[9],          evec[6])<span class='expansion'>((evec[6])[0] = (flip[4]*flip[9])*(evec[6])[0], (evec[6])[1] =<br> (flip[4]*flip[9])*(evec[6])[1], (evec[6])[2] = (flip[4]*flip<br>[9])*(evec[6])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">      <span class='macro'>ELL_3V_SCALE(evec[7], flip[4]*flip[8]*flip[10], evec[7])<span class='expansion'>((evec[7])[0] = (flip[4]*flip[8]*flip[10])*(evec[7])[0], (evec<br>[7])[1] = (flip[4]*flip[8]*flip[10])*(evec[7])[1], (evec[7])[<br>2] = (flip[4]*flip[8]*flip[10])*(evec[7])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">    <span class='keyword'>for</span> (vi=0; vi&lt;8; vi++) {</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">      vval[vi] = <span class='macro'>ELL_3V_DOT(grad[vi], evec[vi])<span class='expansion'>((grad[vi])[0]*(evec[vi])[0] + (grad[vi])[1]*(evec[vi])[1] + (<br>grad[vi])[2]*(evec[vi])[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">triangulate(seekContext *sctx, baggage *bag, limnPolyData *lpld) {</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">  <span class='comment'>/* static const char me[]="triangulate"; */</span></td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">  <span class='keyword'>unsigned</span> xi, yi, sx, sy, si, spi;</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">  <span class='comment'>/* ========================================================== */</span></td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">  <span class='comment'>/* NOTE: these things must agree with information in tables.c */</span></td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">  <span class='keyword'>int</span> e2v[12][2] = {        <span class='comment'>/* maps edge index to corner vertex indices */</span></td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">    {0, 1},  <span class='comment'>/*  0 */</span></td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">    {0, 2},  <span class='comment'>/*  1 */</span></td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">    {1, 3},  <span class='comment'>/*  2 */</span></td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">    {2, 3},  <span class='comment'>/*  3 */</span></td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">    {0, 4},  <span class='comment'>/*  4 */</span></td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">    {1, 5},  <span class='comment'>/*  5 */</span></td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">    {2, 6},  <span class='comment'>/*  6 */</span></td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">    {3, 7},  <span class='comment'>/*  7 */</span></td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">    {4, 5},  <span class='comment'>/*  8 */</span></td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">    {4, 6},  <span class='comment'>/*  9 */</span></td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">    {5, 7},  <span class='comment'>/* 10 */</span></td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">    {6, 7}   <span class='comment'>/* 11 */</span></td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">  };</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">  <span class='keyword'>double</span> vccoord[8][3] = {  <span class='comment'>/* vertex corner coordinates */</span></td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">    {0, 0, 0},  <span class='comment'>/* 0 */</span></td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">    {1, 0, 0},  <span class='comment'>/* 1 */</span></td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">    {0, 1, 0},  <span class='comment'>/* 2 */</span></td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">    {1, 1, 0},  <span class='comment'>/* 3 */</span></td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">    {0, 0, 1},  <span class='comment'>/* 4 */</span></td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">    {1, 0, 1},  <span class='comment'>/* 5 */</span></td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">    {0, 1, 1},  <span class='comment'>/* 6 */</span></td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">    {1, 1, 1}   <span class='comment'>/* 7 */</span></td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">  };</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">  <span class='comment'>/* ========================================================== */</span></td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">  sx = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sx)<span class='expansion'>((unsigned int)(sctx-&gt;sx))</span></span>;</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">  sy = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sy)<span class='expansion'>((unsigned int)(sctx-&gt;sy))</span></span>;</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">  <span class='keyword'>for</span> (yi=0; yi&lt;sy-1; yi++) {</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">    <span class='keyword'>double</span> vval[8], vgrad[8][3], vert[3], tvertA[4], tvertB[4], ww;</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>char</span> vcase;</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">    <span class='keyword'>int</span> ti, vi, ei, vi0, vi1, ecase;</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">    <span class='keyword'>const</span> <span class='keyword'>int</span> *tcase;</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> vii[3];</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">    <span class='keyword'>for</span> (xi=0; xi&lt;sx-1; xi++) {</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">      si = xi + sx*yi;</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">      spi = (xi+1) + (sx+2)*(yi+1);</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">      <span class='keyword'>switch</span> (sctx-&gt;type) {</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">      <span class='keyword'>case</span> seekTypeIsocontour:</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        vvalIsoSet(sctx, bag, vval, xi, yi);</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">      <span class='keyword'>case</span> seekTypeRidgeSurface:</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">      <span class='keyword'>case</span> seekTypeValleySurface:</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">      <span class='keyword'>case</span> seekTypeMaximalSurface:</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">      <span class='keyword'>case</span> seekTypeMinimalSurface:</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">      <span class='keyword'>case</span> seekTypeRidgeSurfaceOP:</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">      <span class='keyword'>case</span> seekTypeValleySurfaceOP:</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">        vvalSurfSet(sctx, bag, vval, xi, yi);</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">      <span class='comment'>/* determine voxel and edge case */</span></td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">      vcase = 0;</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">      <span class='keyword'>for</span> (vi=0; vi&lt;8; vi++) {</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">        vcase |= (vval[vi] &gt; 0) &lt;&lt; vi;</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">      <span class='keyword'>if</span> (0 == vcase || 255 == vcase) {</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">        <span class='comment'>/* no triangles added here */</span></td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">      <span class='comment'>/* set voxel corner gradients */</span></td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">      <span class='keyword'>if</span> (seekTypeIsocontour == sctx-&gt;type</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">          &amp;&amp; sctx-&gt;normalsFind</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">          &amp;&amp; !sctx-&gt;normAns) {</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">        voxelGrads(vgrad, sctx-&gt;sclv, sx, spi);</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">      sctx-&gt;voxNum++;</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">      ecase = seekContour3DTopoHackEdge[vcase];</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">      <span class='comment'>/* create new vertices as needed */</span></td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">      <span class='keyword'>for</span> (ei=0; ei&lt;12; ei++) {</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">        <span class='keyword'>if</span> ((ecase &amp; (1 &lt;&lt; ei))</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">            &amp;&amp; -1 == sctx-&gt;vidx[bag-&gt;evti[ei] + 5*si]) {</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">          <span class='keyword'>int</span> ovi;</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">          <span class='keyword'>double</span> tvec[3], grad[3], tlen;</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">          <span class='comment'>/* this edge is needed for triangulation,</span></td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">             <span class='comment'>and, we haven't already created a vertex for it */</span></td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">          vi0 = e2v[ei][0];</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">          vi1 = e2v[ei][1];</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">          ww = vval[vi0]/(vval[vi0] - vval[vi1]);</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">          <span class='macro'>ELL_3V_LERP(vert, ww, vccoord[vi0], vccoord[vi1])<span class='expansion'>((vert)[0] = (((ww))*(((vccoord[vi1])[0]) - ((vccoord[vi0])[0<br>])) + ((vccoord[vi0])[0])), (vert)[1] = (((ww))*(((vccoord[vi1<br>])[1]) - ((vccoord[vi0])[1])) + ((vccoord[vi0])[1])), (vert)[<br>2] = (((ww))*(((vccoord[vi1])[2]) - ((vccoord[vi0])[2])) + ((<br>vccoord[vi0])[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">          <span class='macro'>ELL_4V_SET(tvertA, vert[0] + xi, vert[1] + yi, vert[2] + bag-&gt;zi, 1)<span class='expansion'>((tvertA)[0] = (vert[0] + xi), (tvertA)[1] = (vert[1] + yi), (<br>tvertA)[2] = (vert[2] + bag-&gt;zi), (tvertA)[3] = (1))</span></span>;</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">          <span class='macro'>ELL_4MV_MUL(tvertB, sctx-&gt;txfIdx, tvertA)<span class='expansion'>((tvertB)[0]=(sctx-&gt;txfIdx)[ 0]*(tvertA)[0]+(sctx-&gt;txfIdx<br>)[ 1]*(tvertA)[1]+(sctx-&gt;txfIdx)[ 2]*(tvertA)[2]+(sctx-&gt;<br>txfIdx)[ 3]*(tvertA)[3], (tvertB)[1]=(sctx-&gt;txfIdx)[ 4]*(tvertA<br>)[0]+(sctx-&gt;txfIdx)[ 5]*(tvertA)[1]+(sctx-&gt;txfIdx)[ 6]*<br>(tvertA)[2]+(sctx-&gt;txfIdx)[ 7]*(tvertA)[3], (tvertB)[2]=(sctx<br>-&gt;txfIdx)[ 8]*(tvertA)[0]+(sctx-&gt;txfIdx)[ 9]*(tvertA)[1<br>]+(sctx-&gt;txfIdx)[10]*(tvertA)[2]+(sctx-&gt;txfIdx)[11]*(tvertA<br>)[3], (tvertB)[3]=(sctx-&gt;txfIdx)[12]*(tvertA)[0]+(sctx-&gt;<br>txfIdx)[13]*(tvertA)[1]+(sctx-&gt;txfIdx)[14]*(tvertA)[2]+(sctx<br>-&gt;txfIdx)[15]*(tvertA)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">          <span class='comment'>/* tvertB is now in input index space */</span></td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">          <span class='macro'>ELL_4MV_MUL(tvertA, sctx-&gt;shape-&gt;ItoW, tvertB)<span class='expansion'>((tvertA)[0]=(sctx-&gt;shape-&gt;ItoW)[ 0]*(tvertB)[0]+(sctx-&gt;<br>shape-&gt;ItoW)[ 1]*(tvertB)[1]+(sctx-&gt;shape-&gt;ItoW)[ 2]<br>*(tvertB)[2]+(sctx-&gt;shape-&gt;ItoW)[ 3]*(tvertB)[3], (tvertA<br>)[1]=(sctx-&gt;shape-&gt;ItoW)[ 4]*(tvertB)[0]+(sctx-&gt;shape<br>-&gt;ItoW)[ 5]*(tvertB)[1]+(sctx-&gt;shape-&gt;ItoW)[ 6]*(tvertB<br>)[2]+(sctx-&gt;shape-&gt;ItoW)[ 7]*(tvertB)[3], (tvertA)[2]=(<br>sctx-&gt;shape-&gt;ItoW)[ 8]*(tvertB)[0]+(sctx-&gt;shape-&gt;<br>ItoW)[ 9]*(tvertB)[1]+(sctx-&gt;shape-&gt;ItoW)[10]*(tvertB)[<br>2]+(sctx-&gt;shape-&gt;ItoW)[11]*(tvertB)[3], (tvertA)[3]=(sctx<br>-&gt;shape-&gt;ItoW)[12]*(tvertB)[0]+(sctx-&gt;shape-&gt;ItoW<br>)[13]*(tvertB)[1]+(sctx-&gt;shape-&gt;ItoW)[14]*(tvertB)[2]+(<br>sctx-&gt;shape-&gt;ItoW)[15]*(tvertB)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">          <span class='comment'>/* tvertA is now in input world space */</span></td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">          <span class='macro'>ELL_4V_HOMOG(tvertA, tvertA)<span class='expansion'>((tvertA)[0] = (tvertA)[0]/(tvertA)[3], (tvertA)[1] = (tvertA<br>)[1]/(tvertA)[3], (tvertA)[2] = (tvertA)[2]/(tvertA)[3], (tvertA<br>)[3] = 1.0)</span></span>;</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">          <span class='macro'>ELL_4V_HOMOG(tvertB, tvertB)<span class='expansion'>((tvertB)[0] = (tvertB)[0]/(tvertB)[3], (tvertB)[1] = (tvertB<br>)[1]/(tvertB)[3], (tvertB)[2] = (tvertB)[2]/(tvertB)[3], (tvertB<br>)[3] = 1.0)</span></span>;</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">          ovi = sctx-&gt;vidx[bag-&gt;evti[ei] + 5*si] =</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">            airArrayLenIncr(bag-&gt;xyzwArr, 1);</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">          <span class='macro'>ELL_4V_SET_TT(lpld-&gt;xyzw + 4*ovi, <span class='keyword'>float</span>,<span class='expansion'>((lpld-&gt;xyzw + 4*ovi)[0] = ((float)((tvertA[0]))), (lpld-&gt;<br>xyzw + 4*ovi)[1] = ((float)((tvertA[1]))), (lpld-&gt;xyzw + 4<br>*ovi)[2] = ((float)((tvertA[2]))), (lpld-&gt;xyzw + 4*ovi)[3]<br> = ((float)((1.0))))</span></span></td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">                        <span class='macro'>tvertA[0], tvertA[1], tvertA[2], 1.0)<span class='expansion'>((lpld-&gt;xyzw + 4*ovi)[0] = ((float)((tvertA[0]))), (lpld-&gt;<br>xyzw + 4*ovi)[1] = ((float)((tvertA[1]))), (lpld-&gt;xyzw + 4<br>*ovi)[2] = ((float)((tvertA[2]))), (lpld-&gt;xyzw + 4*ovi)[3]<br> = ((float)((1.0))))</span></span>;</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">          <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">          <span class='comment'>fprintf(stderr, "!%s: vert %u: %g %g %g\n", me, ovi,</span></td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">                  <span class='comment'>tvertA[0], tvertA[1], tvertA[2]);</span></td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">          <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">          <span class='keyword'>if</span> (sctx-&gt;normalsFind) {</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">            airArrayLenIncr(bag-&gt;normArr, 1);</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">            <span class='keyword'>if</span> (sctx-&gt;normAns) {</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">              gageProbe(sctx-&gt;gctx, tvertB[0], tvertB[1], tvertB[2]);</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">              <span class='macro'>ELL_3V_SCALE_TT(lpld-&gt;norm + 3*ovi, <span class='keyword'>float</span>, -1, sctx-&gt;normAns)<span class='expansion'>((lpld-&gt;norm + 3*ovi)[0] = ((float)((-1)*(sctx-&gt;normAns<br>)[0])), (lpld-&gt;norm + 3*ovi)[1] = ((float)((-1)*(sctx-&gt;<br>normAns)[1])), (lpld-&gt;norm + 3*ovi)[2] = ((float)((-1)*(sctx<br>-&gt;normAns)[2])))</span></span>;</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">              <span class='keyword'>if</span> (sctx-&gt;reverse) {</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">                <span class='macro'>ELL_3V_SCALE(lpld-&gt;norm + 3*ovi, -1, lpld-&gt;norm + 3*ovi)<span class='expansion'>((lpld-&gt;norm + 3*ovi)[0] = (-1)*(lpld-&gt;norm + 3*ovi)[0]<br>, (lpld-&gt;norm + 3*ovi)[1] = (-1)*(lpld-&gt;norm + 3*ovi)[1<br>], (lpld-&gt;norm + 3*ovi)[2] = (-1)*(lpld-&gt;norm + 3*ovi)[<br>2])</span></span>;</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">              }</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">            } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">              <span class='macro'>ELL_3V_LERP(grad, ww, vgrad[vi0], vgrad[vi1])<span class='expansion'>((grad)[0] = (((ww))*(((vgrad[vi1])[0]) - ((vgrad[vi0])[0])) +<br> ((vgrad[vi0])[0])), (grad)[1] = (((ww))*(((vgrad[vi1])[1]) -<br> ((vgrad[vi0])[1])) + ((vgrad[vi0])[1])), (grad)[2] = (((ww))<br>*(((vgrad[vi1])[2]) - ((vgrad[vi0])[2])) + ((vgrad[vi0])[2]))<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line">              <span class='macro'>ELL_3MV_MUL(tvec, sctx-&gt;txfNormal, grad)<span class='expansion'>((tvec)[0] = (sctx-&gt;txfNormal)[0]*(grad)[0] + (sctx-&gt;txfNormal<br>)[1]*(grad)[1] + (sctx-&gt;txfNormal)[2]*(grad)[2], (tvec)[1]<br> = (sctx-&gt;txfNormal)[3]*(grad)[0] + (sctx-&gt;txfNormal)[4<br>]*(grad)[1] + (sctx-&gt;txfNormal)[5]*(grad)[2], (tvec)[2] = (<br>sctx-&gt;txfNormal)[6]*(grad)[0] + (sctx-&gt;txfNormal)[7]*(grad<br>)[1] + (sctx-&gt;txfNormal)[8]*(grad)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">              <span class='macro'>ELL_3V_NORM_TT(lpld-&gt;norm + 3*ovi, <span class='keyword'>float</span>, tvec, tlen)<span class='expansion'>(tlen = ((float)((sqrt((((tvec))[0]*((tvec))[0] + ((tvec))[1]<br>*((tvec))[1] + ((tvec))[2]*((tvec))[2]))))), ((lpld-&gt;norm +<br> 3*ovi)[0] = ((float)((1.0/tlen)*(tvec)[0])), (lpld-&gt;norm +<br> 3*ovi)[1] = ((float)((1.0/tlen)*(tvec)[1])), (lpld-&gt;norm +<br> 3*ovi)[2] = ((float)((1.0/tlen)*(tvec)[2]))))</span></span>;</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line">          sctx-&gt;vertNum++;</td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">          <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">            <span class='comment'>fprintf(stderr, "%s: vert %d (edge %d) of (%d,%d,%d) "</span></td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">            <span class='comment'>"at %g %g %g\n",</span></td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">            <span class='comment'>me, sctx-&gt;vidx[bag-&gt;evti[ei] + 5*si], ei, xi, yi, zi,</span></td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">            <span class='comment'>vert[0] + xi, vert[1] + yi, vert[2] + bag-&gt;zi);</span></td></tr>
+<tr><td class="num" id="LN860">860</td><td class="line">          <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line">      <span class='comment'>/* add triangles */</span></td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">      ti = 0;</td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line">      tcase = seekContour3DTopoHackTriangle[vcase];</td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">      <span class='keyword'>while</span> (-1 != tcase[0 + 3*ti]) {</td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">        <span class='keyword'>unsigned</span> iii;</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">        <span class='macro'>ELL_3V_SET(vii,<span class='expansion'>((vii)[0] = (sctx-&gt;vidx[bag-&gt;evti[tcase[0 + 3*ti]] + 5*<br>si]), (vii)[1] = (sctx-&gt;vidx[bag-&gt;evti[tcase[1 + 3*ti]]<br> + 5*si]), (vii)[2] = (sctx-&gt;vidx[bag-&gt;evti[tcase[2 + 3<br>*ti]] + 5*si]))</span></span></td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line">                   <span class='macro'>sctx-&gt;vidx[bag-&gt;evti[tcase[0 + 3*ti]] + 5*si],<span class='expansion'>((vii)[0] = (sctx-&gt;vidx[bag-&gt;evti[tcase[0 + 3*ti]] + 5*<br>si]), (vii)[1] = (sctx-&gt;vidx[bag-&gt;evti[tcase[1 + 3*ti]]<br> + 5*si]), (vii)[2] = (sctx-&gt;vidx[bag-&gt;evti[tcase[2 + 3<br>*ti]] + 5*si]))</span></span></td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">                   <span class='macro'>sctx-&gt;vidx[bag-&gt;evti[tcase[1 + 3*ti]] + 5*si],<span class='expansion'>((vii)[0] = (sctx-&gt;vidx[bag-&gt;evti[tcase[0 + 3*ti]] + 5*<br>si]), (vii)[1] = (sctx-&gt;vidx[bag-&gt;evti[tcase[1 + 3*ti]]<br> + 5*si]), (vii)[2] = (sctx-&gt;vidx[bag-&gt;evti[tcase[2 + 3<br>*ti]] + 5*si]))</span></span></td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line">                   <span class='macro'>sctx-&gt;vidx[bag-&gt;evti[tcase[2 + 3*ti]] + 5*si])<span class='expansion'>((vii)[0] = (sctx-&gt;vidx[bag-&gt;evti[tcase[0 + 3*ti]] + 5*<br>si]), (vii)[1] = (sctx-&gt;vidx[bag-&gt;evti[tcase[1 + 3*ti]]<br> + 5*si]), (vii)[2] = (sctx-&gt;vidx[bag-&gt;evti[tcase[2 + 3<br>*ti]] + 5*si]))</span></span>;</td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">        <span class='keyword'>if</span> (sctx-&gt;reverse) {</td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line">          <span class='keyword'>int</span> tmpi;</td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">          tmpi = vii[1]; vii[1] = vii[2]; vii[2] = tmpi;</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line">        iii = airArrayLenIncr(bag-&gt;indxArr, 3);</td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">        <span class='macro'>ELL_3V_COPY(lpld-&gt;indx + iii, vii)<span class='expansion'>((lpld-&gt;indx + iii)[0] = (vii)[0], (lpld-&gt;indx + iii)[1<br>] = (vii)[1], (lpld-&gt;indx + iii)[2] = (vii)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">        <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line">        <span class='comment'>fprintf(stderr, "!%s: tri %u: %u %u %u\n",</span></td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">                <span class='comment'>me, iii/3, vii[0], vii[1], vii[2]);</span></td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">        <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line">        lpld-&gt;icnt[0] += 3;</td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">        sctx-&gt;faceNum++;</td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">        ti++;</td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line">surfaceExtract(seekContext *sctx, limnPolyData *lpld) {</td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"surfaceExtract"</span>;</td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line">  <span class='keyword'>char</span> done[<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> zi, sz;</td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line">  baggage *bag;</td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line">  bag = <span class="mrange"><span class="mrange">baggageNew(sctx)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Calling 'baggageNew'</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">  sz = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, sctx-&gt;sz)<span class='expansion'>((unsigned int)(sctx-&gt;sz))</span></span>;</td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line">  <span class='comment'>/* this creates the airArrays in bag */</span></td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">  <span class='keyword'>if</span> (outputInit(sctx, bag, lpld)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: trouble"</span>, me);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:5ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'bag'</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: extracting ...       "</span>, me);</td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line">  <span class='keyword'>for</span> (zi=0; zi&lt;sz-1; zi++) {</td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">    <span class='keyword'>char</span> trouble=0;</td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line">    <span class='keyword'>if</span> (sctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s"</span>, airDoneStr(0, zi, sz-2, done));</td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">      fflush(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>);</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">    bag-&gt;zi = zi;</td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">    <span class='keyword'>if</span> (sctx-&gt;type==seekTypeRidgeSurfaceT ||</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">        sctx-&gt;type==seekTypeValleySurfaceT) {</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">      <span class='keyword'>if</span> (_seekShuffleProbeT(sctx, bag) ||</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">          _seekTriangulateT(sctx, bag, lpld))</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line">        trouble = 1;</td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line">      <span class='keyword'>if</span> (shuffleProbe(sctx, bag) ||</td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line">          triangulate(sctx, bag, lpld))</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">        trouble = 1;</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN927">927</td><td class="line">    <span class='keyword'>if</span> (trouble) {</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">      biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: trouble on zi = %u"</span>, me, zi);</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s\n"</span>, airDoneStr(0, zi, sz-2, done));</td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN935">935</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line">  <span class='comment'>/* this cleans up the airArrays in bag */</span></td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line">  baggageNix(bag);</td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line">seekExtract(seekContext *sctx, limnPolyData *lpld) {</td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"seekExtract"</span>;</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">  <span class='keyword'>double</span> time0;</td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line">  <span class='keyword'>int</span> E;</td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">  <span class='keyword'>if</span> (!( sctx &amp;&amp; lpld )) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">  <span class='keyword'>if</span> (seekTypeIsocontour == sctx-&gt;type) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line">    <span class='keyword'>if</span> (!<span class='macro'>AIR_EXISTS(sctx-&gt;isovalue)<span class='expansion'>(((int)(!((sctx-&gt;isovalue) - (sctx-&gt;isovalue)))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">      biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: didn't seem to ever set isovalue (now %g)"</span>, me,</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">               sctx-&gt;isovalue);</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line">  <span class='keyword'>if</span> (sctx-&gt;verbose) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: --------------------\n"</span>, me);</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: flagResult = %d\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line">            sctx-&gt;flag[flagResult]);</td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN967">967</td><td class="line">  <span class='comment'>/* reset max strength seen */</span></td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">  sctx-&gt;strengthSeenMax = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">  <span class='comment'>/* start time */</span></td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line">  time0 = airTime();</td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line">  <span class='keyword'>switch</span>(sctx-&gt;type) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:3ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Control jumps to 'case seekTypeRidgeSurface:'  at line 975</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line">  <span class='keyword'>case</span> seekTypeIsocontour:</td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line">  <span class='keyword'>case</span> seekTypeRidgeSurface:</td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line">  <span class='keyword'>case</span> seekTypeValleySurface:</td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line">  <span class='keyword'>case</span> seekTypeMinimalSurface:</td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line">  <span class='keyword'>case</span> seekTypeMaximalSurface:</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">  <span class='keyword'>case</span> seekTypeRidgeSurfaceOP:</td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line">  <span class='keyword'>case</span> seekTypeRidgeSurfaceT:</td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line">  <span class='keyword'>case</span> seekTypeValleySurfaceOP:</td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line">  <span class='keyword'>case</span> seekTypeValleySurfaceT:</td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">    E = <span class="mrange">surfaceExtract(sctx, lpld)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Calling 'surfaceExtract'</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">  <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN986">986</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: sorry, %s extraction not implemented"</span>, me,</td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line">             airEnumStr(seekType, sctx-&gt;type));</td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line">    <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line">  <span class='keyword'>if</span> (E) {</td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">    biffAddf(<span class='macro'>SEEK<span class='expansion'>seekBiffKey</span></span>, <span class='string_literal'>"%s: trouble"</span>, me);</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line">  <span class='comment'>/* end time */</span></td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line">  sctx-&gt;time = airTime() - time0;</td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">  sctx-&gt;flag[flagResult] = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">}</td></tr>
+</table></body></html>

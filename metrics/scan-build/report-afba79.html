@@ -1,0 +1,1022 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/bin/gprobe.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'six' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/bin/gprobe.c -->
+
+<!-- FILENAME gprobe.c -->
+
+<!-- FUNCTIONNAME main -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT d045dc249e2baedff8a2c837c97c3956 -->
+
+<!-- BUGLINE 848 -->
+
+<!-- BUGCOLUMN 5 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/bin/gprobe.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 848, column 5</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'six' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include &lt;stdio.h&gt;</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include &lt;teem/biff.h&gt;</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include &lt;teem/hest.h&gt;</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include &lt;teem/nrrd.h&gt;</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include &lt;teem/gage.h&gt;</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='directive'>#include &lt;teem/ten.h&gt;</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#include &lt;teem/meet.h&gt;</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">printans(FILE *file, <span class='keyword'>const</span> <span class='keyword'>double</span> *ans, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> len) {</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ai;</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">  <span class='macro'>AIR_UNUSED(file)<span class='expansion'>(void)(file)</span></span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">  <span class='keyword'>for</span> (ai=0; ai&lt;len; ai++) {</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">    <span class='keyword'>if</span> (ai) {</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">      printf(<span class='string_literal'>", "</span>);</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">    printf(<span class='string_literal'>"%g"</span>, ans[ai]);</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">gridProbe(gageContext *ctx, gagePerVolume *pvl, <span class='keyword'>int</span> what,</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">          Nrrd *nout, <span class='keyword'>int</span> typeOut, Nrrd *_ngrid,</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">          <span class='keyword'>int</span> indexSpace, <span class='keyword'>int</span> verbose, <span class='keyword'>int</span> clamp, <span class='keyword'>int</span> scaleIsTau,</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">          <span class='keyword'>double</span> eft, <span class='keyword'>double</span> eftVal) {</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">  <span class='keyword'>char</span> me[]=<span class='string_literal'>"gridProbe"</span>;</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">  Nrrd *ngrid;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">  <span class='keyword'>double</span> *grid, pos[4];</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">  <span class='keyword'>const</span> <span class='keyword'>double</span> *answer;</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ansLen, dim, aidx, baseDim, gridDim;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">  size_t sizeOut[<span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>], coordOut[<span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>], II, NN;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">  <span class='keyword'>double</span> (*ins)(<span class='keyword'>void</span> *v, size_t I, <span class='keyword'>double</span> d);</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">  <span class='keyword'>char</span> stmp[2][<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">  <span class='keyword'>if</span> (!(ctx &amp;&amp; pvl &amp;&amp; nout &amp;&amp; _ngrid)) {</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">  <span class='keyword'>if</span> (airEnumValCheck(nrrdType, typeOut)) {</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: type %d not valid"</span>, me, typeOut);</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">  <span class='keyword'>if</span> (!gagePerVolumeIsAttached(ctx, pvl)) {</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: given pvl not attached to context"</span>, me);</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">  <span class='keyword'>if</span> (!(2 == _ngrid-&gt;dim)) {</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: ngrid must be 2 (not %u)"</span>, me, _ngrid-&gt;dim);</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">  <span class='keyword'>if</span> ((ctx-&gt;stackPos &amp;&amp; _ngrid-&gt;axis[0].size != 5)</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">      || (!ctx-&gt;stackPos &amp;&amp; _ngrid-&gt;axis[0].size != 4)) {</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: if %susing stack, need "</span></td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">             <span class='string_literal'>"ngrid-&gt;axis[0].size = %u = 1 + %u (not %u)"</span>, me,</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">             (ctx-&gt;stackPos ? <span class='string_literal'>""</span> : <span class='string_literal'>"not "</span>),</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">             (ctx-&gt;stackPos ? 4 : 3) + 1,</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">             (ctx-&gt;stackPos ? 4 : 3),</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">             <span class='macro'>AIR_UINT(_ngrid-&gt;axis[0].size)<span class='expansion'>((unsigned int)(_ngrid-&gt;axis[0].size))</span></span>);</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">  ngrid = nrrdNew();</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">  airMopAdd(mop, ngrid, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">  <span class='keyword'>if</span> (ctx-&gt;stackPos) {</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">    <span class='keyword'>if</span> (nrrdConvert(ngrid, _ngrid, nrrdTypeDouble)) {</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">      biffMovef(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble converting ngrid"</span>, me);</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">    Nrrd *ntmp;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">    ptrdiff_t minIdx[2], maxIdx[2];</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">    minIdx[0] = minIdx[1] = 0;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">    maxIdx[0] = 4;                      <span class='comment'>/* pad by one sample */</span></td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">    maxIdx[1] = <span class='macro'>AIR_CAST(ptrdiff_t, _ngrid-&gt;axis[1].size-1)<span class='expansion'>((ptrdiff_t)(_ngrid-&gt;axis[1].size-1))</span></span>; <span class='comment'>/* no padding */</span></td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">    ntmp = nrrdNew();</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">    airMopAdd(mop, ntmp, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">    <span class='keyword'>if</span> (nrrdConvert(ntmp, _ngrid, nrrdTypeDouble)</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">        || nrrdPad_nva(ngrid, ntmp, minIdx, maxIdx, nrrdBoundaryPad, 0.0)) {</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">      biffMovef(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble converting/padding ngrid"</span>, me);</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">  grid = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, ngrid-&gt;data)<span class='expansion'>((double *)(ngrid-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  gridDim = <span class='macro'>AIR_ROUNDUP_UI(grid[0])<span class='expansion'>((unsigned int)(floor((grid[0])+0.5)))</span></span>;</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">  <span class='keyword'>if</span> (gridDim + 1 != ngrid-&gt;axis[1].size) {</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: ngrid-&gt;axis[1].size = %u but expected %u = 1 + %u"</span>,</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">             me, <span class='macro'>AIR_UINT(ngrid-&gt;axis[1].size)<span class='expansion'>((unsigned int)(ngrid-&gt;axis[1].size))</span></span>,</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">             1 + gridDim, gridDim);</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">  answer = gageAnswerPointer(ctx, pvl, what);</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">  ansLen = pvl-&gt;kind-&gt;table[what].answerLength;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">  baseDim = 1 == ansLen ? 0 : 1;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">  dim = baseDim + gridDim;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">  <span class='keyword'>if</span> (dim &gt; <span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>) {</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">    biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: output dimension %u unreasonable"</span>, me, dim);</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">  <span class='keyword'>if</span> (ansLen &gt; 1) {</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">    sizeOut[0] = ansLen;</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    coordOut[0] = 0;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">  NN = 1;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">  <span class='keyword'>for</span> (aidx=0; aidx&lt;gridDim; aidx++) {</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">    sizeOut[aidx + baseDim] = <span class='macro'>AIR_ROUNDUP_UI(grid[0 + 5*(aidx+1)])<span class='expansion'>((unsigned int)(floor((grid[0 + 5*(aidx+1)])+0.5)))</span></span>;</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    NN *= sizeOut[aidx + baseDim];</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">    coordOut[aidx + baseDim] = 0;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_nva(nout, typeOut, dim, sizeOut)) {</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">    biffMovef(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate output"</span>, me);</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">  ins = nrrdDInsert[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">  <span class='keyword'>for</span> (II=0; II&lt;NN; II++) {</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">    <span class='keyword'>int</span> E;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">    <span class='keyword'>if</span> (verbose &amp;&amp; 3 == gridDim</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        &amp;&amp; !coordOut[0+baseDim] &amp;&amp; !coordOut[1+baseDim]) {</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">      <span class='keyword'>if</span> (verbose &gt; 1) {</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"z = "</span>);</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>" %s/%s"</span>,</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">              airSprintSize_t(stmp[0], coordOut[2+baseDim]),</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">              airSprintSize_t(stmp[1], sizeOut[2+baseDim]));</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">      fflush(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>);</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">      <span class='keyword'>if</span> (verbose &gt; 1) {</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">    <span class='macro'>ELL_4V_COPY(pos, grid + 1 + 5*0)<span class='expansion'>((pos)[0] = (grid + 1 + 5*0)[0], (pos)[1] = (grid + 1 + 5*0)[<br>1], (pos)[2] = (grid + 1 + 5*0)[2], (pos)[3] = (grid + 1 + 5*<br>0)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">    <span class='keyword'>for</span> (aidx=0; aidx&lt;gridDim; aidx++) {</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">      <span class='macro'>ELL_4V_SCALE_ADD2(pos, 1, pos,<span class='expansion'>((pos)[0] = (1)*(pos)[0] + (((double)(coordOut[aidx + baseDim<br>])))*(grid + 1 + 5*(1+aidx))[0], (pos)[1] = (1)*(pos)[1] + ((<br>(double)(coordOut[aidx + baseDim])))*(grid + 1 + 5*(1+aidx))[<br>1], (pos)[2] = (1)*(pos)[2] + (((double)(coordOut[aidx + baseDim<br>])))*(grid + 1 + 5*(1+aidx))[2], (pos)[3] = (1)*(pos)[3] + ((<br>(double)(coordOut[aidx + baseDim])))*(grid + 1 + 5*(1+aidx))[<br>3])</span></span></td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                        <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, coordOut[aidx + baseDim]),<span class='expansion'>((pos)[0] = (1)*(pos)[0] + (((double)(coordOut[aidx + baseDim<br>])))*(grid + 1 + 5*(1+aidx))[0], (pos)[1] = (1)*(pos)[1] + ((<br>(double)(coordOut[aidx + baseDim])))*(grid + 1 + 5*(1+aidx))[<br>1], (pos)[2] = (1)*(pos)[2] + (((double)(coordOut[aidx + baseDim<br>])))*(grid + 1 + 5*(1+aidx))[2], (pos)[3] = (1)*(pos)[3] + ((<br>(double)(coordOut[aidx + baseDim])))*(grid + 1 + 5*(1+aidx))[<br>3])</span></span></td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                        <span class='macro'>grid + 1 + 5*(1+aidx))<span class='expansion'>((pos)[0] = (1)*(pos)[0] + (((double)(coordOut[aidx + baseDim<br>])))*(grid + 1 + 5*(1+aidx))[0], (pos)[1] = (1)*(pos)[1] + ((<br>(double)(coordOut[aidx + baseDim])))*(grid + 1 + 5*(1+aidx))[<br>1], (pos)[2] = (1)*(pos)[2] + (((double)(coordOut[aidx + baseDim<br>])))*(grid + 1 + 5*(1+aidx))[2], (pos)[3] = (1)*(pos)[3] + ((<br>(double)(coordOut[aidx + baseDim])))*(grid + 1 + 5*(1+aidx))[<br>3])</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">    <span class='keyword'>if</span> (scaleIsTau &amp;&amp; ctx-&gt;stackPos) {</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">      <span class='comment'>/* have to convert given tau values to sigma */</span></td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">      pos[3] = airSigmaOfTau(pos[3]);</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">    <span class='comment'>printf("%s: %u -&gt; (%u %u) -&gt; %g %g %g %g (%s)\n", me,</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">           <span class='comment'>AIR_UINT(II),</span></td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">           <span class='comment'>AIR_UINT(coordOut[0+baseDim]),</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">           <span class='comment'>AIR_UINT(coordOut[1+baseDim]),</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">           <span class='comment'>pos[0], pos[1], pos[2], pos[3],</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">           <span class='comment'>indexSpace ? "index" : "world");</span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">    E = (ctx-&gt;stackPos</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">         ? gageStackProbeSpace(ctx, pos[0], pos[1], pos[2], pos[3],</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">                               indexSpace, clamp)</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">         : gageProbeSpace(ctx, pos[0], pos[1], pos[2],</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">                          indexSpace, clamp));</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">    <span class='keyword'>if</span> (E) {</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">      biffAddf(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>, <span class='string_literal'>"%s: trouble at II=%s =(%g,%g,%g,%g):\n%s\n(%d)\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">               airSprintSize_t(stmp[0], II),</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">               pos[0], pos[1], pos[2], pos[3],</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">               ctx-&gt;errStr, ctx-&gt;errNum);</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">    <span class='keyword'>if</span> (1 == ansLen) {</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">      ins(nout-&gt;data, II, (ctx-&gt;edgeFrac &gt; eft</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">                           ? eftVal</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">                           : *answer));</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">      <span class='keyword'>for</span> (aidx=0; aidx&lt;ansLen; aidx++) {</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">        ins(nout-&gt;data, aidx + ansLen*II, (ctx-&gt;edgeFrac &gt; eft</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">                                           ? eftVal</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">                                           : answer[aidx]));</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">    <span class='macro'>NRRD_COORD_INCR(coordOut, sizeOut, dim, baseDim)<span class='expansion'>if ((baseDim) &lt; (dim)) { (coordOut)[(baseDim)]++; { unsigned<br> int ddd; for (ddd=0; ddd+1 &lt; ((dim)-(baseDim)) &amp;&amp;<br> ((coordOut)+(baseDim))[ddd] &gt;= ((sizeOut)+(baseDim))[ddd]<br>; ddd++) { ((coordOut)+(baseDim))[ddd] = 0; ((coordOut)+(baseDim<br>))[ddd+1]++; } if ((dim)-(baseDim)) { ((coordOut)+(baseDim))[<br>((dim)-(baseDim))-1] = ((((coordOut)+(baseDim))[((dim)-(baseDim<br>))-1]) &lt; (((sizeOut)+(baseDim))[((dim)-(baseDim))-1]-1) ? (<br>((coordOut)+(baseDim))[((dim)-(baseDim))-1]) : (((sizeOut)+(baseDim<br>))[((dim)-(baseDim))-1]-1)); } }; }</span></span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">  <span class='keyword'>if</span> (verbose &amp;&amp; verbose &lt;= 1) {</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">  <span class='keyword'>if</span> (!indexSpace) {</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">    <span class='comment'>/* set the output space directions, but (being conservative/cautious)</span></td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">       <span class='comment'>only do so when grid had specified world-space positions */</span></td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">    <span class='comment'>/* HEY: untested! whipped up out of frustration for GLK Bonn talk */</span></td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">    nout-&gt;spaceDim = 3;</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">    <span class='keyword'>if</span> (baseDim) {</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">      nrrdSpaceVecSetNaN(nout-&gt;axis[0].spaceDirection);</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">    nrrdSpaceVecCopy(nout-&gt;spaceOrigin, grid + 1 + 5*0);</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">    <span class='keyword'>for</span> (aidx=0; aidx&lt;gridDim; aidx++) {</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">      nrrdSpaceVecCopy(nout-&gt;axis[baseDim+aidx].spaceDirection,</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">                       grid + 1 + 5*(1+aidx));</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> *probeInfo =</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">  (<span class='string_literal'>"Shows off the functionality of the gage library. "</span></td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">   <span class='string_literal'>"Uses gageProbe() to query various kinds of volumes "</span></td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">   <span class='string_literal'>"to learn various measured or derived quantities."</span>);</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">main(<span class='keyword'>int</span> argc, <span class='keyword'>const</span> <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">  gageKind *kind;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">  <span class='keyword'>const</span> <span class='keyword'>char</span> *me;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">  <span class='keyword'>char</span> *whatS, *err, *outS, *stackFnameFormat;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">  hestParm *hparm;</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">  hestOpt *hopt = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">  NrrdKernelSpec *k00, *k11, *k22, *kSS, *kSSblur;</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">  <span class='keyword'>int</span> what, E=0, renorm, uniformSS, optimSS, verbose, zeroZ,</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">    orientationFromSpacing, probeSpaceIndex, normdSS;</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> iBaseDim, oBaseDim, axi, numSS, seed;</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">  <span class='keyword'>const</span> <span class='keyword'>double</span> *answer;</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">  Nrrd *nin, *_npos, *npos, *_ngrid, *ngrid, *nout, **ninSS=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">  Nrrd *ngrad=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *nbmat=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">  size_t six, siy, siz, sox, soy, soz;</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">  <span class='keyword'>double</span> bval=0, eps, gmc, rangeSS[2], *pntPos, scale[3], posSS, biasSS,</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">    dsix, dsiy, dsiz, dsox, dsoy, dsoz, edgeFracInfo[2];</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">  gageContext *ctx;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">  gagePerVolume *pvl=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">  <span class='keyword'>double</span> t0, t1, rscl[3], min[3], maxOut[3], maxIn[3];</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line"><span class='directive'>#define <span class='macro'>NON_SBP_OPT_NUM<span class='expansion'>5</span></span> 5</span></td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ansLen, *skip, skipNum, pntPosNum,</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">    nonSbpOpi[<span class='macro'>NON_SBP_OPT_NUM<span class='expansion'>5</span></span>], nsi;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">  gageStackBlurParm *sbpIN, *sbpCL, *sbp;</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">  <span class='keyword'>int</span> otype, clamp, scaleIsTau;</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">  <span class='keyword'>char</span> stmp[4][<span class='macro'>AIR_STRLEN_SMALL<span class='expansion'>(128+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">  me = argv[0];</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">  <span class='comment'>/* parse environment variables first, in case they break nrrdDefault*</span></td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">     <span class='comment'>or nrrdState* variables in a way that nrrdSanity() should see */</span></td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">  nrrdDefaultGetenv();</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  nrrdStateGetenv();</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  <span class='comment'>/* no harm done in making sure we're sane */</span></td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">  <span class='keyword'>if</span> (!nrrdSanity()) {</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"******************************************\n"</span>);</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"******************************************\n"</span>);</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"  %s: nrrd sanity check FAILED.\n"</span>, me);</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"  This means that either nrrd can't work on this "</span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">            <span class='string_literal'>"platform, or (more likely)\n"</span>);</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"  there was an error in the compilation options "</span></td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">            <span class='string_literal'>"and variable definitions\n"</span>);</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"  for how Teem was built here.\n"</span>);</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"  %s\n"</span>, err = biffGetDone(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>));</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"******************************************\n"</span>);</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"******************************************\n"</span>);</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">    free(err);</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">  hparm = hestParmNew();</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">  airMopAdd(mop, hparm, <span class='macro'>AIR_CAST(airMopper, hestParmFree)<span class='expansion'>((airMopper)(hestParmFree))</span></span>, airMopAlways);</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">  hparm-&gt;elideSingleOtherType = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"i"</span>, <span class='string_literal'>"nin"</span>, airTypeOther, 1, 1, &amp;nin, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">             <span class='string_literal'>"input volume"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestNrrd);</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"k"</span>, <span class='string_literal'>"kind"</span>, airTypeOther, 1, 1, &amp;kind, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">             <span class='string_literal'>"\"kind\" of volume (\"scalar\", \"vector\", "</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">             <span class='string_literal'>"\"tensor\", or \"dwi\")"</span>,</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, meetHestGageKind);</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"v"</span>, <span class='string_literal'>"verbosity"</span>, airTypeInt, 1, 1, &amp;verbose, <span class='string_literal'>"1"</span>,</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">             <span class='string_literal'>"verbosity level"</span>);</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"q"</span>, <span class='string_literal'>"query"</span>, airTypeString, 1, 1, &amp;whatS, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">             <span class='string_literal'>"the quantity (scalar, vector, or matrix) to learn by probing"</span>);</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"gmc"</span>, <span class='string_literal'>"min gradmag"</span>, airTypeDouble, 1, 1, &amp;gmc,</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">             <span class='string_literal'>"0.0"</span>, <span class='string_literal'>"For curvature-based queries, use zero when gradient "</span></td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">             <span class='string_literal'>"magnitude is below this"</span>);</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ofs"</span>, <span class='string_literal'>"ofs"</span>, airTypeInt, 0, 0, &amp;orientationFromSpacing,</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='string_literal'>"If only per-axis spacing is available, use that to "</span></td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">             <span class='string_literal'>"contrive full orientation info"</span>);</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"seed"</span>, <span class='string_literal'>"N"</span>, airTypeUInt, 1, 1, &amp;seed, <span class='string_literal'>"42"</span>,</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">             <span class='string_literal'>"RNG seed; mostly for debugging"</span>);</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"c"</span>, <span class='string_literal'>"bool"</span>, airTypeBool, 1, 1, &amp;clamp, <span class='string_literal'>"false"</span>,</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">             <span class='string_literal'>"clamp positions as part of probing"</span>);</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ev"</span>, <span class='string_literal'>"thresh val"</span>, airTypeDouble, 2, 2,</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">             edgeFracInfo, <span class='string_literal'>"1 0"</span>,</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">             <span class='string_literal'>"if using position clamping (with \"-c true\"), the fraction "</span></td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">             <span class='string_literal'>"of values invented for the kernel support, or \"edge frac\" "</span></td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">             <span class='string_literal'>"is saved per probe (0 means kernel support was entirely within "</span></td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">             <span class='string_literal'>"data; 1 means everything was invented). "</span></td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">             <span class='string_literal'>"If this frac exceeds the first \"thresh\" "</span></td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">             <span class='string_literal'>"value given here, then the saved value for the probe will be "</span></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">             <span class='string_literal'>"the second value \"val\" given here"</span>);</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"zz"</span>, <span class='string_literal'>"bool"</span>, airTypeBool, 1, 1, &amp;zeroZ, <span class='string_literal'>"false"</span>,</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">             <span class='string_literal'>"enable \"zeroZ\" behavior in gage that partially "</span></td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">             <span class='string_literal'>"implements working with 3D images as if they are 2D"</span>);</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"k00"</span>, <span class='string_literal'>"kern00"</span>, airTypeOther, 1, 1, &amp;k00,</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">             <span class='string_literal'>"tent"</span>, <span class='string_literal'>"kernel for gageKernel00"</span>,</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestKernelSpec);</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"k11"</span>, <span class='string_literal'>"kern11"</span>, airTypeOther, 1, 1, &amp;k11,</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">             <span class='string_literal'>"cubicd:1,0"</span>, <span class='string_literal'>"kernel for gageKernel11"</span>,</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestKernelSpec);</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"k22"</span>, <span class='string_literal'>"kern22"</span>, airTypeOther, 1, 1, &amp;k22,</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">             <span class='string_literal'>"cubicdd:1,0"</span>, <span class='string_literal'>"kernel for gageKernel22"</span>,</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestKernelSpec);</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"rn"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, airTypeInt, 0, 0, &amp;renorm, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">             <span class='string_literal'>"renormalize kernel weights at each new sample location. "</span></td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">             <span class='string_literal'>"\"Accurate\" kernels don't need this; doing it always "</span></td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">             <span class='string_literal'>"makes things go slower"</span>);</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">  nsi = 0;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">  nonSbpOpi[nsi++] =</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssn"</span>, <span class='string_literal'>"SS #"</span>, airTypeUInt, 1, 1, &amp;numSS,</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">             <span class='string_literal'>"0"</span>, <span class='string_literal'>"how many scale-space samples to evaluate, or, "</span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">             <span class='string_literal'>"0 to turn-off all scale-space behavior"</span>);</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">  nonSbpOpi[nsi++] =</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssr"</span>, <span class='string_literal'>"scale range"</span>, airTypeDouble, 2, 2, rangeSS,</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">             <span class='string_literal'>"nan nan"</span>, <span class='string_literal'>"range of scales in scale-space"</span>);</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">  nonSbpOpi[nsi++] =</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssu"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, airTypeInt, 0, 0, &amp;uniformSS, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">             <span class='string_literal'>"do uniform samples along sigma, and not (by default) "</span></td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">             <span class='string_literal'>"samples according to the effective diffusion scale"</span>);</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">  nonSbpOpi[nsi++] =</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"sso"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, airTypeInt, 0, 0, &amp;optimSS, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">             <span class='string_literal'>"if not using \"-ssu\", use pre-computed optimal "</span></td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">             <span class='string_literal'>"sigmas when possible"</span>);</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">  nonSbpOpi[nsi++] =</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"kssb"</span>, <span class='string_literal'>"kernel"</span>, airTypeOther, 1, 1, &amp;kSSblur,</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">             <span class='string_literal'>"dgauss:1,5"</span>, <span class='string_literal'>"blurring kernel, to sample scale space"</span>,</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestKernelSpec);</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">  <span class='keyword'>if</span> (nsi != <span class='macro'>NON_SBP_OPT_NUM<span class='expansion'>5</span></span>) {</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: PANIC nsi %u != %u"</span>, me, nsi, <span class='macro'>NON_SBP_OPT_NUM<span class='expansion'>5</span></span>);</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">    exit(1);</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"sbp"</span>, <span class='string_literal'>"blur spec"</span>, airTypeOther, 1, 1, &amp;sbpCL, <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">             <span class='string_literal'>"complete specification of stack blur parms; "</span></td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">             <span class='string_literal'>"over-rides all previous \"ss\" options"</span>,</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, gageHestStackBlurParm);</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">  <span class='comment'>/* These two options are needed even if sbp is used, because they are *not*</span></td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">     <span class='comment'>part of the gageStackBlurParm.  In meet, this info is handled by the</span></td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">     <span class='comment'>extraFlag/extraParm construct, which is not available here */</span></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssnd"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, airTypeInt, 0, 0, &amp;normdSS, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">             <span class='string_literal'>"normalize derivatives by scale"</span>);</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssnb"</span>, <span class='string_literal'>"bias"</span>, airTypeDouble, 1, 1, &amp;biasSS, <span class='string_literal'>"0.0"</span>,</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">             <span class='string_literal'>"bias on scale-based derivative normalization"</span>);</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssf"</span>, <span class='string_literal'>"SS read/save format"</span>, airTypeString, 1, 1,</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">             &amp;stackFnameFormat, <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">             <span class='string_literal'>"printf-style format (including a \"%u\") for the "</span></td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">             <span class='string_literal'>"filenames from which to read "</span></td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">             <span class='string_literal'>"pre-blurred volumes computed for the stack, if they "</span></td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">             <span class='string_literal'>"exist and match the stack parameters, and where to save "</span></td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">             <span class='string_literal'>"them if they had to be re-computed.  Leave this as empty "</span></td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">             <span class='string_literal'>"string to disable this."</span>);</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"kssr"</span>, <span class='string_literal'>"kernel"</span>, airTypeOther, 1, 1, &amp;kSS,</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">             <span class='string_literal'>"hermite"</span>, <span class='string_literal'>"kernel for reconstructing from scale space samples"</span>,</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestKernelSpec);</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"sit"</span>, <span class='string_literal'>"sit"</span>, airTypeBool, 1, 1, &amp;scaleIsTau, <span class='string_literal'>"false"</span>,</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">             <span class='string_literal'>"in some places, scale should be interpreted as tau, not "</span></td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">             <span class='string_literal'>"sigma. Currently limited to grid probing (via \"-pg\")"</span>);</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"s"</span>, <span class='string_literal'>"sclX sclY sxlZ"</span>, airTypeDouble, 3, 3, scale,</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">             <span class='string_literal'>"1 1 1"</span>,</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">             <span class='string_literal'>"scaling factor for resampling on each axis "</span></td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">             <span class='string_literal'>"(&gt;1.0 : supersampling); use \"-ssp\" (and \"-psi\")"</span></td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">             <span class='string_literal'>"to specify scale position of sampling"</span>);</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"ssp"</span>, <span class='string_literal'>"pos"</span>, airTypeDouble, 1, 1, &amp;posSS, <span class='string_literal'>"0"</span>,</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">             <span class='string_literal'>"when using scale-space, scale-position at which to probe"</span>);</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"pg"</span>, <span class='string_literal'>"nrrd"</span>, airTypeOther, 1, 1, &amp;_ngrid, <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">             <span class='string_literal'>"overrides \"-s\": "</span></td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">             <span class='string_literal'>"2-D nrrd which specifies origin and direction vectors "</span></td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">             <span class='string_literal'>"for sampling grid"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestNrrd);</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"pi"</span>, <span class='string_literal'>"nrrd"</span>, airTypeOther, 1, 1, &amp;_npos, <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">             <span class='string_literal'>"overrides \"-pv\": probes at this list of 3-vec or "</span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">             <span class='string_literal'>"4-vec positions"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdHestNrrd);</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"pp"</span>, <span class='string_literal'>"pos"</span>, airTypeDouble, 3, 4, &amp;pntPos,</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">             <span class='string_literal'>"nan nan nan"</span>,</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">             <span class='string_literal'>"overrides \"-pi\": only sample at this specified point"</span>,</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">             &amp;pntPosNum);</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"eps"</span>, <span class='string_literal'>"epsilon"</span>, airTypeDouble, 1, 1, &amp;eps, <span class='string_literal'>"0"</span>,</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">             <span class='string_literal'>"if non-zero, and if query is a scalar, and if using \"pp\" "</span></td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">             <span class='string_literal'>"to query at a single point, then do epsilon offset probes "</span></td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">             <span class='string_literal'>"to calculate discrete differences, to find the numerical "</span></td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">             <span class='string_literal'>"gradient and hessian (for debugging)"</span>);</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"psi"</span>, <span class='string_literal'>"p"</span>, airTypeBool, 1, 1, &amp;probeSpaceIndex, <span class='string_literal'>"false"</span>,</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">             <span class='string_literal'>"whether the probe location specification (by any of "</span></td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">             <span class='string_literal'>"the four previous flags) are in index space"</span>);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"t"</span>, <span class='string_literal'>"type"</span>, airTypeEnum, 1, 1, &amp;otype, <span class='string_literal'>"float"</span>,</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">             <span class='string_literal'>"type of output volume"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, nrrdType);</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">  hestOptAdd(&amp;hopt, <span class='string_literal'>"o"</span>, <span class='string_literal'>"nout"</span>, airTypeString, 1, 1, &amp;outS, <span class='string_literal'>"-"</span>,</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">             <span class='string_literal'>"output volume"</span>);</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">  hestParseOrDie(hopt, argc-1, argv+1, hparm,</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                 me, probeInfo, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">  airMopAdd(mop, hopt, <span class='macro'>AIR_CAST(airMopper, hestOptFree)<span class='expansion'>((airMopper)(hestOptFree))</span></span>, airMopAlways);</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">  airMopAdd(mop, hopt, <span class='macro'>AIR_CAST(airMopper, hestParseFree)<span class='expansion'>((airMopper)(hestParseFree))</span></span>, airMopAlways);</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">  what = airEnumVal(kind-&gt;enm, whatS);</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">  <span class='keyword'>if</span> (!what) {</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">    <span class='comment'>/* 0 indeed always means "unknown" for any gageKind */</span></td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: couldn't parse \"%s\" as measure of \"%s\" volume\n"</span>,</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">            me, whatS, kind-&gt;name);</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">    hestUsage(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, hopt, me, hparm);</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">    hestGlossary(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, hopt, hparm);</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">  <span class='comment'>/* special set-up required for DWI kind */</span></td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">  <span class='keyword'>if</span> (!strcmp(<span class='macro'>TEN_DWI_GAGE_KIND_NAME<span class='expansion'>"dwi"</span></span>, kind-&gt;name)) {</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">    <span class='keyword'>if</span> (tenDWMRIKeyValueParse(&amp;ngrad, &amp;nbmat, &amp;bval, &amp;skip, &amp;skipNum, nin)) {</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble parsing DWI info:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">    <span class='keyword'>if</span> (skipNum) {</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: sorry, can't do DWI skipping in tenDwiGage"</span>, me);</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">    <span class='comment'>/* this could stand to use some more command-line arguments */</span></td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">    <span class='keyword'>if</span> (tenDwiGageKindSet(kind, 50, 1, bval, 0.001, ngrad, nbmat,</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">                          tenEstimate1MethodLLS,</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">                          tenEstimate2MethodQSegLLS, seed)) {</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>TEN<span class='expansion'>tenBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble parsing DWI info:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">  <span class='comment'>/* for setting up pre-blurred scale-space samples */</span></td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">  <span class='keyword'>if</span> (numSS || sbpCL) {</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> vi;</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">    <span class='keyword'>int</span> recompute, gotOld;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">    <span class='keyword'>if</span> (sbpCL) {</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">      <span class='comment'>/* we got the whole stack blar parm here */</span></td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">      gotOld = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">      <span class='keyword'>for</span> (nsi=0; nsi&lt;<span class='macro'>NON_SBP_OPT_NUM<span class='expansion'>5</span></span>; nsi++) {</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        gotOld |= (hestSourceUser == hopt[nonSbpOpi[nsi]].source);</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">      <span class='keyword'>if</span> (gotOld) {</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: with new -sbp option; can't also use older "</span></td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">                <span class='string_literal'>"scale-space options (used"</span>, me);</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">        <span class='keyword'>for</span> (nsi=0; nsi&lt;<span class='macro'>NON_SBP_OPT_NUM<span class='expansion'>5</span></span>; nsi++) {</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">          <span class='keyword'>if</span> (hestSourceUser == hopt[nonSbpOpi[nsi]].source) {</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">            fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>" -%s"</span>, hopt[nonSbpOpi[nsi]].flag);</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>")\n"</span>);</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">        airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">      <span class='keyword'>if</span> (gageStackBlurManage(&amp;ninSS, &amp;recompute, sbpCL,</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">                              stackFnameFormat, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">                              nin, kind)) {</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">        airMopAdd(mop, err = biffGetDone(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble getting volume stack:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">        airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">      <span class='keyword'>if</span> (sbpCL-&gt;verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: sampling scale range %g--%g via %s:\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">                sbpCL-&gt;sigmaRange[0], sbpCL-&gt;sigmaRange[1],</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">                airEnumStr(gageSigmaSampling, sbpCL-&gt;sigmaSampling));</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>for</span> (vi=0; vi&lt;sbpCL-&gt;num; vi++) {</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">          fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"    sigma[%u] = %g\n"</span>, vi, sbpCL-&gt;sigma[vi]);</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">      sbp = sbpCL;</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">      <span class='comment'>/* old way of doing things; depending on many separate options</span></td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">         <span class='comment'>to set numSS, rangeSS, uniformSS, optimSS, etc */</span></td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">      sbpIN = gageStackBlurParmNew();</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">      airMopAdd(mop, sbpIN, (airMopper)gageStackBlurParmNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">      <span class='keyword'>if</span> (gageStackBlurParmVerboseSet(sbpIN, verbose)</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">          || gageStackBlurParmScaleSet(sbpIN, numSS, rangeSS[0], rangeSS[1],</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">                                       uniformSS, optimSS)</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">          || gageStackBlurParmKernelSet(sbpIN, kSSblur)</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">          || gageStackBlurParmRenormalizeSet(sbpIN, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>)</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">          || gageStackBlurParmBoundarySet(sbpIN, nrrdBoundaryBleed, <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>)</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">          || gageStackBlurManage(&amp;ninSS, &amp;recompute, sbpIN,</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                                 stackFnameFormat, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">                                 nin, kind)) {</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">        airMopAdd(mop, err = biffGetDone(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble getting volume stack:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">      <span class='keyword'>if</span> (verbose &gt; 2) {</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: sampling scale range %g--%g %suniformly:\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                rangeSS[0], rangeSS[1], uniformSS ? <span class='string_literal'>""</span> : <span class='string_literal'>"non-"</span>);</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">        <span class='keyword'>for</span> (vi=0; vi&lt;numSS; vi++) {</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">          fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"    scalePos[%u] = %g\n"</span>, vi, sbpIN-&gt;sigma[vi]);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">      sbp = sbpIN;</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">    airMopAdd(mop, ninSS, airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">    ninSS = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">    sbpIN = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">    sbp = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">  <span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">  <span class='comment'>**** Except for the gageProbe() call in the inner loop below,</span></td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">  <span class='comment'>**** and the gageContextNix() call at the very end, all the gage</span></td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">  <span class='comment'>**** calls which set up (and take down) the context and state are here.</span></td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">  <span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">  ctx = gageContextNew();</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">  airMopAdd(mop, ctx, <span class='macro'>AIR_CAST(airMopper, gageContextNix)<span class='expansion'>((airMopper)(gageContextNix))</span></span>, airMopAlways);</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">  gageParmSet(ctx, gageParmGradMagCurvMin, gmc);</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">  gageParmSet(ctx, gageParmVerbose, verbose);</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">  gageParmSet(ctx, gageParmTwoDimZeroZ, zeroZ);</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">  gageParmSet(ctx, gageParmRenormalize, renorm ? <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span> : <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">  gageParmSet(ctx, gageParmCheckIntegrals, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">  gageParmSet(ctx, gageParmOrientationFromSpacing, orientationFromSpacing);</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">  E = 0;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">  <span class='keyword'>if</span> (!E) E |= !(pvl = gagePerVolumeNew(ctx, nin, kind));</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageKernelSet(ctx, gageKernel00, k00-&gt;kernel, k00-&gt;parm);</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageKernelSet(ctx, gageKernel11, k11-&gt;kernel, k11-&gt;parm);</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageKernelSet(ctx, gageKernel22, k22-&gt;kernel, k22-&gt;parm);</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">  <span class='keyword'>if</span> (sbp) {</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">    gagePerVolume **pvlSS;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">    gageParmSet(ctx, gageParmStackUse, <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">    gageParmSet(ctx, gageParmStackNormalizeDeriv, normdSS);</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">    gageParmSet(ctx, gageParmStackNormalizeDerivBias, biasSS);</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">    <span class='keyword'>if</span> (!E) E |= !(pvlSS = <span class='macro'>AIR_CAST(gagePerVolume **,<span class='expansion'>((gagePerVolume **)(calloc(sbp-&gt;num, sizeof(gagePerVolume *<br>))))</span></span></td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">                                    <span class='macro'>calloc(sbp-&gt;num, <span class='keyword'>sizeof</span>(gagePerVolume *)))<span class='expansion'>((gagePerVolume **)(calloc(sbp-&gt;num, sizeof(gagePerVolume *<br>))))</span></span>);</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">    <span class='keyword'>if</span> (!E) airMopAdd(mop, pvlSS, (airMopper)airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gageStackPerVolumeNew(ctx, pvlSS,</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                                       <span class='macro'>AIR_CAST(<span class='keyword'>const</span> Nrrd*<span class='keyword'>const</span>*, ninSS)<span class='expansion'>((const Nrrd*const*)(ninSS))</span></span>,</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">                                       sbp-&gt;num, kind);</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gageStackPerVolumeAttach(ctx, pvl, pvlSS,</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">                                          sbp-&gt;sigma, sbp-&gt;num);</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gageKernelSet(ctx, gageKernelStack, kSS-&gt;kernel, kSS-&gt;parm);</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">    <span class='keyword'>if</span> (!E) E |= gagePerVolumeAttach(ctx, pvl);</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageQueryItemOn(ctx, pvl, what);</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">  <span class='keyword'>if</span> (!E) E |= gageUpdate(ctx);</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">  <span class='keyword'>if</span> (E) {</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">    airMopAdd(mop, err = biffGetDone(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">  answer = gageAnswerPointer(ctx, pvl, what);</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">  ansLen = kind-&gt;table[what].answerLength;</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">  <span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">  <span class='comment'>**** end gage setup.</span></td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">  <span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">  <span class='keyword'>if</span> (verbose) {</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: kernel support = %d^3 samples\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">            2*ctx-&gt;radius);</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">  <span class='keyword'>if</span> (<span class='macro'>ELL_3V_EXISTS(pntPos)<span class='expansion'>((((int)(!(((pntPos)[0]) - ((pntPos)[0]))))) &amp;&amp; (((int<br>)(!(((pntPos)[1]) - ((pntPos)[1]))))) &amp;&amp; (((int)(!(((<br>pntPos)[2]) - ((pntPos)[2]))))))</span></span>) {</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">    <span class='comment'>/* only interested in a single point, make sure we have the right</span></td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">       <span class='comment'>info about the point WRT scale stuff */</span></td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">    <span class='keyword'>if</span> (sbp) {</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">      <span class='keyword'>if</span> (!(4 == pntPosNum &amp;&amp; <span class='macro'>ELL_4V_EXISTS(pntPos)<span class='expansion'>((((int)(!(((pntPos)[0]) - ((pntPos)[0]))))) &amp;&amp; (((int<br>)(!(((pntPos)[1]) - ((pntPos)[1]))))) &amp;&amp; (((int)(!(((<br>pntPos)[2]) - ((pntPos)[2]))))) &amp;&amp; (((int)(!(((pntPos<br>)[3]) - ((pntPos)[3]))))))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: need a 4-vec position with scale-space"</span>, me);</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">        airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">      <span class='keyword'>if</span> (!(3 == pntPosNum)) {</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: need a 3-vec position (w/out scale-space)"</span>, me);</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">        airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">    <span class='keyword'>if</span> (sbp</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">        ? gageStackProbeSpace(ctx,</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                              pntPos[0], pntPos[1], pntPos[2], pntPos[3],</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">                              probeSpaceIndex, clamp)</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">        : gageProbeSpace(ctx,</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">                         pntPos[0], pntPos[1], pntPos[2],</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">                         probeSpaceIndex, clamp)) {</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble probing: (errNum %d) %s\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">              ctx-&gt;errNum, ctx-&gt;errStr);</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">    <span class='keyword'>if</span> (sbp) {</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">      printf(<span class='string_literal'>"%s: %s(%s:%g,%g,%g,%g) = "</span>, me, airEnumStr(kind-&gt;enm, what),</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">             probeSpaceIndex ? <span class='string_literal'>"index"</span> : <span class='string_literal'>"world"</span>,</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">             pntPos[0], pntPos[1], pntPos[2], pntPos[3]);</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">      printf(<span class='string_literal'>"%s: %s(%s:%g,%g,%g) = "</span>, me, airEnumStr(kind-&gt;enm, what),</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">             probeSpaceIndex ? <span class='string_literal'>"index"</span> : <span class='string_literal'>"world"</span>,</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">             pntPos[0], pntPos[1], pntPos[2]);</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">    printans(<span class='macro'>stdout<span class='expansion'>__stdoutp</span></span>, answer, ansLen);</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">    printf(<span class='string_literal'>"\n"</span>);</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">    <span class='comment'>/* we're done, get out of here */</span></td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">    <span class='comment'>/* except if we're supposed to debug derivatives */</span></td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">    <span class='keyword'>if</span> (eps &amp;&amp; 1 == ansLen) {</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">      <span class='keyword'>double</span> v[3][3][3], fes, ee;</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">      <span class='keyword'>int</span> xo, yo, zo;</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">      <span class='keyword'>if</span> (probeSpaceIndex) {</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">        fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"\n%s: WARNING!!: not probing in world-space (via "</span></td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">                <span class='string_literal'>"\"-wsp\") likely leads to errors in estimated "</span></td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">                <span class='string_literal'>"derivatives\n\n"</span>, me);</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">      gageParmSet(ctx, gageParmVerbose, 0);</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"><span class='directive'>#define <span class='macro'>PROBE(x, y, z)<span class='expansion'>((sbp ? gageStackProbeSpace(ctx, x, y, z, posSS, probeSpaceIndex<br>, clamp) : gageProbeSpace(ctx, x, y, z, probeSpaceIndex, clamp<br>)),answer[0])</span></span>                                                  \</span></td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">      <span class='directive'>((sbp                                                             \</span></td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='directive'>? gageStackProbeSpace(ctx, x, y, z, posSS,                      \</span></td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">                              <span class='directive'>probeSpaceIndex, clamp)                   \</span></td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">        <span class='directive'>: gageProbeSpace(ctx, x, y, z, probeSpaceIndex,                 \</span></td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">                         <span class='directive'>clamp)),answer[0])</span></td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">      <span class='keyword'>for</span> (xo=0; xo&lt;=2; xo++) {</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">        <span class='keyword'>for</span> (yo=0; yo&lt;=2; yo++) {</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">          <span class='keyword'>for</span> (zo=0; zo&lt;=2; zo++) {</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">            v[xo][yo][zo] = <span class='macro'>PROBE(pntPos[0] + (xo-1)*eps,<span class='expansion'>((sbp ? gageStackProbeSpace(ctx, pntPos[0] + (xo-1)*eps, pntPos<br>[1] + (yo-1)*eps, pntPos[2] + (zo-1)*eps, posSS, probeSpaceIndex<br>, clamp) : gageProbeSpace(ctx, pntPos[0] + (xo-1)*eps, pntPos<br>[1] + (yo-1)*eps, pntPos[2] + (zo-1)*eps, probeSpaceIndex, clamp<br>)),answer[0])</span></span></td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                                  <span class='macro'>pntPos[1] + (yo-1)*eps,<span class='expansion'>((sbp ? gageStackProbeSpace(ctx, pntPos[0] + (xo-1)*eps, pntPos<br>[1] + (yo-1)*eps, pntPos[2] + (zo-1)*eps, posSS, probeSpaceIndex<br>, clamp) : gageProbeSpace(ctx, pntPos[0] + (xo-1)*eps, pntPos<br>[1] + (yo-1)*eps, pntPos[2] + (zo-1)*eps, probeSpaceIndex, clamp<br>)),answer[0])</span></span></td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">                                  <span class='macro'>pntPos[2] + (zo-1)*eps)<span class='expansion'>((sbp ? gageStackProbeSpace(ctx, pntPos[0] + (xo-1)*eps, pntPos<br>[1] + (yo-1)*eps, pntPos[2] + (zo-1)*eps, posSS, probeSpaceIndex<br>, clamp) : gageProbeSpace(ctx, pntPos[0] + (xo-1)*eps, pntPos<br>[1] + (yo-1)*eps, pntPos[2] + (zo-1)*eps, probeSpaceIndex, clamp<br>)),answer[0])</span></span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">      printf(<span class='string_literal'>"%s: approx gradient(%s) at (%g,%g,%g) = %f %f %f\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">             airEnumStr(kind-&gt;enm, what), pntPos[0], pntPos[1], pntPos[2],</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">             (v[2][1][1] - v[0][1][1])/(2*eps),</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">             (v[1][2][1] - v[1][0][1])/(2*eps),</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">             (v[1][1][2] - v[1][1][0])/(2*eps));</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">      fes = 4*eps*eps;</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">      ee = eps*eps;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">      printf(<span class='string_literal'>"%s: approx hessian(%s) at (%g,%g,%g) = \n"</span></td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">             <span class='string_literal'>"%f %f %f\n"</span></td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">             <span class='string_literal'>"   %f %f\n"</span></td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">             <span class='string_literal'>"      %f\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">             airEnumStr(kind-&gt;enm, what), pntPos[0], pntPos[1], pntPos[2],</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">             (v[0][1][1] - 2*v[1][1][1] + v[2][1][1])/ee,</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">             (v[2][2][1] - v[0][2][1] - v[2][0][1] + v[0][0][1])/fes,</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">             (v[2][1][2] - v[0][1][2] - v[2][1][0] + v[0][1][0])/fes,</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">             (v[1][2][1] - 2*v[1][1][1] + v[1][0][1])/ee,</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">             (v[1][2][2] - v[1][0][2] - v[1][2][0] + v[1][0][0])/fes,</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">             (v[1][1][2] - 2*v[1][1][1] + v[1][1][0])/ee);</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">    airMopOkay(mop); <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">  <span class='keyword'>if</span> (_npos) {</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">    <span class='comment'>/* given a nrrd of probe locations */</span></td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">    <span class='keyword'>double</span> *pos, (*ins)(<span class='keyword'>void</span> *v, size_t I, <span class='keyword'>double</span> d);</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">    size_t II, NN;</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> aidx;</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">    <span class='keyword'>if</span> (!(2 == _npos-&gt;dim</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">          &amp;&amp; (3 == _npos-&gt;axis[0].size || 4 == _npos-&gt;axis[0].size))) {</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: need npos 2-D 3-by-N or 4-by-N "</span></td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">              <span class='string_literal'>"(not %u-D %u-by-N)\n"</span>, me, _npos-&gt;dim,</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">              <span class='macro'>AIR_UINT(_npos-&gt;axis[0].size)<span class='expansion'>((unsigned int)(_npos-&gt;axis[0].size))</span></span>);</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">    <span class='keyword'>if</span> ((sbp &amp;&amp; 3 == _npos-&gt;axis[0].size)</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">        || (!sbp &amp;&amp; 4 == _npos-&gt;axis[0].size)) {</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: have %u point coords but %s using scale-space\n"</span>,</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">              me, <span class='macro'>AIR_UINT(_npos-&gt;axis[0].size)<span class='expansion'>((unsigned int)(_npos-&gt;axis[0].size))</span></span>,</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">              sbp ? <span class='string_literal'>"are"</span> : <span class='string_literal'>"are not"</span>);</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">    NN = _npos-&gt;axis[1].size;</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">    npos = nrrdNew();</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">    airMopAdd(mop, npos, <span class='macro'>AIR_CAST(airMopper, nrrdNuke)<span class='expansion'>((airMopper)(nrrdNuke))</span></span>, airMopAlways);</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">    nout = nrrdNew();</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">    airMopAdd(mop, nout, <span class='macro'>AIR_CAST(airMopper, nrrdNuke)<span class='expansion'>((airMopper)(nrrdNuke))</span></span>, airMopAlways);</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">    <span class='keyword'>if</span> (nrrdConvert(npos, _npos, nrrdTypeDouble)</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">        || nrrdMaybeAlloc_va(nout, otype, 2,</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">                             <span class='macro'>AIR_CAST(size_t, ansLen)<span class='expansion'>((size_t)(ansLen))</span></span>,</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">                             <span class='macro'>AIR_CAST(size_t, NN)<span class='expansion'>((size_t)(NN))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble with npos or nout:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">    pos = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, npos-&gt;data)<span class='expansion'>((double *)(npos-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">    ins = nrrdDInsert[nout-&gt;type];</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">    <span class='keyword'>for</span> (II=0; II&lt;NN; II++) {</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">      <span class='keyword'>if</span> (sbp) {</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">        gageStackProbeSpace(ctx, pos[0], pos[1], pos[2], pos[3],</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                            probeSpaceIndex, clamp);</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        gageProbeSpace(ctx, pos[0], pos[1], pos[2],</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">                       probeSpaceIndex, clamp);</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">      <span class='keyword'>if</span> (1 == ansLen) {</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        ins(nout-&gt;data, II, (ctx-&gt;edgeFrac &gt; edgeFracInfo[0]</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">                             ? edgeFracInfo[1]</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">                             : *answer));</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">        <span class='keyword'>for</span> (aidx=0; aidx&lt;ansLen; aidx++) {</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">          ins(nout-&gt;data, aidx + ansLen*II, (ctx-&gt;edgeFrac &gt; edgeFracInfo[0]</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                                             ? edgeFracInfo[1]</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                                             : answer[aidx]));</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">      <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">      <span class='comment'>if (sbp) {</span></td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">        <span class='comment'>printf("%s: %s(%s:%g,%g,%g,%g) = ", me, airEnumStr(kind-&gt;enm, what),</span></td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">               <span class='comment'>probeSpaceIndex ? "index" : "world",</span></td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">               <span class='comment'>pos[0], pos[1], pos[2], pos[3]);</span></td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">      <span class='comment'>} else {</span></td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        <span class='comment'>printf("%s: %s(%s:%g,%g,%g) = ", me, airEnumStr(kind-&gt;enm, what),</span></td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">               <span class='comment'>probeSpaceIndex ? "index" : "world",</span></td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">               <span class='comment'>pos[0], pos[1], pos[2]);</span></td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">      <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">      <span class='comment'>printans(stdout, answer, ansLen);</span></td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">      <span class='comment'>printf("\n");</span></td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">      pos += _npos-&gt;axis[0].size;</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">    <span class='keyword'>if</span> (nrrdSave(outS, nout, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble saving output:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">      airMopError(mop);</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">    <span class='comment'>/* we're done, get out of here */</span></td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">    airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">    exit(0);</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">  <span class='comment'>/* else, we're sampling on some kind of grid */</span></td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">  ngrid = nrrdNew();</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">  airMopAdd(mop, ngrid, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">  iBaseDim = kind-&gt;baseDim;</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">  oBaseDim = 1 == ansLen ? 0 : 1;</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">  <span class='keyword'>if</span> (!_ngrid) {</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">    <span class='comment'>/* did not get a grid, have to use "-s" args to define it */</span></td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">    <span class='keyword'>double</span> *grid;</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">    size_t gridSize[<span class='macro'>NRRD_DIM_MAX<span class='expansion'>16</span></span>];</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">    six = nin-&gt;axis[0+iBaseDim].size;</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">    siy = nin-&gt;axis[1+iBaseDim].size;</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">    siz = nin-&gt;axis[2+iBaseDim].size;</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">    dsix = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, six)<span class='expansion'>((double)(six))</span></span>;</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">    dsiy = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, siy)<span class='expansion'>((double)(siy))</span></span>;</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">    dsiz = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, siz)<span class='expansion'>((double)(siz))</span></span>;</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">    sox = <span class='macro'>AIR_CAST(size_t, scale[0]*dsix)<span class='expansion'>((size_t)(scale[0]*dsix))</span></span>;</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">    soy = <span class='macro'>AIR_CAST(size_t, scale[1]*dsiy)<span class='expansion'>((size_t)(scale[1]*dsiy))</span></span>;</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">    soz = <span class='macro'>AIR_CAST(size_t, scale[2]*dsiz)<span class='expansion'>((size_t)(scale[2]*dsiz))</span></span>;</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">    dsox = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, sox)<span class='expansion'>((double)(sox))</span></span>;</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">    dsoy = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, soy)<span class='expansion'>((double)(soy))</span></span>;</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">    dsoz = <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, soz)<span class='expansion'>((double)(soz))</span></span>;</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">    rscl[0] = dsix/dsox;</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">    rscl[1] = dsiy/dsoy;</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">    rscl[2] = dsiz/dsoz;</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">    <span class='keyword'>if</span> (verbose) {</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: creating %u x %s x %s x %s output\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">              ansLen,</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">              airSprintSize_t(stmp[1], sox),</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">              airSprintSize_t(stmp[2], soy),</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">              airSprintSize_t(stmp[3], soz));</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: effective scaling is %g %g %g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">              rscl[0], rscl[1], rscl[2]);</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">    gridSize[0] = sbp ? 5 : 4;</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">    gridSize[1] = 4;</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">    <span class='keyword'>if</span> (nrrdMaybeAlloc_nva(ngrid, nrrdTypeDouble, 2, gridSize)) {</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble making ngrid:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">    grid = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, ngrid-&gt;data)<span class='expansion'>((double *)(ngrid-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">    <span class='keyword'>if</span> (nrrdCenterCell == ctx-&gt;shape-&gt;center) {</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">      <span class='macro'>ELL_3V_SET(min, -0.5, -0.5, -0.5)<span class='expansion'>((min)[0] = (-0.5), (min)[1] = (-0.5), (min)[2] = (-0.5))</span></span>;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">      <span class='macro'>ELL_3V_SET(maxOut, dsox-0.5, dsoy-0.5, dsoz-0.5)<span class='expansion'>((maxOut)[0] = (dsox-0.5), (maxOut)[1] = (dsoy-0.5), (maxOut)<br>[2] = (dsoz-0.5))</span></span>;</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">      <span class='macro'>ELL_3V_SET(maxIn,  dsix-0.5, dsiy-0.5, dsiz-0.5)<span class='expansion'>((maxIn)[0] = (dsix-0.5), (maxIn)[1] = (dsiy-0.5), (maxIn)[2]<br> = (dsiz-0.5))</span></span>;</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">      <span class='macro'>ELL_3V_SET(min, 0, 0, 0)<span class='expansion'>((min)[0] = (0), (min)[1] = (0), (min)[2] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">      <span class='macro'>ELL_3V_SET(maxOut, dsox-1, dsoy-1, dsoz-1)<span class='expansion'>((maxOut)[0] = (dsox-1), (maxOut)[1] = (dsoy-1), (maxOut)[2] =<br> (dsoz-1))</span></span>;</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">      <span class='macro'>ELL_3V_SET(maxIn,  dsix-1, dsiy-1, dsiz-1)<span class='expansion'>((maxIn)[0] = (dsix-1), (maxIn)[1] = (dsiy-1), (maxIn)[2] = (<br>dsiz-1))</span></span>;</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">    <span class='macro'>ELL_4V_SET(grid + gridSize[0]*0, 3,<span class='expansion'>((grid + gridSize[0]*0)[0] = (3), (grid + gridSize[0]*0)[1] =<br> ((nrrdCenterCell == (ctx-&gt;shape-&gt;center) ? ( ((double)<br>(((maxIn[0])))-(((min[0]))))*((double)(((0)) + 0.5)-(0)) / ((<br>double)(((sox)))-(0)) + (((min[0])))) : ( ((double)(((maxIn[0<br>])))-(((min[0]))))*((double)(((0)))-(0)) / ((double)(((sox))-<br>1)-(0)) + (((min[0])))))), (grid + gridSize[0]*0)[2] = ((nrrdCenterCell<br> == (ctx-&gt;shape-&gt;center) ? ( ((double)(((maxIn[1])))-((<br>(min[1]))))*((double)(((0)) + 0.5)-(0)) / ((double)(((soy)))-<br>(0)) + (((min[1])))) : ( ((double)(((maxIn[1])))-(((min[1])))<br>)*((double)(((0)))-(0)) / ((double)(((soy))-1)-(0)) + (((min[<br>1])))))), (grid + gridSize[0]*0)[3] = ((nrrdCenterCell == (ctx<br>-&gt;shape-&gt;center) ? ( ((double)(((maxIn[2])))-(((min[2])<br>)))*((double)(((0)) + 0.5)-(0)) / ((double)(((soz)))-(0)) + (<br>((min[2])))) : ( ((double)(((maxIn[2])))-(((min[2]))))*((double<br>)(((0)))-(0)) / ((double)(((soz))-1)-(0)) + (((min[2])))))))</span></span></td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">               <span class='macro'>NRRD_POS(ctx-&gt;shape-&gt;center, min[0], maxIn[0], sox, 0),<span class='expansion'>((grid + gridSize[0]*0)[0] = (3), (grid + gridSize[0]*0)[1] =<br> ((nrrdCenterCell == (ctx-&gt;shape-&gt;center) ? ( ((double)<br>(((maxIn[0])))-(((min[0]))))*((double)(((0)) + 0.5)-(0)) / ((<br>double)(((sox)))-(0)) + (((min[0])))) : ( ((double)(((maxIn[0<br>])))-(((min[0]))))*((double)(((0)))-(0)) / ((double)(((sox))-<br>1)-(0)) + (((min[0])))))), (grid + gridSize[0]*0)[2] = ((nrrdCenterCell<br> == (ctx-&gt;shape-&gt;center) ? ( ((double)(((maxIn[1])))-((<br>(min[1]))))*((double)(((0)) + 0.5)-(0)) / ((double)(((soy)))-<br>(0)) + (((min[1])))) : ( ((double)(((maxIn[1])))-(((min[1])))<br>)*((double)(((0)))-(0)) / ((double)(((soy))-1)-(0)) + (((min[<br>1])))))), (grid + gridSize[0]*0)[3] = ((nrrdCenterCell == (ctx<br>-&gt;shape-&gt;center) ? ( ((double)(((maxIn[2])))-(((min[2])<br>)))*((double)(((0)) + 0.5)-(0)) / ((double)(((soz)))-(0)) + (<br>((min[2])))) : ( ((double)(((maxIn[2])))-(((min[2]))))*((double<br>)(((0)))-(0)) / ((double)(((soz))-1)-(0)) + (((min[2])))))))</span></span></td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">               <span class='macro'>NRRD_POS(ctx-&gt;shape-&gt;center, min[1], maxIn[1], soy, 0),<span class='expansion'>((grid + gridSize[0]*0)[0] = (3), (grid + gridSize[0]*0)[1] =<br> ((nrrdCenterCell == (ctx-&gt;shape-&gt;center) ? ( ((double)<br>(((maxIn[0])))-(((min[0]))))*((double)(((0)) + 0.5)-(0)) / ((<br>double)(((sox)))-(0)) + (((min[0])))) : ( ((double)(((maxIn[0<br>])))-(((min[0]))))*((double)(((0)))-(0)) / ((double)(((sox))-<br>1)-(0)) + (((min[0])))))), (grid + gridSize[0]*0)[2] = ((nrrdCenterCell<br> == (ctx-&gt;shape-&gt;center) ? ( ((double)(((maxIn[1])))-((<br>(min[1]))))*((double)(((0)) + 0.5)-(0)) / ((double)(((soy)))-<br>(0)) + (((min[1])))) : ( ((double)(((maxIn[1])))-(((min[1])))<br>)*((double)(((0)))-(0)) / ((double)(((soy))-1)-(0)) + (((min[<br>1])))))), (grid + gridSize[0]*0)[3] = ((nrrdCenterCell == (ctx<br>-&gt;shape-&gt;center) ? ( ((double)(((maxIn[2])))-(((min[2])<br>)))*((double)(((0)) + 0.5)-(0)) / ((double)(((soz)))-(0)) + (<br>((min[2])))) : ( ((double)(((maxIn[2])))-(((min[2]))))*((double<br>)(((0)))-(0)) / ((double)(((soz))-1)-(0)) + (((min[2])))))))</span></span></td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">               <span class='macro'>NRRD_POS(ctx-&gt;shape-&gt;center, min[2], maxIn[2], soz, 0))<span class='expansion'>((grid + gridSize[0]*0)[0] = (3), (grid + gridSize[0]*0)[1] =<br> ((nrrdCenterCell == (ctx-&gt;shape-&gt;center) ? ( ((double)<br>(((maxIn[0])))-(((min[0]))))*((double)(((0)) + 0.5)-(0)) / ((<br>double)(((sox)))-(0)) + (((min[0])))) : ( ((double)(((maxIn[0<br>])))-(((min[0]))))*((double)(((0)))-(0)) / ((double)(((sox))-<br>1)-(0)) + (((min[0])))))), (grid + gridSize[0]*0)[2] = ((nrrdCenterCell<br> == (ctx-&gt;shape-&gt;center) ? ( ((double)(((maxIn[1])))-((<br>(min[1]))))*((double)(((0)) + 0.5)-(0)) / ((double)(((soy)))-<br>(0)) + (((min[1])))) : ( ((double)(((maxIn[1])))-(((min[1])))<br>)*((double)(((0)))-(0)) / ((double)(((soy))-1)-(0)) + (((min[<br>1])))))), (grid + gridSize[0]*0)[3] = ((nrrdCenterCell == (ctx<br>-&gt;shape-&gt;center) ? ( ((double)(((maxIn[2])))-(((min[2])<br>)))*((double)(((0)) + 0.5)-(0)) / ((double)(((soz)))-(0)) + (<br>((min[2])))) : ( ((double)(((maxIn[2])))-(((min[2]))))*((double<br>)(((0)))-(0)) / ((double)(((soz))-1)-(0)) + (((min[2])))))))</span></span>;</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">    <span class='macro'>ELL_4V_SET(grid + gridSize[0]*1, dsox,<span class='expansion'>((grid + gridSize[0]*1)[0] = (dsox), (grid + gridSize[0]*1)[1<br>] = (( ((double)(maxIn[0])-(min[0]))*((double)(1)) / ((double<br>)(maxOut[0])-(min[0])) )), (grid + gridSize[0]*1)[2] = (0), (<br>grid + gridSize[0]*1)[3] = (0))</span></span></td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">               <span class='macro'>AIR_DELTA(min[0], 1, maxOut[0], min[0], maxIn[0]),<span class='expansion'>((grid + gridSize[0]*1)[0] = (dsox), (grid + gridSize[0]*1)[1<br>] = (( ((double)(maxIn[0])-(min[0]))*((double)(1)) / ((double<br>)(maxOut[0])-(min[0])) )), (grid + gridSize[0]*1)[2] = (0), (<br>grid + gridSize[0]*1)[3] = (0))</span></span></td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">               <span class='macro'>0,<span class='expansion'>((grid + gridSize[0]*1)[0] = (dsox), (grid + gridSize[0]*1)[1<br>] = (( ((double)(maxIn[0])-(min[0]))*((double)(1)) / ((double<br>)(maxOut[0])-(min[0])) )), (grid + gridSize[0]*1)[2] = (0), (<br>grid + gridSize[0]*1)[3] = (0))</span></span></td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">               <span class='macro'>0)<span class='expansion'>((grid + gridSize[0]*1)[0] = (dsox), (grid + gridSize[0]*1)[1<br>] = (( ((double)(maxIn[0])-(min[0]))*((double)(1)) / ((double<br>)(maxOut[0])-(min[0])) )), (grid + gridSize[0]*1)[2] = (0), (<br>grid + gridSize[0]*1)[3] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">    <span class='macro'>ELL_4V_SET(grid + gridSize[0]*2, dsoy,<span class='expansion'>((grid + gridSize[0]*2)[0] = (dsoy), (grid + gridSize[0]*2)[1<br>] = (0), (grid + gridSize[0]*2)[2] = (( ((double)(maxIn[1])-(<br>min[1]))*((double)(1)) / ((double)(maxOut[1])-(min[1])) )), (<br>grid + gridSize[0]*2)[3] = (0))</span></span></td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">               <span class='macro'>0,<span class='expansion'>((grid + gridSize[0]*2)[0] = (dsoy), (grid + gridSize[0]*2)[1<br>] = (0), (grid + gridSize[0]*2)[2] = (( ((double)(maxIn[1])-(<br>min[1]))*((double)(1)) / ((double)(maxOut[1])-(min[1])) )), (<br>grid + gridSize[0]*2)[3] = (0))</span></span></td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">               <span class='macro'>AIR_DELTA(min[1], 1, maxOut[1], min[1], maxIn[1]),<span class='expansion'>((grid + gridSize[0]*2)[0] = (dsoy), (grid + gridSize[0]*2)[1<br>] = (0), (grid + gridSize[0]*2)[2] = (( ((double)(maxIn[1])-(<br>min[1]))*((double)(1)) / ((double)(maxOut[1])-(min[1])) )), (<br>grid + gridSize[0]*2)[3] = (0))</span></span></td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">               <span class='macro'>0)<span class='expansion'>((grid + gridSize[0]*2)[0] = (dsoy), (grid + gridSize[0]*2)[1<br>] = (0), (grid + gridSize[0]*2)[2] = (( ((double)(maxIn[1])-(<br>min[1]))*((double)(1)) / ((double)(maxOut[1])-(min[1])) )), (<br>grid + gridSize[0]*2)[3] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">    <span class='macro'>ELL_4V_SET(grid + gridSize[0]*3, dsoz,<span class='expansion'>((grid + gridSize[0]*3)[0] = (dsoz), (grid + gridSize[0]*3)[1<br>] = (0), (grid + gridSize[0]*3)[2] = (0), (grid + gridSize[0]<br>*3)[3] = (( ((double)(maxIn[2])-(min[2]))*((double)(1)) / ((double<br>)(maxOut[2])-(min[2])) )))</span></span></td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">               <span class='macro'>0,<span class='expansion'>((grid + gridSize[0]*3)[0] = (dsoz), (grid + gridSize[0]*3)[1<br>] = (0), (grid + gridSize[0]*3)[2] = (0), (grid + gridSize[0]<br>*3)[3] = (( ((double)(maxIn[2])-(min[2]))*((double)(1)) / ((double<br>)(maxOut[2])-(min[2])) )))</span></span></td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">               <span class='macro'>0,<span class='expansion'>((grid + gridSize[0]*3)[0] = (dsoz), (grid + gridSize[0]*3)[1<br>] = (0), (grid + gridSize[0]*3)[2] = (0), (grid + gridSize[0]<br>*3)[3] = (( ((double)(maxIn[2])-(min[2]))*((double)(1)) / ((double<br>)(maxOut[2])-(min[2])) )))</span></span></td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">               <span class='macro'>AIR_DELTA(min[2], 1, maxOut[2], min[2], maxIn[2]))<span class='expansion'>((grid + gridSize[0]*3)[0] = (dsoz), (grid + gridSize[0]*3)[1<br>] = (0), (grid + gridSize[0]*3)[2] = (0), (grid + gridSize[0]<br>*3)[3] = (( ((double)(maxIn[2])-(min[2]))*((double)(1)) / ((double<br>)(maxOut[2])-(min[2])) )))</span></span>;</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">    <span class='keyword'>if</span> (sbp) {</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">      <span class='keyword'>if</span> (!probeSpaceIndex) {</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">        <span class='keyword'>double</span> idxSS = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>int</span> vi;</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">        <span class='comment'>/* there's actually work to do here, weirdly: gageProbe can</span></td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">           <span class='comment'>either work in index space, or in world space, but the</span></td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">           <span class='comment'>vprobe-style sampling is index-space-centric, so we have to</span></td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">           <span class='comment'>convert the world-space stack position to index space, to be</span></td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">           <span class='comment'>consistent with the way that the grid sampling will be</span></td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">           <span class='comment'>defined. So, we have to actually replicate work that is done</span></td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">           <span class='comment'>by _gageProbeSpace() in converting from world to index space */</span></td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">        <span class='comment'>/* HEY: the way that idxSS is set is very strange */</span></td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">        <span class='keyword'>for</span> (vi=0; vi&lt;sbp-&gt;num-1; vi++) {</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">          <span class='keyword'>if</span> (<span class='macro'>AIR_IN_CL(sbp-&gt;sigma[vi], posSS, sbp-&gt;sigma[vi+1])<span class='expansion'>((sbp-&gt;sigma[vi]) &lt;= (posSS) &amp;&amp; (posSS) &lt;= (<br>sbp-&gt;sigma[vi+1]))</span></span>) {</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">            idxSS = vi + <span class='macro'>AIR_AFFINE(sbp-&gt;sigma[vi], posSS, sbp-&gt;sigma[vi+1],<span class='expansion'>( ((double)(1)-(0))*((double)(posSS)-(sbp-&gt;sigma[vi])) / (<br>(double)(sbp-&gt;sigma[vi+1])-(sbp-&gt;sigma[vi])) + (0))</span></span></td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">                                    <span class='macro'>0, 1)<span class='expansion'>( ((double)(1)-(0))*((double)(posSS)-(sbp-&gt;sigma[vi])) / (<br>(double)(sbp-&gt;sigma[vi+1])-(sbp-&gt;sigma[vi])) + (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">            <span class='keyword'>if</span> (verbose &gt; 1) {</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">              fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: scale pos %g -&gt; idx %g = %u + %g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">                      posSS, idxSS, vi,</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">                      <span class='macro'>AIR_AFFINE(sbp-&gt;sigma[vi], posSS, sbp-&gt;sigma[vi+1],<span class='expansion'>( ((double)(1)-(0))*((double)(posSS)-(sbp-&gt;sigma[vi])) / (<br>(double)(sbp-&gt;sigma[vi+1])-(sbp-&gt;sigma[vi])) + (0))</span></span></td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">                                 <span class='macro'>0, 1)<span class='expansion'>( ((double)(1)-(0))*((double)(posSS)-(sbp-&gt;sigma[vi])) / (<br>(double)(sbp-&gt;sigma[vi+1])-(sbp-&gt;sigma[vi])) + (0))</span></span>);</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">            }</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">            <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">        <span class='keyword'>if</span> (vi == sbp-&gt;num-1) {</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">          fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: scale pos %g outside range %g=%g, %g=%g\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">                  posSS, rangeSS[0], sbp-&gt;sigma[0],</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">                  rangeSS[1], sbp-&gt;sigma[sbp-&gt;num-1]);</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">          airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">        grid[4 + 5*0] = idxSS;</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">        grid[4 + 5*0] = posSS;</td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">      grid[4 + 5*1] = 0;</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">      grid[4 + 5*2] = 0;</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">      grid[4 + 5*3] = 0;</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">    <span class='comment'>/* we did get a grid, here we only copy from _ngrid to ngrid,</span></td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">       <span class='comment'>and let further massaging be done in gridProbe below */</span></td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">    six = <span class="mrange">siy = siz = 0</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:5ex">Value stored to 'six' is never read</div></td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">    sox = soy = soz = 0;</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line">    <span class='keyword'>if</span> (nrrdCopy(ngrid, _ngrid)) {</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">      airMopAdd(mop, err = biffGetDone(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">      fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble copying ngrid:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">  <span class='comment'>/* probe onto grid */</span></td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">  nout = nrrdNew();</td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">  airMopAdd(mop, nout, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN860">860</td><td class="line">  gageParmSet(ctx, gageParmVerbose, verbose);</td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line">  t0 = airTime();</td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line">  <span class='keyword'>if</span> (gridProbe(ctx, pvl, what, nout, otype, ngrid,</td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line">                (_ngrid</td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">                 ? probeSpaceIndex  <span class='comment'>/* user specifies grid space */</span></td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line">                 : <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>),       <span class='comment'>/* copying vprobe index-space behavior */</span></td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">                verbose, clamp, scaleIsTau,</td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">                edgeFracInfo[0], edgeFracInfo[1])) {</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">    <span class='comment'>/* note hijacking of GAGE key */</span></td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line">    airMopAdd(mop, err = biffGetDone(<span class='macro'>GAGE<span class='expansion'>gageBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble probing on grid:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line">    airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line">  t1 = airTime();</td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">  <span class='keyword'>if</span> (verbose) {</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"probe rate = %g KHz\n"</span>,</td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line">            <span class='macro'>AIR_CAST(<span class='keyword'>double</span>, nrrdElementNumber(nout)/ansLen)<span class='expansion'>((double)(nrrdElementNumber(nout)/ansLen))</span></span></td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">            / (1000.0*(t1-t0)));</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">  <span class='comment'>/* massage output some */</span></td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">  nrrdContentSet_va(nout, <span class='string_literal'>"gprobe"</span>, nin, <span class='string_literal'>"%s"</span>, airEnumStr(kind-&gt;enm, what));</td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line">  <span class='keyword'>if</span> (!_ngrid) {</td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">    <span class='comment'>/* did not get a grid, have to emulate vprobe per-axis behavior */</span></td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">    <span class='keyword'>for</span> (axi=0; axi&lt;3; axi++) {</td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">      nout-&gt;axis[axi+oBaseDim].label =</td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">        airStrdup(nin-&gt;axis[axi+iBaseDim].label);</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">      nout-&gt;axis[axi+oBaseDim].center = ctx-&gt;shape-&gt;center;</td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line">    nrrdBasicInfoCopy(nout, nin, (<span class='macro'>NRRD_BASIC_INFO_DATA_BIT<span class='expansion'>(1&lt;&lt; 1)</span></span></td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_TYPE_BIT<span class='expansion'>(1&lt;&lt; 2)</span></span></td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_BLOCKSIZE_BIT<span class='expansion'>(1&lt;&lt; 3)</span></span></td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_DIMENSION_BIT<span class='expansion'>(1&lt;&lt; 4)</span></span></td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_CONTENT_BIT<span class='expansion'>(1&lt;&lt; 5)</span></span></td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_SPACEORIGIN_BIT<span class='expansion'>(1&lt;&lt;10)</span></span></td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_OLDMIN_BIT<span class='expansion'>(1&lt;&lt;12)</span></span></td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_OLDMAX_BIT<span class='expansion'>(1&lt;&lt;13)</span></span></td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_COMMENTS_BIT<span class='expansion'>(1&lt;&lt;14)</span></span></td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line">                                  | <span class='macro'>NRRD_BASIC_INFO_KEYVALUEPAIRS_BIT<span class='expansion'>(1&lt;&lt;15)</span></span>));</td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">    <span class='keyword'>if</span> (ctx-&gt;shape-&gt;fromOrientation) {</td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line">      <span class='keyword'>if</span> (nin-&gt;space) {</td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line">        nrrdSpaceSet(nout, nin-&gt;space);</td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">        nrrdSpaceDimensionSet(nout, nin-&gt;spaceDim);</td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line">      nrrdSpaceVecCopy(nout-&gt;spaceOrigin, nin-&gt;spaceOrigin);</td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line">      <span class='keyword'>for</span> (axi=0; axi&lt;3; axi++) {</td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">        <span class='keyword'>double</span> tmp;</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">        nrrdSpaceVecScale(nout-&gt;axis[axi+oBaseDim].spaceDirection,</td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">                          rscl[axi],</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line">                          nin-&gt;axis[axi+iBaseDim].spaceDirection);</td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">        tmp = <span class='macro'>AIR_AFFINE(min[axi], 0, maxOut[axi], min[axi], maxIn[axi])<span class='expansion'>( ((double)(maxIn[axi])-(min[axi]))*((double)(0)-(min[axi])) /<br> ((double)(maxOut[axi])-(min[axi])) + (min[axi]))</span></span>;</td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line">        nrrdSpaceVecScaleAdd2(nout-&gt;spaceOrigin,</td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">                              1.0, nout-&gt;spaceOrigin,</td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">                              tmp, nin-&gt;axis[axi+iBaseDim].spaceDirection);</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">      <span class='keyword'>for</span> (axi=0; axi&lt;3; axi++) {</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">        nout-&gt;axis[axi+oBaseDim].spacing =</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">          rscl[axi]*nin-&gt;axis[axi+iBaseDim].spacing;</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line">  <span class='keyword'>if</span> (nrrdSave(outS, nout, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">    airMopAdd(mop, err = biffGetDone(<span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>), airFree, airMopAlways);</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"%s: trouble saving output:\n%s\n"</span>, me, err);</td></tr>
+<tr><td class="num" id="LN927">927</td><td class="line">    airMopError(mop);</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">}</td></tr>
+</table></body></html>

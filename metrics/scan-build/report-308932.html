@@ -1,0 +1,1273 @@
+<!doctype html>
+<html>
+<head>
+<title>/Users/scm/git/github/teem/src/pull/trace.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'trc' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /Users/scm/git/github/teem/src/pull/trace.c -->
+
+<!-- FILENAME trace.c -->
+
+<!-- FUNCTIONNAME pullTraceMultiRead -->
+
+<!-- ISSUEHASHCONTENTOFLINEINCONTEXT 0a98753de4a66226abdcbc6cd1892c5c -->
+
+<!-- BUGLINE 1179 -->
+
+<!-- BUGCOLUMN 7 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/pull/trace.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1179, column 7</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'trc' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>Teem: Tools to process and visualize scientific data and images             .</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line">  <span class='comment'>Copyright (C) 2013, 2012, 2011, 2010, 2009  University of Chicago</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2008, 2007, 2006, 2005  Gordon Kindlmann</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright (C) 2004, 2003, 2002, 2001, 2000, 1999, 1998  University of Utah</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>This library is free software; you can redistribute it and/or</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>modify it under the terms of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(LGPL) as published by the Free Software Foundation; either</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>version 2.1 of the License, or (at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>The terms of redistributing and/or modifying this software also</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>include exceptions to the LGPL that facilitate static linking.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>This library is distributed in the hope that it will be useful,</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>but WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with this library; if not, write to Free Software Foundation, Inc.,</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line">  <span class='comment'>51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "pull.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "privatePull.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">pullTrace *</td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">pullTraceNew(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  pullTrace *ret;</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">  ret = <span class='macro'>AIR_CALLOC(1, pullTrace)<span class='expansion'>(pullTrace*)(calloc((1), sizeof(pullTrace)))</span></span>;</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">  <span class='keyword'>if</span> (ret) {</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">    ret-&gt;seedPos[0] = ret-&gt;seedPos[1] = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">    ret-&gt;seedPos[2] = ret-&gt;seedPos[3] = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">    ret-&gt;nvert = nrrdNew();</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">    ret-&gt;nstrn = nrrdNew();</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">    ret-&gt;nstab = nrrdNew();</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">    ret-&gt;norin = nrrdNew();</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">    ret-&gt;seedIdx = 0;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">    ret-&gt;whyStop[0] = ret-&gt;whyStop[1] = pullTraceStopUnknown;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">    ret-&gt;whyStopCFail[0] = ret-&gt;whyStopCFail[1] = pullConstraintFailUnknown;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">    ret-&gt;whyNowhere = pullTraceStopUnknown;</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">    ret-&gt;whyNowhereCFail = pullConstraintFailUnknown;</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">pullTrace *</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">pullTraceNix(pullTrace *pts) {</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">  <span class='keyword'>if</span> (pts) {</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">    nrrdNuke(pts-&gt;nvert);</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">    nrrdNuke(pts-&gt;nstrn);</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">    nrrdNuke(pts-&gt;nstab);</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">    nrrdNuke(pts-&gt;norin);</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">    free(pts);</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"><span class='keyword'>void</span></td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">pullTraceStability(<span class='keyword'>double</span> *spcStab,</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">                   <span class='keyword'>double</span> *oriStab,</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">                   <span class='keyword'>const</span> <span class='keyword'>double</span> pos0[4],</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">                   <span class='keyword'>const</span> <span class='keyword'>double</span> pos1[4],</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">                   <span class='keyword'>const</span> <span class='keyword'>double</span> ori0[3],</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">                   <span class='keyword'>const</span> <span class='keyword'>double</span> ori1[3],</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">                   <span class='keyword'>double</span> sigma0,</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">                   <span class='keyword'>const</span> pullContext *pctx) {</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">  <span class='keyword'>double</span> sc, stb, dx, ds, diff[4];</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">  <span class='macro'>ELL_4V_SUB(diff, pos1, pos0)<span class='expansion'>((diff)[0] = (pos1)[0] - (pos0)[0], (diff)[1] = (pos1)[1] - (<br>pos0)[1], (diff)[2] = (pos1)[2] - (pos0)[2], (diff)[3] = (pos1<br>)[3] - (pos0)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">  dx = <span class='macro'>ELL_3V_LEN(diff)<span class='expansion'>(sqrt((((diff))[0]*((diff))[0] + ((diff))[1]*((diff))[1] + ((<br>diff))[2]*((diff))[2])))</span></span>/(pctx-&gt;voxelSizeSpace);</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">  sc = (pos0[3] + pos1[3])/2;</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;flag.scaleIsTau) {</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">    sc = <span class='macro'>gageSigOfTau(sc)<span class='expansion'>airSigmaOfTau(sc)</span></span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">  sc += sigma0;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">  dx /= sc;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">  ds = diff[3];</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">  stb = atan2(ds, dx)/(<span class='macro'>AIR_PI<span class='expansion'>3.14159265358979323846</span></span>/2); <span class='comment'>/* [-1,1]: 0 means least stable */</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">  stb = <span class='macro'>AIR_ABS(stb)<span class='expansion'>((stb) &gt; 0.0f ? (stb) : -(stb))</span></span>;      <span class='comment'>/* [0,1]: 0 means least stable */</span></td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">  *spcStab = <span class='macro'>AIR_CLAMP(0, stb, 1)<span class='expansion'>((stb) &lt; (0) ? (0) : ((stb) &gt; (1) ? (1) : (stb)))</span></span>;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">  <span class='comment'>static double maxvelo = 0;</span></td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">  <span class='comment'>if (1 &amp;&amp; vv &gt; maxvelo) {</span></td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">    <span class='comment'>char me[]="pullTraceStability";</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">    <span class='comment'>printf("\n%s: [%g,%g,%g,%g] - [%g,%g,%g,%g] = [%g,%g,%g,%g]\n", me,</span></td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">           <span class='comment'>pos0[0], pos0[1], pos0[2], pos0[3],</span></td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">           <span class='comment'>pos1[0], pos1[1], pos1[2], pos1[3],</span></td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">           <span class='comment'>diff[0], diff[1], diff[2], diff[3]);</span></td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">    <span class='comment'>printf("%s: dx = %g -&gt; %g; ds = %g\n", me, dx0, dx, ds);</span></td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">    <span class='comment'>printf("%s: vv = atan2(%g,%g)/pi = %g -&gt; %g &gt; %g\n", me, ds, dx, vv0, vv, maxvelo);</span></td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">    <span class='comment'>maxvelo = vv;</span></td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">  <span class='keyword'>if</span> (ori0 &amp;&amp; ori1) {</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">    <span class='comment'>/* dori = delta in orientation */</span></td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">    <span class='keyword'>double</span> dori = ell_3v_angle_d(ori0, ori1);</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">    <span class='comment'>/* dori in [0,pi]; 0 and pi mean no change */</span></td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">    <span class='keyword'>if</span> (dori &gt; <span class='macro'>AIR_PI<span class='expansion'>3.14159265358979323846</span></span>/2) {</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">      dori -= <span class='macro'>AIR_PI<span class='expansion'>3.14159265358979323846</span></span>;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">    <span class='comment'>/* dori in [-pi/2,pi/2]; 0 means no change; +-pi/2 means most change */</span></td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">    dori = <span class='macro'>AIR_ABS(dori)<span class='expansion'>((dori) &gt; 0.0f ? (dori) : -(dori))</span></span>;</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">    <span class='comment'>/* dori in [0,pi/2]; 0 means no change; pi/2 means most change */</span></td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">    *oriStab = atan2(ds, dori)/(<span class='macro'>AIR_PI<span class='expansion'>3.14159265358979323846</span></span>/2);</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">    <span class='comment'>/* *oriStab in [0,1]; 0 means stable, 1 means not stable */</span></td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">    *oriStab = 0;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">  <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">_pullConstrTanSlap(pullContext *pctx, pullPoint *point,</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                   <span class='keyword'>double</span> tlen,</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">                   <span class='comment'>/* input+output */</span> <span class='keyword'>double</span> toff[3],</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">                   <span class='comment'>/* output */</span> <span class='keyword'>int</span> *constrFailP) {</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullConstrTanSlap"</span>;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">  <span class='keyword'>double</span> pos0[4], tt;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">  <span class='keyword'>if</span> (!(pctx &amp;&amp; point &amp;&amp; toff &amp;&amp; constrFailP)) {</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;flag.zeroZ) {</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">    toff[2] = 0;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">  <span class='macro'>ELL_3V_NORM(toff, toff, tt)<span class='expansion'>(tt = (sqrt((((toff))[0]*((toff))[0] + ((toff))[1]*((toff))[1<br>] + ((toff))[2]*((toff))[2]))), ((toff)[0] = (1.0/tt)*(toff)[<br>0], (toff)[1] = (1.0/tt)*(toff)[1], (toff)[2] = (1.0/tt)*(toff<br>)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">  <span class='keyword'>if</span> (!(tlen &gt; 0 &amp;&amp; tt &gt; 0)) {</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: tlen %g or |toff| %g not positive"</span>, me, tlen, tt);</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">  <span class='macro'>ELL_4V_COPY(pos0, point-&gt;pos)<span class='expansion'>((pos0)[0] = (point-&gt;pos)[0], (pos0)[1] = (point-&gt;pos)[<br>1], (pos0)[2] = (point-&gt;pos)[2], (pos0)[3] = (point-&gt;pos<br>)[3])</span></span>; <span class='comment'>/* pos0[3] should stay put; will test at end */</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">  <span class='macro'>ELL_3V_SCALE_ADD2(point-&gt;pos, 1, pos0, tlen, toff)<span class='expansion'>((point-&gt;pos)[0] = (1)*(pos0)[0] + (tlen)*(toff)[0], (point<br>-&gt;pos)[1] = (1)*(pos0)[1] + (tlen)*(toff)[1], (point-&gt;pos<br>)[2] = (1)*(pos0)[2] + (tlen)*(toff)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">  <span class='keyword'>if</span> (_pullConstraintSatisfy(pctx-&gt;task[0], point, 0 <span class='comment'>/* travmax */</span>, constrFailP)) {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble"</span>, me);</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">    <span class='macro'>ELL_4V_COPY(point-&gt;pos, pos0)<span class='expansion'>((point-&gt;pos)[0] = (pos0)[0], (point-&gt;pos)[1] = (pos0)[<br>1], (point-&gt;pos)[2] = (pos0)[2], (point-&gt;pos)[3] = (pos0<br>)[3])</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">  <span class='comment'>/* save offset to new position */</span></td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">  <span class='macro'>ELL_3V_SUB(toff, point-&gt;pos, pos0)<span class='expansion'>((toff)[0] = (point-&gt;pos)[0] - (pos0)[0], (toff)[1] = (point<br>-&gt;pos)[1] - (pos0)[1], (toff)[2] = (point-&gt;pos)[2] - (pos0<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">  <span class='keyword'>if</span> (pos0[3] != point-&gt;pos[3]) {</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: point-&gt;pos[3] %g was changed (from %g)"</span>,</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">             me, point-&gt;pos[3], pos0[3]);</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">    <span class='macro'>ELL_4V_COPY(point-&gt;pos, pos0)<span class='expansion'>((point-&gt;pos)[0] = (pos0)[0], (point-&gt;pos)[1] = (pos0)[<br>1], (point-&gt;pos)[2] = (pos0)[2], (point-&gt;pos)[3] = (pos0<br>)[3])</span></span>; <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">  <span class='macro'>ELL_4V_COPY(point-&gt;pos, pos0)<span class='expansion'>((point-&gt;pos)[0] = (pos0)[0], (point-&gt;pos)[1] = (pos0)[<br>1], (point-&gt;pos)[2] = (pos0)[2], (point-&gt;pos)[3] = (pos0<br>)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">_pullConstrOrientFind(pullContext *pctx, pullPoint *point,</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">                      <span class='keyword'>int</span> normalfind, <span class='comment'>/* find normal two 2D surface,</span></td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">                                         <span class='comment'>else find tangent to 1D curve */</span></td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">                      <span class='keyword'>double</span> tlen,</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                      <span class='keyword'>const</span> <span class='keyword'>double</span> tdir0[3], <span class='comment'>/* if non-NULL, try using this direction */</span></td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                      <span class='comment'>/* output */</span></td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                      <span class='keyword'>double</span> dir[3],</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">                      <span class='keyword'>int</span> *constrFailP) {</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"_pullConstrOrientFind"</span>;</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">  <span class='keyword'>double</span> tt;</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line"><span class='directive'>#define <span class='macro'>SLAP(LEN, DIR)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (LEN), (DIR), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (DIR)[0], (DIR)[1], (DIR)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>                                                  \</span></td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">  <span class='directive'>/* fprintf(stderr, "!%s: SLAP %g %g %g --&gt;", me, (DIR)[0], (DIR)[1], (DIR)[2]); */  \</span></td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">  <span class='directive'>if (_pullConstrTanSlap(pctx, point, (LEN), (DIR), constrFailP)) {     \</span></td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">    <span class='directive'>biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, "%s: looking for tangent, starting with (%g,%g,%g)", \</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">             <span class='directive'>me, (DIR)[0], (DIR)[1], (DIR)[2]);                         \</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">    <span class='directive'>return 1;                                                           \</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">  <span class='directive'>}                                                                     \</span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">  <span class='directive'>if (*constrFailP) {                                                   \</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">    <span class='directive'>/* unsuccessful in finding tangent, but not a biff error */         \</span></td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">    <span class='directive'>return 0;                                                           \</span></td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">  <span class='directive'>}                                                                     \</span></td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">  <span class='directive'>/* fprintf(stderr, " %g %g %g\n", (DIR)[0], (DIR)[1], (DIR)[2]); */</span></td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">  <span class='keyword'>if</span> (!(pctx &amp;&amp; point &amp;&amp; constrFailP)) {</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">  *constrFailP = pullConstraintFailUnknown;</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">  <span class='keyword'>if</span> (normalfind) {</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">    <span class='keyword'>double</span> tan0[3], tan1[3];</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">    <span class='comment'>/* looking for a surface normal */</span></td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">    <span class='keyword'>if</span> (tdir0) { <span class='comment'>/* have something to start with */</span></td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">      ell_3v_perp_d(tan0, tdir0);</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">      <span class='macro'>ELL_3V_CROSS(tan1, tan0, tdir0)<span class='expansion'>((tan1)[0] = (tan0)[1]*(tdir0)[2] - (tan0)[2]*(tdir0)[1], (tan1<br>)[1] = (tan0)[2]*(tdir0)[0] - (tan0)[0]*(tdir0)[2], (tan1)[2]<br> = (tan0)[0]*(tdir0)[1] - (tan0)[1]*(tdir0)[0])</span></span>;</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">      <span class='macro'>SLAP(tlen, tan1)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tan1), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tan1)[0], (tan1)[1], (tan1)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">      <span class='macro'>SLAP(tlen, tan0)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tan0), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tan0)[0], (tan0)[1], (tan0)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">      <span class='macro'>ELL_3V_CROSS(dir, tan1, tan0)<span class='expansion'>((dir)[0] = (tan1)[1]*(tan0)[2] - (tan1)[2]*(tan0)[1], (dir)[<br>1] = (tan1)[2]*(tan0)[0] - (tan1)[0]*(tan0)[2], (dir)[2] = (tan1<br>)[0]*(tan0)[1] - (tan1)[1]*(tan0)[0])</span></span>;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">    } <span class='keyword'>else</span> { <span class='comment'>/* have to start from scratch */</span></td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">      <span class='keyword'>double</span> tns[9] = {1,0,0,  0,1,0,  0,0,1};</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">      <span class='macro'>SLAP(tlen, tns+0)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tns+0), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tns+0)[0], (tns+0)[1], (tns+0)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">      <span class='macro'>SLAP(tlen, tns+3)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tns+3), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tns+3)[0], (tns+3)[1], (tns+3)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">      <span class='macro'>SLAP(tlen, tns+6)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tns+6), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tns+6)[0], (tns+6)[1], (tns+6)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">      ell_3m_1d_nullspace_d(dir, tns);</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">    <span class='comment'>/* looking for a curve tangent */</span></td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">    <span class='keyword'>if</span> (tdir0) { <span class='comment'>/* have something to start with */</span></td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">      <span class='macro'>ELL_3V_COPY(dir, tdir0)<span class='expansion'>((dir)[0] = (tdir0)[0], (dir)[1] = (tdir0)[1], (dir)[2] = (tdir0<br>)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">      <span class='macro'>SLAP(tlen, dir)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (dir), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (dir)[0], (dir)[1], (dir)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">      <span class='comment'>/* SLAP(tlen, dir);   (didn't have much effect, in one test) */</span></td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">    } <span class='keyword'>else</span> { <span class='comment'>/* have to start from scratch */</span></td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">      <span class='keyword'>double</span> tX[3] = {1,0,0}, tY[3] = {0,1,0}, tZ[3] = {0,0,1};</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">      <span class='macro'>SLAP(tlen, tX)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tX), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tX)[0], (tX)[1], (tX)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">      <span class='macro'>SLAP(tlen, tY)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tY), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tY)[0], (tY)[1], (tY)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">      <span class='keyword'>if</span> (<span class='macro'>ELL_3V_DOT(tX, tY)<span class='expansion'>((tX)[0]*(tY)[0] + (tX)[1]*(tY)[1] + (tX)[2]*(tY)[2])</span></span> &lt; 0) { <span class='macro'>ELL_3V_SCALE(tY, -1, tY)<span class='expansion'>((tY)[0] = (-1)*(tY)[0], (tY)[1] = (-1)*(tY)[1], (tY)[2] = (-<br>1)*(tY)[2])</span></span>; }</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">      <span class='keyword'>if</span> (pctx-&gt;flag.zeroZ) {</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">        <span class='macro'>ELL_3V_SET(tZ, 0, 0, 0)<span class='expansion'>((tZ)[0] = (0), (tZ)[1] = (0), (tZ)[2] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        <span class='macro'>SLAP(tlen, tZ)<span class='expansion'>if (_pullConstrTanSlap(pctx, point, (tlen), (tZ), constrFailP<br>)) { biffAddf(pullBiffKey, "%s: looking for tangent, starting with (%g,%g,%g)"<br>, me, (tZ)[0], (tZ)[1], (tZ)[2]); return 1; } if (*constrFailP<br>) { return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>ELL_3V_DOT(tX, tZ)<span class='expansion'>((tX)[0]*(tZ)[0] + (tX)[1]*(tZ)[1] + (tX)[2]*(tZ)[2])</span></span> &lt; 0) { <span class='macro'>ELL_3V_SCALE(tZ, -1, tZ)<span class='expansion'>((tZ)[0] = (-1)*(tZ)[0], (tZ)[1] = (-1)*(tZ)[1], (tZ)[2] = (-<br>1)*(tZ)[2])</span></span>; }</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>ELL_3V_DOT(tY, tZ)<span class='expansion'>((tY)[0]*(tZ)[0] + (tY)[1]*(tZ)[1] + (tY)[2]*(tZ)[2])</span></span> &lt; 0) { <span class='macro'>ELL_3V_SCALE(tY, -1, tZ)<span class='expansion'>((tY)[0] = (-1)*(tZ)[0], (tY)[1] = (-1)*(tZ)[1], (tY)[2] = (-<br>1)*(tZ)[2])</span></span>; }</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">      <span class='macro'>ELL_3V_ADD3(dir, tX, tY, tZ)<span class='expansion'>((dir)[0] = (tX)[0] + (tY)[0] + (tZ)[0], (dir)[1] = (tX)[1] +<br> (tY)[1] + (tZ)[1], (dir)[2] = (tX)[2] + (tY)[2] + (tZ)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">  <span class='macro'>ELL_3V_NORM(dir, dir, tt)<span class='expansion'>(tt = (sqrt((((dir))[0]*((dir))[0] + ((dir))[1]*((dir))[1] + (<br>(dir))[2]*((dir))[2]))), ((dir)[0] = (1.0/tt)*(dir)[0], (dir)<br>[1] = (1.0/tt)*(dir)[1], (dir)[2] = (1.0/tt)*(dir)[2]))</span></span>;</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">  <span class='keyword'>if</span> (!(tt &gt; 0)) {</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: computed direction is zero (%g)?"</span>, me, tt);</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line"><span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line"><span class='comment'>******** pullTraceSet</span></td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line"><span class='comment'>**</span></td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line"><span class='comment'>** computes a single trace, according to the given parameters,</span></td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line"><span class='comment'>** and store it in the pullTrace</span></td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line"><span class='comment'>int recordStrength: should strength be recorded along trace</span></td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"><span class='comment'>double scaleDelta: discrete step along scale</span></td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line"><span class='comment'>double halfScaleWin: how far, along scale, trace should go in each direction</span></td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line"><span class='comment'>unsigned int arrIncr: increment for storing position (maybe strength)</span></td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line"><span class='comment'>const double _seedPos[4]: starting position</span></td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line"><span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">pullTraceSet(pullContext *pctx, pullTrace *pts,</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">             <span class='keyword'>int</span> recordStrength,</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">             <span class='keyword'>double</span> scaleDelta, <span class='keyword'>double</span> halfScaleWin,</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">             <span class='keyword'>double</span> orientTestLen,</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">             <span class='keyword'>unsigned</span> <span class='keyword'>int</span> arrIncr,</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">             <span class='keyword'>const</span> <span class='keyword'>double</span> _seedPos[4]) {</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullTraceSet"</span>;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">  pullPoint *point;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">  airArray *mop, *trceArr[2], *hstrnArr[2], *horinArr[2];</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">  <span class='keyword'>double</span> *trce[2], ssrange[2], *vert, *hstrn[2], *horin[2], *strn, *orin, *stab,</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">    seedPos[4], polen, porin[3];</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">  <span class='keyword'>int</span> constrFail;</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> dirIdx, lentmp, tidx, oidx, vertNum;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">  <span class='keyword'>if</span> (!( pctx &amp;&amp; pts &amp;&amp; _seedPos )) {</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">  <span class='keyword'>if</span> (!( <span class='macro'>AIR_EXISTS(scaleDelta)<span class='expansion'>(((int)(!((scaleDelta) - (scaleDelta)))))</span></span> &amp;&amp; scaleDelta &gt; 0.0 )) {</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need existing scaleDelta &gt; 0 (not %g)"</span>,</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">             me, scaleDelta);</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">  <span class='keyword'>if</span> (!( halfScaleWin &gt; 0 )) {</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need halfScaleWin &gt; 0"</span>, me);</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">  <span class='keyword'>if</span> (!(pctx-&gt;constraint)) {</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: given context doesn't have constraint set"</span>, me);</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">  pts-&gt;fdim = _pullConstraintDim(pctx);</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">  <span class='keyword'>if</span> (0 &gt; pts-&gt;fdim) {</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't learn dimension of feature"</span>, me);</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">  <span class='keyword'>if</span> (pts-&gt;fdim == 2 &amp;&amp; pctx-&gt;flag.zeroZ) {</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: can't have feature dim 2 with zeroZ"</span>, me);</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">  <span class='keyword'>if</span> (!( <span class='macro'>AIR_EXISTS(orientTestLen)<span class='expansion'>(((int)(!((orientTestLen) - (orientTestLen)))))</span></span> &amp;&amp; orientTestLen &gt;= 0 )) {</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need non-negative orientTestLen (not %g)\n"</span>,</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">             me, orientTestLen);</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">  <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; !orientTestLen) {</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">    <span class='comment'>/* not really an error */</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">    <span class='comment'>fprintf(stderr, "\n\n%s: WARNING: have a %d-D feature, but not "</span></td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">            <span class='comment'>"measuring its orientation\n\n\n", me, pts-&gt;fdim);</span></td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">  <span class='comment'>/* The test for "should I measure orientation"</span></td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">     <span class='comment'>is "if (pts-&gt;fdim &amp;&amp; orientTestLen)" */</span></td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">  <span class='keyword'>if</span> (recordStrength &amp;&amp; !pctx-&gt;ispec[pullInfoStrength]) {</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: want to record strength but %s not set in context"</span>,</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">             me, airEnumStr(pullInfo, pullInfoStrength));</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">  <span class='keyword'>if</span> (pullConstraintScaleRange(pctx, ssrange)) {</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trouble getting scale range"</span>, me);</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">  <span class='comment'>/* re-initialize termination descriptions (in case of trace re-use) */</span></td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">  pts-&gt;whyStop[0] = pts-&gt;whyStop[1] = pullTraceStopUnknown;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">  pts-&gt;whyStopCFail[0] = pts-&gt;whyStopCFail[1] = pullConstraintFailUnknown;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">  pts-&gt;whyNowhere = pullTraceStopUnknown;</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">  pts-&gt;whyNowhereCFail = pullConstraintFailUnknown;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">  <span class='comment'>/* enforce zeroZ */</span></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">  <span class='macro'>ELL_4V_COPY(seedPos, _seedPos)<span class='expansion'>((seedPos)[0] = (_seedPos)[0], (seedPos)[1] = (_seedPos)[1], (<br>seedPos)[2] = (_seedPos)[2], (seedPos)[3] = (_seedPos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;flag.zeroZ) {</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">    seedPos[2] = 0.0;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">  <span class='comment'>/* save seedPos in any case */</span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">  <span class='macro'>ELL_4V_COPY(pts-&gt;seedPos, seedPos)<span class='expansion'>((pts-&gt;seedPos)[0] = (seedPos)[0], (pts-&gt;seedPos)[1] = (<br>seedPos)[1], (pts-&gt;seedPos)[2] = (seedPos)[2], (pts-&gt;seedPos<br>)[3] = (seedPos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">  point = pullPointNew(pctx); <span class='comment'>/* we'll want to decrement idtagNext later */</span></td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">  airMopAdd(mop, point, (airMopper)pullPointNix, airMopAlways);</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">  <span class='macro'>ELL_4V_COPY(point-&gt;pos, seedPos)<span class='expansion'>((point-&gt;pos)[0] = (seedPos)[0], (point-&gt;pos)[1] = (seedPos<br>)[1], (point-&gt;pos)[2] = (seedPos)[2], (point-&gt;pos)[3] =<br> (seedPos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">  <span class='comment'>if (pctx-&gt;verbose) {</span></td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">    <span class='comment'>fprintf(stderr, "%s: trying at seed=(%g,%g,%g,%g)\n", me,</span></td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">            <span class='comment'>seedPos[0], seedPos[1], seedPos[2], seedPos[3]);</span></td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">  <span class='comment'>/* The termination of the trace due to low stablity is handled here</span></td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">     <span class='comment'>(or could be), not by _pullConstraintSatisfy, so we set 0 for the</span></td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">     <span class='comment'>travelMax arg of _pullConstraintSatisfy (no travel limit) */</span></td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">  <span class='keyword'>if</span> (_pullConstraintSatisfy(pctx-&gt;task[0], point,</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">                             0 <span class='comment'>/* travmax */</span>, &amp;constrFail)) {</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: constraint sat on seed point"</span>, me);</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">    airMopError(mop);</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">  <span class='comment'>if (pctx-&gt;verbose) {</span></td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">    <span class='comment'>fprintf(stderr, "%s: seed=(%g,%g,%g,%g) -&gt; %s (%g,%g,%g,%g)\n", me,</span></td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">            <span class='comment'>seedPos[0], seedPos[1], seedPos[2], seedPos[3],</span></td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">            <span class='comment'>constrFail ? "!NO!" : "(yes)",</span></td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">            <span class='comment'>point-&gt;pos[0] - seedPos[0], point-&gt;pos[1] - seedPos[1],</span></td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">            <span class='comment'>point-&gt;pos[2] - seedPos[2], point-&gt;pos[3] - seedPos[3]);</span></td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">  <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">  <span class='keyword'>if</span> (constrFail) {</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">    pts-&gt;whyNowhere = pullTraceStopConstrFail;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">    airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">    <span class='comment'>/* pctx-&gt;idtagNext -= 1; / * HACK * / */</span></td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">  <span class='keyword'>if</span> (point-&gt;status &amp; <span class='macro'>PULL_STATUS_EDGE_BIT<span class='expansion'>(1&lt;&lt; 4)</span></span>) {</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">    pts-&gt;whyNowhere = pullTraceStopVolumeEdge;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">    airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">    <span class='comment'>/* pctx-&gt;idtagNext -= 1; / * HACK * / */</span></td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">  <span class='keyword'>if</span> (pctx-&gt;flag.zeroZ &amp;&amp; point-&gt;pos[2] != 0) {</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: zeroZ violated (a)"</span>, me);</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">    airMopError(mop);</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">  <span class='comment'>/* else constraint sat worked at seed point; we have work to do */</span></td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">  <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">    <span class='comment'>/* learn orientation at seed point */</span></td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">    polen = (orientTestLen</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">             *pctx-&gt;voxelSizeSpace</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">             <span class='comment'>/* if used, the effect of this this last (unprincipled) factor</span></td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">                <span class='comment'>is gradually increase the test distance with scale</span></td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">                <span class='comment'>*(1 + gageTauOfSig(_pullSigma(pctx, point-&gt;pos))) */</span> );</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">    <span class='keyword'>double</span> pos0[4], dp[4];</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">    <span class='keyword'>int</span> cf;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">    <span class='macro'>ELL_4V_COPY(pos0, point-&gt;pos)<span class='expansion'>((pos0)[0] = (point-&gt;pos)[0], (pos0)[1] = (point-&gt;pos)[<br>1], (pos0)[2] = (point-&gt;pos)[2], (pos0)[3] = (point-&gt;pos<br>)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">    <span class='keyword'>if</span> (_pullConstrOrientFind(pctx, point, pts-&gt;fdim == 2,</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">                              polen, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> <span class='comment'>/* no initial guess */</span>, porin, &amp;cf)) {</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trying to find orientation at seed"</span>, me);</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">      airMopError(mop);</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">    <span class='macro'>ELL_4V_SUB(dp, pos0, point-&gt;pos)<span class='expansion'>((dp)[0] = (pos0)[0] - (point-&gt;pos)[0], (dp)[1] = (pos0)[1<br>] - (point-&gt;pos)[1], (dp)[2] = (pos0)[2] - (point-&gt;pos)<br>[2], (dp)[3] = (pos0)[3] - (point-&gt;pos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">    <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">    <span class='comment'>fprintf(stderr, "!%s: cf = %d (%s)\n", me, cf, airEnumStr(pullConstraintFail, cf));</span></td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">    <span class='comment'>fprintf(stderr, "!%s: (fdim=%u) pos=[%g,%g,%g,%g] polen=%g porin=[%g,%g,%g] |%g|\n",</span></td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">            <span class='comment'>me, pts-&gt;fdim,</span></td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">            <span class='comment'>point-&gt;pos[0], point-&gt;pos[1], point-&gt;pos[2], point-&gt;pos[3],</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">            <span class='comment'>polen, porin[0], porin[1], porin[2], ELL_4V_LEN(dp));</span></td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">    <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">    <span class='keyword'>if</span> (cf) {</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">      pts-&gt;whyNowhere = pullTraceStopConstrFail;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">      pts-&gt;whyNowhereCFail = cf;</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">      airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">      <span class='comment'>/* pctx-&gt;idtagNext -= 1; / * HACK * / */</span></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">      <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">    <span class='comment'>/* either feature is 0D points, or don't care about orientation */</span></td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">    polen = <span class='macro'>AIR_NAN<span class='expansion'>(airFloatQNaN.f)</span></span>;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">    <span class='macro'>ELL_3V_SET(porin, AIR_NAN, AIR_NAN, AIR_NAN)<span class='expansion'>((porin)[0] = ((airFloatQNaN.f)), (porin)[1] = ((airFloatQNaN<br>.f)), (porin)[2] = ((airFloatQNaN.f)))</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">  <span class='keyword'>for</span> (dirIdx=0; dirIdx&lt;2; dirIdx++) {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">    trceArr[dirIdx] = airArrayNew((<span class='keyword'>void</span>**)(trce + dirIdx), <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                                  4*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>), arrIncr);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">    airMopAdd(mop, trceArr[dirIdx], (airMopper)airArrayNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">    <span class='keyword'>if</span> (recordStrength) {</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">      hstrnArr[dirIdx] = airArrayNew((<span class='keyword'>void</span>**)(hstrn + dirIdx), <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">                                     <span class='keyword'>sizeof</span>(<span class='keyword'>double</span>), arrIncr);</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">      airMopAdd(mop, hstrnArr[dirIdx], (airMopper)airArrayNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">      hstrnArr[dirIdx] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">      hstrn[dirIdx] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">    <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">      horinArr[dirIdx] = airArrayNew((<span class='keyword'>void</span>**)(horin + dirIdx), <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                                     3*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>), arrIncr);</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">      airMopAdd(mop, horinArr[dirIdx], (airMopper)airArrayNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">    } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">      horinArr[dirIdx] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">      horin[dirIdx] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">  <span class='keyword'>for</span> (dirIdx=0; dirIdx&lt;2; dirIdx++) {</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> step;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">    <span class='keyword'>double</span> dscl;</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">    dscl = (!dirIdx ? -1 : +1)*scaleDelta;</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">    step = 0;</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">    <span class='keyword'>while</span> (1) {</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">      <span class='keyword'>if</span> (!step) {</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        <span class='comment'>/* first step in both directions requires special tricks */</span></td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">        <span class='keyword'>if</span> (0 == dirIdx) {</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">          <span class='comment'>/* this is done once, at the very start */</span></td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">          <span class='comment'>/* save constraint sat of seed point */</span></td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">          tidx = airArrayLenIncr(trceArr[0], 1);</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">          <span class='macro'>ELL_4V_COPY(trce[0] + 4*tidx, point-&gt;pos)<span class='expansion'>((trce[0] + 4*tidx)[0] = (point-&gt;pos)[0], (trce[0] + 4*tidx<br>)[1] = (point-&gt;pos)[1], (trce[0] + 4*tidx)[2] = (point-&gt;<br>pos)[2], (trce[0] + 4*tidx)[3] = (point-&gt;pos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">          <span class='keyword'>if</span> (recordStrength) {</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">            airArrayLenIncr(hstrnArr[0], 1);</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">            hstrn[0][0] = pullPointScalar(pctx, point, pullInfoStrength,</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">                                          <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">          <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">            airArrayLenIncr(horinArr[0], 1);</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">            <span class='macro'>ELL_3V_COPY(horin[0] + 3*0, porin)<span class='expansion'>((horin[0] + 3*0)[0] = (porin)[0], (horin[0] + 3*0)[1] = (porin<br>)[1], (horin[0] + 3*0)[2] = (porin)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">          <span class='comment'>/* re-set position from constraint sat of seed pos */</span></td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">          <span class='macro'>ELL_4V_COPY(point-&gt;pos, trce[0] + 4*0)<span class='expansion'>((point-&gt;pos)[0] = (trce[0] + 4*0)[0], (point-&gt;pos)[1] =<br> (trce[0] + 4*0)[1], (point-&gt;pos)[2] = (trce[0] + 4*0)[2],<br> (point-&gt;pos)[3] = (trce[0] + 4*0)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">          <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">            <span class='macro'>ELL_3V_COPY(porin, horin[0] + 3*0)<span class='expansion'>((porin)[0] = (horin[0] + 3*0)[0], (porin)[1] = (horin[0] + 3<br>*0)[1], (porin)[2] = (horin[0] + 3*0)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">          }</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">      <span class='comment'>/* nudge position along scale */</span></td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">      point-&gt;pos[3] += dscl;</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">      <span class='keyword'>if</span> (!<span class='macro'>AIR_IN_OP(ssrange[0], point-&gt;pos[3], ssrange[1])<span class='expansion'>((ssrange[0]) &lt; (point-&gt;pos[3]) &amp;&amp; (point-&gt;pos<br>[3]) &lt; (ssrange[1]))</span></span>) {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">        <span class='comment'>/* if we've stepped outside the range of scale for the volume</span></td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">           <span class='comment'>containing the constraint manifold, we're done */</span></td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">        pts-&gt;whyStop[dirIdx] = pullTraceStopBounds;</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">      <span class='keyword'>if</span> (<span class='macro'>AIR_ABS(point-&gt;pos[3] - seedPos[3])<span class='expansion'>((point-&gt;pos[3] - seedPos[3]) &gt; 0.0f ? (point-&gt;pos[3<br>] - seedPos[3]) : -(point-&gt;pos[3] - seedPos[3]))</span></span> &gt; halfScaleWin) {</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">        <span class='comment'>/* we've moved along scale as far as allowed */</span></td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">        pts-&gt;whyStop[dirIdx] = pullTraceStopLength;</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">      <span class='comment'>/* re-assert constraint */</span></td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">      <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">      <span class='comment'>fprintf(stderr, "%s(%u): pos = %g %g %g %g.... \n", me,</span></td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">              <span class='comment'>point-&gt;idtag, point-&gt;pos[0], point-&gt;pos[1],</span></td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">              <span class='comment'>point-&gt;pos[2], point-&gt;pos[3]);</span></td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">      <span class='keyword'>if</span> (_pullConstraintSatisfy(pctx-&gt;task[0], point,</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">                                 0 <span class='comment'>/* travmax */</span>, &amp;constrFail)) {</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">        biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: dir %u, step %u"</span>, me, dirIdx, step);</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">        airMopError(mop);</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">      <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">      <span class='comment'>if (pctx-&gt;verbose) {</span></td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        <span class='comment'>fprintf(stderr, "%s(%u): ... %s(%d); pos = %g %g %g %g\n", me,</span></td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">                <span class='comment'>point-&gt;idtag,</span></td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">                <span class='comment'>constrFail ? "FAIL" : "(ok)",</span></td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                <span class='comment'>constrFail, point-&gt;pos[0], point-&gt;pos[1],</span></td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">                <span class='comment'>point-&gt;pos[2], point-&gt;pos[3]);</span></td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">      <span class='comment'>}</span></td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">      <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">      <span class='keyword'>if</span> (point-&gt;status &amp; <span class='macro'>PULL_STATUS_EDGE_BIT<span class='expansion'>(1&lt;&lt; 4)</span></span>) {</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">        pts-&gt;whyStop[dirIdx] = pullTraceStopVolumeEdge;</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">      <span class='keyword'>if</span> (constrFail) {</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        <span class='comment'>/* constraint sat failed; no error, we're just done</span></td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">           <span class='comment'>with stepping for this direction */</span></td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">        pts-&gt;whyStop[dirIdx] = pullTraceStopConstrFail;</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">        pts-&gt;whyStopCFail[dirIdx] = constrFail;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">      <span class='keyword'>if</span> (pctx-&gt;flag.zeroZ &amp;&amp; point-&gt;pos[2] != 0) {</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: zeroZ violated (b)"</span>, me);</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        airMopError(mop);</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">      <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        <span class='keyword'>if</span> (_pullConstrOrientFind(pctx, point, pts-&gt;fdim == 2,</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">                                  polen, porin, porin, &amp;constrFail)) {</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">          biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: at dir %u, step %u"</span>, me, dirIdx, step);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">          airMopError(mop);</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">          <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">      <span class='keyword'>if</span> (trceArr[dirIdx]-&gt;len &gt;= 2) {</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        <span class='comment'>/* see if we're moving too fast, by comparing with previous point */</span></td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">        <span class='comment'>/* actually, screw that */</span></td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">      <span class='comment'>/* else save new point on trace */</span></td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">      tidx = airArrayLenIncr(trceArr[dirIdx], 1);</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">      <span class='macro'>ELL_4V_COPY(trce[dirIdx] + 4*tidx, point-&gt;pos)<span class='expansion'>((trce[dirIdx] + 4*tidx)[0] = (point-&gt;pos)[0], (trce[dirIdx<br>] + 4*tidx)[1] = (point-&gt;pos)[1], (trce[dirIdx] + 4*tidx)[<br>2] = (point-&gt;pos)[2], (trce[dirIdx] + 4*tidx)[3] = (point-&gt;<br>pos)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">      <span class='keyword'>if</span> (recordStrength) {</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">        tidx = airArrayLenIncr(hstrnArr[dirIdx], 1);</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">        hstrn[dirIdx][tidx] = pullPointScalar(pctx, point, pullInfoStrength,</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">                                              <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">      <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        tidx = airArrayLenIncr(horinArr[dirIdx], 1);</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        <span class='macro'>ELL_3V_COPY(horin[dirIdx] + 3*tidx, porin)<span class='expansion'>((horin[dirIdx] + 3*tidx)[0] = (porin)[0], (horin[dirIdx] + 3<br>*tidx)[1] = (porin)[1], (horin[dirIdx] + 3*tidx)[2] = (porin)<br>[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">      step++;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">  <span class='comment'>/* transfer trace halves to pts-&gt;nvert */</span></td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">  vertNum = trceArr[0]-&gt;len + trceArr[1]-&gt;len;</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">  <span class='keyword'>if</span> (0 == vertNum || 1 == vertNum || 2 == vertNum) {</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">    pts-&gt;whyNowhere = pullTraceStopStub;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">    airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">    <span class='comment'>/* pctx-&gt;idtagNext -= 1; / * HACK * / */</span></td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">  <span class='keyword'>if</span> (nrrdMaybeAlloc_va(pts-&gt;nvert, nrrdTypeDouble, 2,</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, 4)<span class='expansion'>((size_t)(4))</span></span>,</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">                        <span class='macro'>AIR_CAST(size_t, vertNum)<span class='expansion'>((size_t)(vertNum))</span></span>)</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">      || nrrdMaybeAlloc_va(pts-&gt;nstab, nrrdTypeDouble, 2,</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, 2)<span class='expansion'>((size_t)(2))</span></span>,</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                           <span class='macro'>AIR_CAST(size_t, vertNum)<span class='expansion'>((size_t)(vertNum))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">    biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: allocating output"</span>, me);</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">    airMopError(mop);</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">  <span class='keyword'>if</span> (recordStrength) {</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">    <span class='comment'>/* doing slicing is a simple form of allocation */</span></td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">    <span class='keyword'>if</span> (nrrdSlice(pts-&gt;nstrn, pts-&gt;nvert, 0 <span class='comment'>/* axis */</span>, 0 <span class='comment'>/* pos */</span>)) {</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">      biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: allocating strength output"</span>, me);</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">      airMopError(mop);</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">  <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">    <span class='comment'>/* cropping just to allocate */</span></td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">    size_t cmin[2] = {0, 0}, cmax[2] = {2, pts-&gt;nvert-&gt;axis[1].size-1};</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">    <span class='keyword'>if</span> (nrrdCrop(pts-&gt;norin, pts-&gt;nvert, cmin, cmax)) {</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">      biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: allocating orientation output"</span>, me);</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">      airMopError(mop);</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">  vert = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, pts-&gt;nvert-&gt;data)<span class='expansion'>((double *)(pts-&gt;nvert-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">  <span class='keyword'>if</span> (recordStrength) {</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">    strn = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, pts-&gt;nstrn-&gt;data)<span class='expansion'>((double *)(pts-&gt;nstrn-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">    strn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">  <span class='keyword'>if</span> (pts-&gt;fdim &amp;&amp; orientTestLen) {</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">    orin = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, pts-&gt;norin-&gt;data)<span class='expansion'>((double *)(pts-&gt;norin-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">    orin = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">  stab = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, pts-&gt;nstab-&gt;data)<span class='expansion'>((double *)(pts-&gt;nstab-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">  lentmp = trceArr[0]-&gt;len;</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">  oidx = 0;</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">  <span class='keyword'>for</span> (tidx=0; tidx&lt;lentmp; tidx++) {</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">    <span class='macro'>ELL_4V_COPY(vert + 4*oidx, trce[0] + 4*(lentmp - 1 - tidx))<span class='expansion'>((vert + 4*oidx)[0] = (trce[0] + 4*(lentmp - 1 - tidx))[0], (<br>vert + 4*oidx)[1] = (trce[0] + 4*(lentmp - 1 - tidx))[1], (vert<br> + 4*oidx)[2] = (trce[0] + 4*(lentmp - 1 - tidx))[2], (vert +<br> 4*oidx)[3] = (trce[0] + 4*(lentmp - 1 - tidx))[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">    <span class='keyword'>if</span> (strn) {</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">      strn[oidx] = hstrn[0][lentmp - 1 - tidx];</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">    <span class='keyword'>if</span> (orin) {</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">      <span class='macro'>ELL_3V_COPY(orin + 3*oidx, horin[0] + 3*(lentmp - 1 - tidx))<span class='expansion'>((orin + 3*oidx)[0] = (horin[0] + 3*(lentmp - 1 - tidx))[0], (<br>orin + 3*oidx)[1] = (horin[0] + 3*(lentmp - 1 - tidx))[1], (orin<br> + 3*oidx)[2] = (horin[0] + 3*(lentmp - 1 - tidx))[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">    oidx++;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">  <span class='comment'>/* the last index written to (before oidx++) was the seed index */</span></td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">  pts-&gt;seedIdx = oidx-1;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">  lentmp = trceArr[1]-&gt;len;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">  <span class='keyword'>for</span> (tidx=0; tidx&lt;lentmp; tidx++) {</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">    <span class='macro'>ELL_4V_COPY(vert + 4*oidx, trce[1] + 4*tidx)<span class='expansion'>((vert + 4*oidx)[0] = (trce[1] + 4*tidx)[0], (vert + 4*oidx)[<br>1] = (trce[1] + 4*tidx)[1], (vert + 4*oidx)[2] = (trce[1] + 4<br>*tidx)[2], (vert + 4*oidx)[3] = (trce[1] + 4*tidx)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">    <span class='keyword'>if</span> (strn) {</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">      strn[oidx] = hstrn[1][tidx];</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">    <span class='keyword'>if</span> (orin) {</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">      <span class='macro'>ELL_3V_COPY(orin + 3*oidx, horin[1] + 3*tidx)<span class='expansion'>((orin + 3*oidx)[0] = (horin[1] + 3*tidx)[0], (orin + 3*oidx)<br>[1] = (horin[1] + 3*tidx)[1], (orin + 3*oidx)[2] = (horin[1] +<br> 3*tidx)[2])</span></span>;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">    oidx++;</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">  lentmp = pts-&gt;nstab-&gt;axis[1].size;</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">  <span class='keyword'>if</span> (1 == lentmp) {</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">    stab[0 + 2*0] = 0.0;</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">    stab[1 + 2*0] = 0.0;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">    <span class='keyword'>for</span> (tidx=0; tidx&lt;lentmp; tidx++) {</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">      <span class='keyword'>double</span> *pA, *pB, *p0, *p1, *p2, *rA, *rB, *r0=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *r1=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *r2=<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">      p0 = vert + 4*(tidx-1);</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">      p1 = vert + 4*tidx;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">      p2 = vert + 4*(tidx+1);</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">      <span class='keyword'>if</span> (orin) {</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">        r0 = orin + 3*(tidx-1);</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        r1 = orin + 3*tidx;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">        r2 = orin + 3*(tidx+1);</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">      <span class='keyword'>if</span> (!tidx) {</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">        <span class='comment'>/* first */</span></td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">        pA = p1; rA = r1;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        pB = p2; rB = r2;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">      } <span class='keyword'>else</span> <span class='keyword'>if</span> (tidx &lt; lentmp-1) {</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">        <span class='comment'>/* middle */</span></td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        pA = p0; rA = r0;</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        pB = p2; rB = r2;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">        <span class='comment'>/* last */</span></td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">        pA = p0; rA = r0;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        pB = p1; rB = r1;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">      pullTraceStability(stab + 0 + 2*tidx, stab + 1 + 2*tidx,</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                         pA, pB, rA, rB, 0.5 <span class='comment'>/* sigma0 */</span>, pctx);</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">  <span class='comment'>/* pctx-&gt;idtagNext -= 1; / * HACK * / */</span></td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line"><span class='keyword'>typedef</span> <span class='keyword'>union</span> {</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">  pullTrace ***trace;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">  <span class='keyword'>void</span> **v;</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">} blahblahUnion;</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">pullTraceMulti *</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">pullTraceMultiNew(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">  <span class='comment'>/* static const char me[]="pullTraceMultiNew"; */</span></td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">  pullTraceMulti *ret;</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">  blahblahUnion bbu;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">  ret = <span class='macro'>AIR_CALLOC(1, pullTraceMulti)<span class='expansion'>(pullTraceMulti*)(calloc((1), sizeof(pullTraceMulti)))</span></span>;</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">  <span class='keyword'>if</span> (ret) {</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">    ret-&gt;trace = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">    ret-&gt;traceNum = 0;</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">    ret-&gt;traceArr = airArrayNew((bbu.trace = &amp;(ret-&gt;trace), bbu.v),</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">                                &amp;(ret-&gt;traceNum), <span class='keyword'>sizeof</span>(pullTrace*),</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">                                <span class='macro'>_PULL_TRACE_MULTI_INCR<span class='expansion'>1024</span></span>);</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">    airArrayPointerCB(ret-&gt;traceArr,</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">                      <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='comment'>/* because we get handed pullTrace structs</span></td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">                               <span class='comment'>that have already been allocated</span></td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">                               <span class='comment'>(and then we own them) */</span></td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">                      (<span class='keyword'>void</span> *(*)(<span class='keyword'>void</span> *))pullTraceNix);</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">pullTraceMultiAdd(pullTraceMulti *mtrc, pullTrace *trc, <span class='keyword'>int</span> *addedP) {</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullTraceMultiAdd"</span>;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> indx;</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">  <span class='keyword'>if</span> (!(mtrc &amp;&amp; trc &amp;&amp; addedP)) {</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">  <span class='keyword'>if</span> (!(trc-&gt;nvert-&gt;data &amp;&amp; trc-&gt;nvert-&gt;axis[1].size &gt;= 3)) {</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">    <span class='comment'>/*  for now getting a stub trace is not an error</span></td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">    <span class='comment'>biffAddf(PULL, "%s: got stub trace", me);</span></td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">    <span class='comment'>return 1; */</span></td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">    *addedP = <span class='macro'>AIR_FALSE<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">  <span class='keyword'>if</span> (!(trc-&gt;nstab-&gt;data</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">        &amp;&amp; trc-&gt;nstab-&gt;axis[1].size == trc-&gt;nvert-&gt;axis[1].size)) {</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: stab data inconsistent"</span>, me);</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">  *addedP = <span class='macro'>AIR_TRUE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">  indx = airArrayLenIncr(mtrc-&gt;traceArr, 1);</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">  <span class='keyword'>if</span> (!mtrc-&gt;trace) {</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: alloc error"</span>, me);</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">  mtrc-&gt;trace[indx] = trc;</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">pullTraceMultiPlotAdd(Nrrd *nplot, <span class='keyword'>const</span> pullTraceMulti *mtrc,</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">                      <span class='keyword'>const</span> Nrrd *nfilt, <span class='keyword'>int</span> strengthUse,</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">                      <span class='keyword'>int</span> smooth, <span class='keyword'>int</span> flatWght,</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> trcIdxMin, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> trcNum,</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                      Nrrd *nmaskedpos,</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">                      <span class='keyword'>const</span> Nrrd *nmask) {</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullTraceMultiPlotAdd"</span>;</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">  <span class='keyword'>double</span> ssRange[2], vRange[2], *plot;</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sizeS, sizeT, trcIdx, trcIdxMax;</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">  <span class='keyword'>int</span> *filt;</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">  airArray *mop;</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">  Nrrd *nsmst; <span class='comment'>/* smoothed stability */</span></td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">  airArray *mposArr;</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">  <span class='keyword'>double</span> *mpos;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>char</span> *mask;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">  <span class='keyword'>if</span> (!(nplot &amp;&amp; mtrc)) {</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">  <span class='keyword'>if</span> (nrrdCheck(nplot)) {</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">    biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble with nplot"</span>, me);</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">  <span class='keyword'>if</span> (nfilt) {</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">    <span class='keyword'>if</span> (nrrdCheck(nfilt)) {</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">      biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble with nfilt"</span>, me);</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">    <span class='keyword'>if</span> (!(1 == nfilt-&gt;dim &amp;&amp; nrrdTypeInt == nfilt-&gt;type)) {</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get 1-D array of %s (got %u-D of %s)"</span>, me,</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">               airEnumStr(nrrdType, nrrdTypeInt), nfilt-&gt;dim,</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">               airEnumStr(nrrdType, nfilt-&gt;type));</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">  <span class='keyword'>if</span> (!(2 == nplot-&gt;dim &amp;&amp; nrrdTypeDouble == nplot-&gt;type)) {</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get 2-D array of %s (got %u-D of %s)"</span>, me,</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">             airEnumStr(nrrdType, nrrdTypeDouble), nplot-&gt;dim,</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">             airEnumStr(nrrdType, nplot-&gt;type));</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">  <span class='keyword'>if</span> (!(trcIdxMin &lt; mtrc-&gt;traceNum)) {</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trcIdxMin %u not &lt; traceNum %u"</span>, me,</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">             trcIdxMin, mtrc-&gt;traceNum);</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">  <span class='keyword'>if</span> (trcNum) {</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">    trcIdxMax = trcIdxMin + trcNum-1;</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">    <span class='keyword'>if</span> (!(trcIdxMax &lt; mtrc-&gt;traceNum)) {</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trcIdxMax %u = %u+%u-1 not &lt; traceNum %u"</span>, me,</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">               trcIdxMax, trcIdxMin, trcNum, mtrc-&gt;traceNum);</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">    trcIdxMax = mtrc-&gt;traceNum-1;</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">  <span class='keyword'>if</span> (nmaskedpos || nmask) {</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">    <span class='keyword'>if</span> (!( nmaskedpos &amp;&amp; nmask )) {</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need either both or neither of nmaskedpos (%p)"</span></td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">               <span class='string_literal'>"and nmask (%p)"</span>, me, nmaskedpos, nmask);</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">    <span class='keyword'>if</span> (!( 2 == nmask-&gt;dim</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">           &amp;&amp; nrrdTypeUChar == nmask-&gt;type</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">           &amp;&amp; nplot-&gt;axis[0].size == nmask-&gt;axis[0].size</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">           &amp;&amp; nplot-&gt;axis[1].size == nmask-&gt;axis[1].size )) {</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got trace mask but wanted "</span></td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">               <span class='string_literal'>"2-D %s %u-by-%u (not %u-D %s %u-by-%u)\n"</span>, me,</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">               airEnumStr(nrrdType, nrrdTypeUChar),</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">               <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nplot-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nplot-&gt;axis[0].size))</span></span>,</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">               <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nplot-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nplot-&gt;axis[1].size))</span></span>,</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">               nmask-&gt;dim,</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">               airEnumStr(nrrdType, nmask-&gt;type),</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">               <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nmask-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nmask-&gt;axis[0].size))</span></span>,</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">               <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nmask-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nmask-&gt;axis[1].size))</span></span>);</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">    mask = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>char</span> *, nmask-&gt;data)<span class='expansion'>((unsigned char *)(nmask-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">    mask = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">  ssRange[0] = nplot-&gt;axis[0].min;</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">  ssRange[1] = nplot-&gt;axis[0].max;</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">  vRange[0] = nplot-&gt;axis[1].min;</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">  vRange[1] = nplot-&gt;axis[1].max;</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">  <span class='keyword'>if</span> (!( <span class='macro'>AIR_EXISTS(ssRange[0])<span class='expansion'>(((int)(!((ssRange[0]) - (ssRange[0])))))</span></span> &amp;&amp; <span class='macro'>AIR_EXISTS(ssRange[1])<span class='expansion'>(((int)(!((ssRange[1]) - (ssRange[1])))))</span></span> &amp;&amp;</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">         <span class='macro'>AIR_EXISTS(vRange[0])<span class='expansion'>(((int)(!((vRange[0]) - (vRange[0])))))</span></span> &amp;&amp; <span class='macro'>AIR_EXISTS(vRange[1])<span class='expansion'>(((int)(!((vRange[1]) - (vRange[1])))))</span></span> )) {</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: need both axis 0 (%g,%g) and 1 (%g,%g) min,max"</span>, me,</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">             ssRange[0], ssRange[1], vRange[0], vRange[1]);</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">  <span class='keyword'>if</span> (1 != vRange[0]) {</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: expected vRange[0] == 1 not %g"</span>, me, vRange[0]);</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">  mop = airMopNew();</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">  mpos = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">  <span class='keyword'>if</span> (nmaskedpos &amp;&amp; nmask) {</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">    nrrdEmpty(nmaskedpos);</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">    mposArr = airArrayNew((<span class='keyword'>void</span>**)(&amp;mpos), <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">                          4*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>), 512 <span class='comment'>/* HEY */</span>);</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">  } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">    mposArr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">  nsmst = nrrdNew();</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">  airMopAdd(mop, nsmst, (airMopper)nrrdNuke, airMopAlways);</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">  plot = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nplot-&gt;data)<span class='expansion'>((double *)(nplot-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">  filt = (nfilt</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">          ? <span class='macro'>AIR_CAST(<span class='keyword'>int</span> *, nfilt-&gt;data)<span class='expansion'>((int *)(nfilt-&gt;data))</span></span></td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">          : <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">  sizeS = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nplot-&gt;axis[0].size)<span class='expansion'>((unsigned int)(nplot-&gt;axis[0].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">  sizeT = <span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, nplot-&gt;axis[1].size)<span class='expansion'>((unsigned int)(nplot-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">  <span class='keyword'>for</span> (trcIdx=trcIdxMin; trcIdx&lt;=trcIdxMax; trcIdx++) {</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">    <span class='keyword'>int</span> pntIdx, pntNum;</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">    <span class='keyword'>const</span> pullTrace *trc;</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">    <span class='keyword'>const</span> <span class='keyword'>double</span> *vert, *stab, *strn;</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">    <span class='keyword'>unsigned</span> <span class='keyword'>int</span> maskInCount;</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">    <span class='keyword'>double</span> maskInPos[4];</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">    <span class='keyword'>if</span> (filt &amp;&amp; !filt[trcIdx]) {</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">      <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">    trc = mtrc-&gt;trace[trcIdx];</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">    <span class='keyword'>if</span> (pullTraceStopStub == trc-&gt;whyNowhere) {</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">      <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">    <span class='keyword'>if</span> (strengthUse &amp;&amp; !(trc-&gt;nstrn &amp;&amp; trc-&gt;nstrn-&gt;data)) {</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: requesting strength-based weighting, but don't have "</span></td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">               <span class='string_literal'>"strength info in trace %u"</span>, me, trcIdx);</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">    pntNum = <span class='macro'>AIR_CAST(<span class='keyword'>int</span>, trc-&gt;nvert-&gt;axis[1].size)<span class='expansion'>((int)(trc-&gt;nvert-&gt;axis[1].size))</span></span>;</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">    vert = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, trc-&gt;nvert-&gt;data)<span class='expansion'>((double *)(trc-&gt;nvert-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">    stab = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, trc-&gt;nstab-&gt;data)<span class='expansion'>((double *)(trc-&gt;nstab-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">    <span class='keyword'>if</span> (smooth &gt; 0) {</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">      <span class='keyword'>double</span> *smst;</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">      <span class='keyword'>if</span> (nrrdCopy(nsmst, trc-&gt;nstab)) {</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">        biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, <span class='string_literal'>"%s: trouble w/ trace %u"</span>, me, trcIdx);</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">        airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line">      smst = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, nsmst-&gt;data)<span class='expansion'>((double *)(nsmst-&gt;data))</span></span>;</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">      <span class='keyword'>for</span> (pntIdx=0; pntIdx&lt;pntNum; pntIdx++) {</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">        <span class='keyword'>int</span> ii, jj;</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">        <span class='keyword'>double</span> ss, ww, ws;</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line">        ss = ws = 0;</td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">        <span class='keyword'>for</span> (jj=-smooth; jj&lt;=smooth; jj++) {</td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">          ii = pntIdx+jj;</td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">          ii = <span class='macro'>AIR_CLAMP(0, ii, pntNum-1)<span class='expansion'>((ii) &lt; (0) ? (0) : ((ii) &gt; (pntNum-1) ? (pntNum-1) : (<br>ii)))</span></span>;</td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">          ww = nrrdKernelBSpline3-&gt;eval1_d(<span class='macro'>AIR_AFFINE(-smooth-1, jj,<span class='expansion'>( ((double)(2)-(-2))*((double)(jj)-(-smooth-1)) / ((double)(smooth<br>+1)-(-smooth-1)) + (-2))</span></span></td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">                                                      <span class='macro'>smooth+1,-2,2)<span class='expansion'>( ((double)(2)-(-2))*((double)(jj)-(-smooth-1)) / ((double)(smooth<br>+1)-(-smooth-1)) + (-2))</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN860">860</td><td class="line">          ws += ww;</td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line">          ss += ww*stab[0 + 2*ii]*stab[1 + 2*ii];</td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line">        smst[pntIdx] = ss/ws;</td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line">      <span class='comment'>/* now redirect stab */</span></td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">      stab = smst;</td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">    strn = <span class='macro'>AIR_CAST(<span class='keyword'>double</span> *, (strengthUse &amp;&amp; trc-&gt;nstrn<span class='expansion'>((double *)((strengthUse &amp;&amp; trc-&gt;nstrn ? trc-&gt;nstrn<br>-&gt;data : ((void*)0))))</span></span></td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line">                               <span class='macro'>? trc-&gt;nstrn-&gt;data : NULL))<span class='expansion'>((double *)((strengthUse &amp;&amp; trc-&gt;nstrn ? trc-&gt;nstrn<br>-&gt;data : ((void*)0))))</span></span>;</td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">    <span class='comment'>/* would be nice to get some graphical indication of this */</span></td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line">    fprintf(<span class='macro'>stderr<span class='expansion'>__stderrp</span></span>, <span class='string_literal'>"!%s: trace %u in [%u,%u]: %u points; stops = %s(%s) | %s(%s)\n"</span>,</td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">            me, trcIdx, trcIdxMin, trcIdxMax, pntNum,</td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line">            airEnumStr(pullTraceStop, trc-&gt;whyStop[0]),</td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">            (pullTraceStopConstrFail == trc-&gt;whyStop[0]</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line">             ? airEnumStr(pullConstraintFail, trc-&gt;whyStopCFail[0])</td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line">             : <span class='string_literal'>""</span>),</td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">            airEnumStr(pullTraceStop, trc-&gt;whyStop[1]),</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">            (pullTraceStopConstrFail == trc-&gt;whyStop[1]</td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line">             ? airEnumStr(pullConstraintFail, trc-&gt;whyStopCFail[1])</td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">             : <span class='string_literal'>""</span>));</td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">    <span class='comment'>/* */</span></td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">    <span class='keyword'>if</span> (mask) {</td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">      maskInCount = 0;</td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">      <span class='macro'>ELL_4V_SET(maskInPos, 0, 0, 0, 0)<span class='expansion'>((maskInPos)[0] = (0), (maskInPos)[1] = (0), (maskInPos)[2] =<br> (0), (maskInPos)[3] = (0))</span></span>;</td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">    <span class='keyword'>for</span> (pntIdx=0; pntIdx&lt;pntNum; pntIdx++) {</td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">      <span class='keyword'>const</span> <span class='keyword'>double</span> *pp;</td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line">      <span class='keyword'>double</span> add, ww;</td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> sidx, vidx;</td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">      pp = vert + 4*pntIdx;</td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line">      <span class='keyword'>if</span> (!(<span class='macro'>AIR_IN_OP(ssRange[0], pp[3], ssRange[1])<span class='expansion'>((ssRange[0]) &lt; (pp[3]) &amp;&amp; (pp[3]) &lt; (ssRange[1<br>]))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line">        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">      <span class='keyword'>if</span> (flatWght &gt; 0) {</td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line">        <span class='keyword'>if</span> (!pntIdx || pntIdx == pntNum-1) {</td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line">          <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">      } <span class='keyword'>else</span> <span class='keyword'>if</span> (flatWght &lt; 0) {</td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line">        <span class='comment'>/* HACK: only show the seed point */</span></td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>AIR_CAST(<span class='keyword'>unsigned</span> <span class='keyword'>int</span>, pntIdx)<span class='expansion'>((unsigned int)(pntIdx))</span></span> != trc-&gt;seedIdx) {</td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">          <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line">      sidx = airIndex(ssRange[0], pp[3], ssRange[1], sizeS);</td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line">      vidx = airIndexClamp(1, stab[0 + 2*pntIdx]*stab[1 + 2*pntIdx], 0, sizeT);</td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">      add = strn ? strn[pntIdx] : 1;</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">      <span class='keyword'>if</span> (flatWght &gt; 0) {</td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">        <span class='keyword'>double</span> dx = ( ((vert + 4*(pntIdx+1))[3] - (vert + 4*(pntIdx-1))[3])</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line">                      / (ssRange[1] - ssRange[0]) );</td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">        <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line">        <span class='comment'>double dx = ( ((vert + 4*(pntIdx+1))[3] - pp[3])</span></td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">                      <span class='comment'>/ (ssRange[1] - ssRange[0]) );</span></td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">        <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">        <span class='keyword'>double</span> dy = (stab[0 + 2*(pntIdx+1)]*stab[1 + 2*(pntIdx+1)]</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">                     - stab[0 + 2*(pntIdx-1)]*stab[1 + 2*(pntIdx-1)]);</td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">        ww = dx/sqrt(dx*dx + dy*dy);</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">      } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">        ww = 1;</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line">      plot[sidx + sizeS*vidx] += <span class='macro'>AIR_MAX(0, ww*add)<span class='expansion'>((0) &gt; (ww*add) ? (0) : (ww*add))</span></span>;</td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">      <span class='keyword'>if</span> (mask &amp;&amp; mask[sidx + sizeS*vidx] &gt; 200) {</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line">        <span class='macro'>ELL_4V_ADD2(maskInPos, maskInPos, pp)<span class='expansion'>((maskInPos)[0] = (maskInPos)[0] + (pp)[0], (maskInPos)[1] = (<br>maskInPos)[1] + (pp)[1], (maskInPos)[2] = (maskInPos)[2] + (pp<br>)[2], (maskInPos)[3] = (maskInPos)[3] + (pp)[3])</span></span>;</td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line">        maskInCount ++;</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">      }</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN927">927</td><td class="line">    <span class='keyword'>if</span> (mask &amp;&amp; maskInCount) {</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">      <span class='keyword'>unsigned</span> <span class='keyword'>int</span> mpi = airArrayLenIncr(mposArr, 1);</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">      <span class='macro'>ELL_4V_SCALE(mpos + 4*mpi, 1.0/maskInCount, maskInPos)<span class='expansion'>((mpos + 4*mpi)[0] = (maskInPos)[0]*1.0/maskInCount, (mpos + 4<br>*mpi)[1] = (maskInPos)[1]*1.0/maskInCount, (mpos + 4*mpi)[2] =<br> (maskInPos)[2]*1.0/maskInCount, (mpos + 4*mpi)[3] = (maskInPos<br>)[3]*1.0/maskInCount)</span></span>;</td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">  <span class='keyword'>if</span> (mask &amp;&amp; mposArr-&gt;len) {</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">    <span class='keyword'>if</span> (nrrdMaybeAlloc_va(nmaskedpos, nrrdTypeDouble, 2,</td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">                          <span class='macro'>AIR_CAST(size_t, 4)<span class='expansion'>((size_t)(4))</span></span>,</td></tr>
+<tr><td class="num" id="LN935">935</td><td class="line">                          <span class='macro'>AIR_CAST(size_t, mposArr-&gt;len)<span class='expansion'>((size_t)(mposArr-&gt;len))</span></span>)) {</td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't allocate masked pos"</span>, me);</td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line">      airMopError(mop); <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">    <span class='macro'>memcpy(nmaskedpos-&gt;data, mposArr-&gt;data,<span class='expansion'>__builtin___memcpy_chk (nmaskedpos-&gt;data, mposArr-&gt;data<br>, 4*(mposArr-&gt;len)*sizeof(double), __builtin_object_size (<br>nmaskedpos-&gt;data, 0))</span></span></td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line">           <span class='macro'>4*(mposArr-&gt;len)*<span class='keyword'>sizeof</span>(<span class='keyword'>double</span>))<span class='expansion'>__builtin___memcpy_chk (nmaskedpos-&gt;data, mposArr-&gt;data<br>, 4*(mposArr-&gt;len)*sizeof(double), __builtin_object_size (<br>nmaskedpos-&gt;data, 0))</span></span>;</td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line">  airMopOkay(mop);</td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line"><span class='keyword'>static</span> size_t</td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line">nsizeof(<span class='keyword'>const</span> Nrrd *nrrd) {</td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">  <span class='keyword'>return</span> (nrrd</td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line">          ? nrrdElementSize(nrrd)*nrrdElementNumber(nrrd)</td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">          : 0);</td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">size_t</td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line">pullTraceMultiSizeof(<span class='keyword'>const</span> pullTraceMulti *mtrc) {</td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">  size_t ret;</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ti;</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line">  <span class='keyword'>if</span> (!mtrc) {</td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line">    <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line">  ret = 0;</td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">  <span class='keyword'>for</span> (ti=0; ti&lt;mtrc-&gt;traceNum; ti++) {</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">    ret += <span class='keyword'>sizeof</span>(pullTrace);</td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line">    ret += nsizeof(mtrc-&gt;trace[ti]-&gt;nvert);</td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">    ret += nsizeof(mtrc-&gt;trace[ti]-&gt;nstrn);</td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line">    ret += nsizeof(mtrc-&gt;trace[ti]-&gt;nstab);</td></tr>
+<tr><td class="num" id="LN967">967</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">  ret += <span class='keyword'>sizeof</span>(pullTrace*)*(mtrc-&gt;traceArr-&gt;size);</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line">  <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line">pullTraceMulti *</td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line">pullTraceMultiNix(pullTraceMulti *mtrc) {</td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line">  <span class='keyword'>if</span> (mtrc) {</td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line">    airArrayNuke(mtrc-&gt;traceArr);</td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line">    free(mtrc);</td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">  <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line"><span class='directive'>#define <span class='macro'>PULL_MTRC_MAGIC<span class='expansion'>"PULLMTRC0001"</span></span> "PULLMTRC0001"</span></td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line"><span class='directive'>#define <span class='macro'>DEMARK_STR<span class='expansion'>"======"</span></span> "======"</span></td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN986">986</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line">tracewrite(FILE *file, <span class='keyword'>const</span> pullTrace *trc, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ti) {</td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"tracewrite"</span>;</td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">  <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line">  <span class='comment'>this was used to get ascii coordinates for a trace,</span></td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">  <span class='comment'>to help isolate (via emacs) one trace from a saved multi-trace</span></td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">  <span class='comment'>NrrdIoState *nio = nrrdIoStateNew();</span></td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">  <span class='comment'>nio-&gt;encoding = nrrdEncodingAscii;</span></td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line">  <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line">  fprintf(file, <span class='string_literal'>"%s %u\n"</span>, <span class='macro'>DEMARK_STR<span class='expansion'>"======"</span></span>, ti);</td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line">  ell_4v_print_d(file, trc-&gt;seedPos);</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line"><span class='directive'>#define WRITE(FF) \</span></td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line">  <span class='directive'>if (trc-&gt;FF &amp;&amp; trc-&gt;FF-&gt;data) { \</span></td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">    <span class='directive'>if (nrrdWrite(file, trc-&gt;FF, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> /* nio */ )) {        \</span></td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">      <span class='directive'>biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, "%s: trouble with " #FF , me); \</span></td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line">      <span class='directive'>return 1; \</span></td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line">    <span class='directive'>} \</span></td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line">  <span class='directive'>} else { \</span></td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line">    <span class='directive'>fprintf(file, "NULL"); \</span></td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line">  <span class='directive'>} \</span></td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line">  <span class='directive'>fprintf(file, "\n")</span></td></tr>
+<tr><td class="num" id="LN1009">1009</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1010">1010</td><td class="line">  fprintf(file, <span class='string_literal'>"nrrds: vert strn stab = %d %d %d\n"</span>,</td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">          trc-&gt;nvert &amp;&amp; trc-&gt;nvert-&gt;data,</td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">          trc-&gt;nstrn &amp;&amp; trc-&gt;nstrn-&gt;data,</td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line">          trc-&gt;nstab &amp;&amp; trc-&gt;nstab-&gt;data);</td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">  WRITE(nvert);</td></tr>
+<tr><td class="num" id="LN1015">1015</td><td class="line">  WRITE(nstrn);</td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line">  WRITE(nstab);</td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">  fprintf(file, <span class='string_literal'>"%u\n"</span>, trc-&gt;seedIdx);</td></tr>
+<tr><td class="num" id="LN1018">1018</td><td class="line">  fprintf(file, <span class='string_literal'>"%s %s %s\n"</span>,</td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">          airEnumStr(pullTraceStop, trc-&gt;whyStop[0]),</td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">          airEnumStr(pullTraceStop, trc-&gt;whyStop[1]),</td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line">          airEnumStr(pullTraceStop, trc-&gt;whyNowhere));</td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line"><span class='directive'>#undef WRITE</span></td></tr>
+<tr><td class="num" id="LN1023">1023</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">pullTraceMultiWrite(FILE *file, <span class='keyword'>const</span> pullTraceMulti *mtrc) {</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullTraceMultiWrite"</span>;</td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ti;</td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line">  <span class='keyword'>if</span> (!(file &amp;&amp; mtrc)) {</td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN1033">1033</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1034">1034</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1035">1035</td><td class="line">  fprintf(file, <span class='string_literal'>"%s\n"</span>, <span class='macro'>PULL_MTRC_MAGIC<span class='expansion'>"PULLMTRC0001"</span></span>);</td></tr>
+<tr><td class="num" id="LN1036">1036</td><td class="line">  fprintf(file, <span class='string_literal'>"%u traces\n"</span>, mtrc-&gt;traceNum);</td></tr>
+<tr><td class="num" id="LN1037">1037</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">  <span class='keyword'>for</span> (ti=0; ti&lt;mtrc-&gt;traceNum; ti++) {</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">    <span class='keyword'>if</span> (tracewrite(file, mtrc-&gt;trace[ti], ti)) {</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: trace %u/%u"</span>, me, ti, mtrc-&gt;traceNum);</td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1043">1043</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1047">1047</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line">traceread(pullTrace *trc, FILE *file, <span class='keyword'>unsigned</span> <span class='keyword'>int</span> _ti) {</td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"traceread"</span>;</td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line">  <span class='keyword'>char</span> line[<span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>], name[<span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN1051">1051</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> ti, lineLen;</td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line">  <span class='keyword'>int</span> stops[3], hackhack, vertHN, strnHN, stabHN; <span class='comment'>/* HN == have nrrd */</span></td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"separator"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "separator")</span></span>;</td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1058">1058</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1059">1059</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1060">1060</td><td class="line">  <span class='keyword'>if</span> (1 != sscanf(line, <span class='macro'>DEMARK_STR<span class='expansion'>"======"</span></span> <span class='string_literal'>" %u"</span>, &amp;ti)) {</td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: \"%s\" doesn't look like %s line"</span>, me, line, name);</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">  <span class='keyword'>if</span> (ti != _ti) {</td></tr>
+<tr><td class="num" id="LN1065">1065</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: read trace index %u but wanted %u"</span>, me, ti, _ti);</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"seed pos"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "seed pos")</span></span>;</td></tr>
+<tr><td class="num" id="LN1069">1069</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line">  <span class='keyword'>if</span> (4 != sscanf(line, <span class='string_literal'>"%lg %lg %lg %lg"</span>, trc-&gt;seedPos + 0,</td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line">                  trc-&gt;seedPos + 1, trc-&gt;seedPos + 2, trc-&gt;seedPos + 3)) {</td></tr>
+<tr><td class="num" id="LN1076">1076</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't parse %s line \"%s\" as 4 doubles"</span>,</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line">             me, name, line);</td></tr>
+<tr><td class="num" id="LN1078">1078</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1079">1079</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"have nrrds"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "have nrrds")</span></span>;</td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1082">1082</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1083">1083</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1084">1084</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1086">1086</td><td class="line">  <span class='keyword'>if</span> (3 != sscanf(line, <span class='string_literal'>"nrrds: vert strn stab = %d %d %d"</span>,</td></tr>
+<tr><td class="num" id="LN1087">1087</td><td class="line">                  &amp;vertHN, &amp;strnHN, &amp;stabHN)) {</td></tr>
+<tr><td class="num" id="LN1088">1088</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: couldn't parse %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1090">1090</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1091">1091</td><td class="line"><span class='directive'>#define <span class='macro'>READ(FF)<span class='expansion'>if (FFHN) { if (nrrdRead(trc-&gt;nFF, file, ((void*)0))) { biffMovef<br>(pullBiffKey, nrrdBiffKey, "%s: trouble with " "FF" , me); return<br> 1; } fgetc(file); } else { airOneLine(file, line, (256+1)); }</span></span> \</span></td></tr>
+<tr><td class="num" id="LN1092">1092</td><td class="line">  <span class='directive'>if (FF##HN) {                         \</span></td></tr>
+<tr><td class="num" id="LN1093">1093</td><td class="line">    <span class='directive'>if (nrrdRead(trc-&gt;n##FF, file, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) {        \</span></td></tr>
+<tr><td class="num" id="LN1094">1094</td><td class="line">      <span class='directive'>biffMovef(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='macro'>NRRD<span class='expansion'>nrrdBiffKey</span></span>, "%s: trouble with " #FF , me); \</span></td></tr>
+<tr><td class="num" id="LN1095">1095</td><td class="line">      <span class='directive'>return 1; \</span></td></tr>
+<tr><td class="num" id="LN1096">1096</td><td class="line">    <span class='directive'>} \</span></td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line">    <span class='directive'>fgetc(file); \</span></td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line">  <span class='directive'>} else {                                      \</span></td></tr>
+<tr><td class="num" id="LN1099">1099</td><td class="line">    <span class='directive'>airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>); \</span></td></tr>
+<tr><td class="num" id="LN1100">1100</td><td class="line">  <span class='directive'>}</span></td></tr>
+<tr><td class="num" id="LN1101">1101</td><td class="line">  hackhack = nrrdStateVerboseIO;  <span class='comment'>/* should be fixed in Teem v2 */</span></td></tr>
+<tr><td class="num" id="LN1102">1102</td><td class="line">  nrrdStateVerboseIO = 0;</td></tr>
+<tr><td class="num" id="LN1103">1103</td><td class="line">  <span class='macro'>READ(vert)<span class='expansion'>if (vertHN) { if (nrrdRead(trc-&gt;nvert, file, ((void*)0))) {<br> biffMovef(pullBiffKey, nrrdBiffKey, "%s: trouble with " "vert"<br> , me); return 1; } fgetc(file); } else { airOneLine(file, line<br>, (256+1)); }</span></span>;</td></tr>
+<tr><td class="num" id="LN1104">1104</td><td class="line">  <span class='macro'>READ(strn)<span class='expansion'>if (strnHN) { if (nrrdRead(trc-&gt;nstrn, file, ((void*)0))) {<br> biffMovef(pullBiffKey, nrrdBiffKey, "%s: trouble with " "strn"<br> , me); return 1; } fgetc(file); } else { airOneLine(file, line<br>, (256+1)); }</span></span>;</td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">  <span class='macro'>READ(stab)<span class='expansion'>if (stabHN) { if (nrrdRead(trc-&gt;nstab, file, ((void*)0))) {<br> biffMovef(pullBiffKey, nrrdBiffKey, "%s: trouble with " "stab"<br> , me); return 1; } fgetc(file); } else { airOneLine(file, line<br>, (256+1)); }</span></span>;</td></tr>
+<tr><td class="num" id="LN1106">1106</td><td class="line">  nrrdStateVerboseIO = hackhack;</td></tr>
+<tr><td class="num" id="LN1107">1107</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"seed idx"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "seed idx")</span></span>;</td></tr>
+<tr><td class="num" id="LN1109">1109</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1110">1110</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1111">1111</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1112">1112</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1113">1113</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1114">1114</td><td class="line">  <span class='keyword'>if</span> (1 != sscanf(line, <span class='string_literal'>"%u"</span>, &amp;(trc-&gt;seedIdx))) {</td></tr>
+<tr><td class="num" id="LN1115">1115</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't parse uint from %s line \"%s\""</span>,</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">             me, name, line);</td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1118">1118</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1119">1119</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"stops"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "stops")</span></span>;</td></tr>
+<tr><td class="num" id="LN1120">1120</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1121">1121</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1122">1122</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1123">1123</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1124">1124</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1125">1125</td><td class="line">  <span class='keyword'>if</span> (3 != airParseStrE(stops, line, <span class='string_literal'>" "</span>, 3, pullTraceStop)) {</td></tr>
+<tr><td class="num" id="LN1126">1126</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't see 3 %s on %s line \"%s\""</span>, me,</td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">             pullTraceStop-&gt;name, name, line);</td></tr>
+<tr><td class="num" id="LN1128">1128</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1129">1129</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1130">1130</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1131">1131</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1132">1132</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1133">1133</td><td class="line"><span class='keyword'>int</span></td></tr>
+<tr><td class="num" id="LN1134">1134</td><td class="line">pullTraceMultiRead(pullTraceMulti *mtrc, FILE *file) {</td></tr>
+<tr><td class="num" id="LN1135">1135</td><td class="line">  <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> me[]=<span class='string_literal'>"pullTraceMultiRead"</span>;</td></tr>
+<tr><td class="num" id="LN1136">1136</td><td class="line">  <span class='keyword'>char</span> line[<span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>], name[<span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">  <span class='keyword'>unsigned</span> <span class='keyword'>int</span> lineLen, ti, tnum;</td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line">  pullTrace *trc;</td></tr>
+<tr><td class="num" id="LN1139">1139</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1140">1140</td><td class="line">  <span class='keyword'>if</span> (!(mtrc &amp;&amp; file)) {</td></tr>
+<tr><td class="num" id="LN1141">1141</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: got NULL pointer"</span>, me);</td></tr>
+<tr><td class="num" id="LN1142">1142</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line">  airArrayLenSet(mtrc-&gt;traceArr, 0);</td></tr>
+<tr><td class="num" id="LN1145">1145</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"magic"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "magic")</span></span>;</td></tr>
+<tr><td class="num" id="LN1146">1146</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1147">1147</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1148">1148</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1149">1149</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1150">1150</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1151">1151</td><td class="line">  <span class='keyword'>if</span> (strcmp(line, <span class='macro'>PULL_MTRC_MAGIC<span class='expansion'>"PULLMTRC0001"</span></span>)) {</td></tr>
+<tr><td class="num" id="LN1152">1152</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: %s line \"%s\" not expected \"%s\""</span>,</td></tr>
+<tr><td class="num" id="LN1153">1153</td><td class="line">             me, name, line, <span class='macro'>PULL_MTRC_MAGIC<span class='expansion'>"PULLMTRC0001"</span></span>);</td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1157">1157</td><td class="line">  <span class='macro'>sprintf(name, <span class='string_literal'>"# of traces"</span>)<span class='expansion'>__builtin___sprintf_chk (name, 0, __builtin_object_size (name<br>, 2 &gt; 1 ? 1 : 0), "# of traces")</span></span>;</td></tr>
+<tr><td class="num" id="LN1158">1158</td><td class="line">  lineLen = airOneLine(file, line, <span class='macro'>AIR_STRLEN_MED<span class='expansion'>(256+1)</span></span>);</td></tr>
+<tr><td class="num" id="LN1159">1159</td><td class="line">  <span class='keyword'>if</span> (!lineLen) {</td></tr>
+<tr><td class="num" id="LN1160">1160</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: didn't get %s line"</span>, me, name);</td></tr>
+<tr><td class="num" id="LN1161">1161</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1162">1162</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1163">1163</td><td class="line">  <span class='keyword'>if</span> (1 != sscanf(line, <span class='string_literal'>"%u traces"</span>, &amp;tnum)) {</td></tr>
+<tr><td class="num" id="LN1164">1164</td><td class="line">    biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: \"%s\" doesn't look like %s line"</span>, me, line, name);</td></tr>
+<tr><td class="num" id="LN1165">1165</td><td class="line">    <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1166">1166</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1167">1167</td><td class="line">  <span class='keyword'>for</span> (ti=0; ti&lt;tnum; ti++) {</td></tr>
+<tr><td class="num" id="LN1168">1168</td><td class="line">    <span class='keyword'>int</span> added;</td></tr>
+<tr><td class="num" id="LN1169">1169</td><td class="line">    trc = pullTraceNew();</td></tr>
+<tr><td class="num" id="LN1170">1170</td><td class="line">    <span class='keyword'>if</span> (traceread(trc, file, ti)) {</td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: on trace %u/%u"</span>, me, ti, tnum);</td></tr>
+<tr><td class="num" id="LN1172">1172</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1173">1173</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1174">1174</td><td class="line">    <span class='keyword'>if</span> (pullTraceMultiAdd(mtrc, trc, &amp;added)) {</td></tr>
+<tr><td class="num" id="LN1175">1175</td><td class="line">      biffAddf(<span class='macro'>PULL<span class='expansion'>pullBiffKey</span></span>, <span class='string_literal'>"%s: adding trace %u/%u"</span>, me, ti, tnum);</td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line">      <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1178">1178</td><td class="line">    <span class='keyword'>if</span> (!added) {</td></tr>
+<tr><td class="num" id="LN1179">1179</td><td class="line">      trc = <span class="mrange">pullTraceNix(trc)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:7ex">Value stored to 'trc' is never read</div></td></tr>
+<tr><td class="num" id="LN1180">1180</td><td class="line">    }</td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line">  }</td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1183">1183</td><td class="line">  <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">}</td></tr>
+</table></body></html>
